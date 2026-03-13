@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import svgPaths from "./svg-6slkny0mf7";
 import imgEarthBackground from "../../EARTH BACKGROUND.svg";
@@ -617,27 +617,281 @@ function Cta() {
   );
 }
 
-function ImageContainer() {
+// ─── Carousel data & variants ────────────────────────────────────────────────
+
+interface CarouselProject {
+  id: number;
+  image: string;
+  brandContent?: React.ReactNode; // custom logo; falls back to brandLabel text
+  brandLabel: string;
+  tags: Array<{ label: string; icon: 'page' | 'building' }>;
+  description: string;
+}
+
+// Mindscale logo pill — exact replica of the original design
+function MindscalePill() {
   return (
-    <div className="absolute contents left-[166.28px] top-[1472.03px]" data-name="Image Container">
-      <div className="absolute h-[291.353px] left-[166.28px] pointer-events-none rounded-[15px] top-[1629.17px] w-[482.868px]" data-name="Card Image">
-        <img alt="" className="absolute inset-0 max-w-none object-cover rounded-[15px] size-full" src={imgCardImage} />
-        <div className="absolute inset-0 rounded-[inherit] shadow-[inset_0px_0px_10px_0px_rgba(104,104,104,0.25)]" />
-      </div>
-      <div className="absolute flex h-[142.19px] items-center justify-center left-[204.82px] top-[1935.47px] w-[405.781px]">
-        <div className="-scale-y-100 flex-none rotate-180">
-          <div className="bg-gradient-to-b from-[#d1d1d1] h-[142.19px] rounded-tl-[15px] rounded-tr-[15px] to-[rgba(255,255,255,0)] w-[405.781px]" data-name="Card Background" />
-        </div>
-      </div>
-      <div className="absolute flex h-[142.187px] items-center justify-center left-[209.5px] top-[1472.03px] w-[405.781px]">
-        <div className="flex-none rotate-180">
-          <div className="bg-gradient-to-b from-[#d1d1d1] h-[142.187px] rounded-tl-[15px] rounded-tr-[15px] to-[rgba(255,255,255,0)] w-[405.781px]" data-name="Card Background" />
+    <div className="relative rounded-[20.041px] bg-[#0e0e0e]" style={{ width: 136.82, height: 40.082 }}>
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div
+          className="relative mask-alpha mask-intersect mask-no-clip mask-no-repeat"
+          style={{
+            width: 97.52,
+            height: 10.669,
+            maskImage: `url('${imgGroup}')`,
+            maskSize: '97.52px 10.669px',
+            maskPosition: '-0.316px -0.069px',
+          }}
+        >
+          <svg className="absolute block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 96.8878 10.5744">
+            <path d={svgPaths.p2c1f7d80} fill="white" />
+            <path d={svgPaths.p2e09c700} fill="#D52121" />
+            <path d={svgPaths.p39f52b00} fill="#D52121" />
+            <path d={svgPaths.p1c2f3000} fill="#B70F0F" />
+          </svg>
         </div>
       </div>
     </div>
   );
 }
 
+const CAROUSEL_PROJECTS: CarouselProject[] = [
+  {
+    id: 0,
+    image: imgCardImage,
+    brandContent: <MindscalePill />,
+    brandLabel: 'MINDSCALE',
+    tags: [
+      { label: 'Landing page', icon: 'page' },
+      { label: 'Agence',       icon: 'building' },
+    ],
+    description: "Mindscale est une entreprise spécialisée dans l'optimisation\ndes tunnels de vente grâce à l'intelligence comportementale et à l'IA.",
+  },
+  {
+    id: 1,
+    image: imgCardImage,
+    brandLabel: 'INFINIFY',
+    tags: [
+      { label: 'Identité visuelle', icon: 'page' },
+      { label: 'Branding',          icon: 'building' },
+    ],
+    description: "Refonte complète de l'identité visuelle pour une marque\nambitieuse avec une présence cohérente sur tous les supports.",
+  },
+  {
+    id: 2,
+    image: imgCardImage,
+    brandLabel: 'E-COMMERCE',
+    tags: [
+      { label: 'E-commerce', icon: 'page' },
+      { label: 'SaaS',       icon: 'building' },
+    ],
+    description: "Conception d'une interface e-commerce premium axée\nsur la conversion et l'expérience utilisateur haut de gamme.",
+  },
+];
+
+const C_EASE = [0.22, 1, 0.36, 1] as const;
+
+const imageVariants = {
+  enter:  { scale: 1.08, opacity: 0, filter: 'blur(8px)' },
+  center: { scale: 1,    opacity: 1, filter: 'blur(0px)',
+    transition: { duration: 0.6, ease: C_EASE } },
+  exit:   { scale: 1.03, opacity: 0, filter: 'blur(8px)',
+    transition: { duration: 0.4, ease: C_EASE } },
+};
+
+const textVariants = {
+  enter:  { opacity: 0, y: 10, filter: 'blur(6px)' },
+  center: { opacity: 1, y: 0,  filter: 'blur(0px)',
+    transition: { duration: 0.45, ease: C_EASE, delay: 0.1 } },
+  exit:   { opacity: 0, y: 10, filter: 'blur(6px)',
+    transition: { duration: 0.25, ease: C_EASE } },
+};
+
+// ─── Tag helpers ─────────────────────────────────────────────────────────────
+
+function CarouselTagIconPage() {
+  return (
+    <div className="relative shrink-0 size-[12.68px]">
+      <svg className="absolute block size-full" fill="none" viewBox="0 0 12.6801 12.6801">
+        <path d={svgPaths.p25307570} fill="#0071E3" />
+        <path d={svgPaths.p25307570} stroke="#0071E3" strokeLinejoin="round" strokeWidth="1.18876" />
+        <path d={svgPaths.p31f43b00} stroke="#0071E3" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.18876" />
+      </svg>
+    </div>
+  );
+}
+
+function CarouselTagIconBuilding() {
+  return (
+    <div className="relative shrink-0 size-[12.68px]">
+      <svg className="absolute block size-full" fill="none" viewBox="0 0 12.68 12.68">
+        <path d={svgPaths.p3eb58400} fill="#0071E3" />
+        <path d={svgPaths.p24331600} fill="#0071E3" />
+        <path d={svgPaths.p2afb9f00} fill="#0071E3" />
+      </svg>
+    </div>
+  );
+}
+
+function CarouselTag({ label, icon }: { label: string; icon: 'page' | 'building' }) {
+  return (
+    <div className="inline-flex items-center gap-[3px] bg-[rgba(0,92,236,0.1)] rounded-[11.904px] px-[9.83px] py-[5.59px]">
+      {icon === 'page' ? <CarouselTagIconPage /> : <CarouselTagIconBuilding />}
+      <span className="font-['Neue_Montreal:Medium',sans-serif] font-medium text-[#005cec] text-[10px] leading-none whitespace-nowrap">
+        {label}
+      </span>
+    </div>
+  );
+}
+
+// ─── Realisations carousel ───────────────────────────────────────────────────
+
+function Realisations() {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const reduced = useReducedMotion();
+  const total = CAROUSEL_PROJECTS.length;
+
+  useEffect(() => {
+    CAROUSEL_PROJECTS.forEach(p => {
+      const img = new window.Image();
+      img.src = p.image;
+    });
+  }, []);
+
+  const go = (delta: number) => {
+    if (isAnimating) return;
+    setIsAnimating(true);
+    setActiveIndex(i => (i + delta + total) % total);
+  };
+
+  const project = CAROUSEL_PROJECTS[activeIndex];
+
+  return (
+    <div className="absolute" style={{ left: 166.28, top: 1472.03, width: 957, height: 606 }} data-name="Réalisations">
+
+      {/* Top gradient */}
+      <div className="absolute pointer-events-none" style={{ left: 43.22, top: 0, width: 405.781, height: 142.187 }}>
+        <div className="flex-none rotate-180">
+          <div className="bg-gradient-to-b from-[#d1d1d1] h-[142.187px] rounded-tl-[15px] rounded-tr-[15px] to-[rgba(255,255,255,0)] w-[405.781px]" />
+        </div>
+      </div>
+
+      {/* Animated image */}
+      <div
+        className="absolute rounded-[15px] overflow-hidden"
+        style={{ left: 0, top: 157.14, width: 482.868, height: 291.353, willChange: 'transform, filter, opacity' }}
+      >
+        <AnimatePresence mode="wait" initial={false} onExitComplete={() => setIsAnimating(false)}>
+          <motion.div
+            key={project.id}
+            className="absolute inset-0"
+            style={{ transformOrigin: 'center center' }}
+            variants={reduced ? undefined : imageVariants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={reduced ? { duration: 0 } : undefined}
+          >
+            <img alt="" className="absolute inset-0 max-w-none object-cover size-full" src={project.image} />
+            <div className="absolute inset-0 shadow-[inset_0px_0px_10px_0px_rgba(104,104,104,0.25)]" />
+          </motion.div>
+        </AnimatePresence>
+      </div>
+
+      {/* Bottom gradient */}
+      <div className="absolute pointer-events-none" style={{ left: 38.54, top: 463.44, width: 405.781, height: 142.19 }}>
+        <div className="-scale-y-100 rotate-180">
+          <div className="bg-gradient-to-b from-[#d1d1d1] h-[142.19px] rounded-tl-[15px] rounded-tr-[15px] to-[rgba(255,255,255,0)] w-[405.781px]" />
+        </div>
+      </div>
+
+      {/* Chevrons — pill wrapping both buttons */}
+      <div
+        className="absolute overflow-hidden rounded-[100px]"
+        style={{ left: 523.65, top: 261.75, width: 42.344, height: 82.122 }}
+      >
+        {/* Frosted pill background */}
+        <div aria-hidden="true" className="absolute inset-0 backdrop-blur-[30px] bg-[#d9d9d9] mix-blend-luminosity pointer-events-none" />
+
+        {/* Buttons stacked inside pill */}
+        <div className="relative z-10 flex flex-col items-center justify-center h-full gap-[4.908px]">
+
+          {/* Prev (up) */}
+          <button
+            onClick={() => go(-1)}
+            className="relative cursor-pointer flex-none"
+            style={{ width: 28.502, height: 28.502 }}
+            aria-label="Précédent"
+          >
+            <svg className="absolute inset-0 size-full" fill="none" viewBox="0 0 28.5016 28.5016">
+              <circle cx="14.2508" cy="14.2508" fill="white" r="14.2508" />
+            </svg>
+            <div className="absolute inset-0 flex items-center justify-center">
+              <svg width="9" height="6" viewBox="0 0 9 6" fill="none">
+                <path d="M1 5L4.5 1.5L8 5" stroke="#0E0E0E" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </div>
+          </button>
+
+          {/* Next (down) */}
+          <button
+            onClick={() => go(1)}
+            className="relative cursor-pointer flex-none"
+            style={{ width: 28.502, height: 28.502 }}
+            aria-label="Suivant"
+          >
+            <svg className="absolute inset-0 size-full" fill="none" viewBox="0 0 28.5016 28.5016">
+              <circle cx="14.2508" cy="14.2508" fill="#BEBEBE" r="14.2508" />
+            </svg>
+            <div className="absolute inset-0 flex items-center justify-center">
+              <svg width="9" height="6" viewBox="0 0 9 6" fill="none">
+                <path d="M1 1L4.5 4.5L8 1" stroke="white" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </div>
+          </button>
+
+        </div>
+      </div>
+
+      {/* Animated text */}
+      <AnimatePresence mode="wait" initial={false}>
+        <motion.div
+          key={`text-${project.id}`}
+          className="absolute flex flex-col"
+          style={{ left: 606.44, top: 195.1 }}
+          variants={reduced ? undefined : textVariants}
+          initial="enter"
+          animate="center"
+          exit="exit"
+          transition={reduced ? { duration: 0 } : undefined}
+        >
+          {project.brandContent ?? (
+            <div className="relative flex items-center justify-center rounded-[20.041px] bg-[#0e0e0e]" style={{ width: 136.82, height: 40.082 }}>
+              <span className="font-['Geist:SemiBold',sans-serif] font-semibold text-white text-[11px] tracking-[0.05em] whitespace-nowrap">
+                {project.brandLabel}
+              </span>
+            </div>
+          )}
+          <div className="flex gap-[6px] items-center" style={{ marginTop: 21.48 }}>
+            {project.tags.map(tag => (
+              <CarouselTag key={tag.label} label={tag.label} icon={tag.icon} />
+            ))}
+          </div>
+          <div
+            className="font-['Neue_Montreal:Regular',sans-serif] font-normal text-[#686868] text-[16px] leading-[22px] whitespace-pre-line"
+            style={{ marginTop: 21.29, maxWidth: 340 }}
+          >
+            {project.description}
+          </div>
+        </motion.div>
+      </AnimatePresence>
+
+    </div>
+  );
+}
+
+// (legacy static sub-components kept below — no longer rendered)
 function SidebarButtonsContainer1() {
   return (
     <div className="absolute contents h-[82.122px] left-[689.93px] top-[1733.78px] w-[42.344px]" data-name="Sidebar Buttons Container">
@@ -878,24 +1132,6 @@ function Group4() {
     <div className="absolute contents left-[772.72px] top-[1667.13px]">
       <FeatureSection />
       <NavigationLinks />
-    </div>
-  );
-}
-
-function Group5() {
-  return (
-    <div className="absolute contents left-[166.28px] top-[1472.03px]">
-      <ImageContainer />
-      <SidebarButtonsContainer />
-      <Group4 />
-    </div>
-  );
-}
-
-function Realisations() {
-  return (
-    <div className="-translate-x-1/2 absolute contents left-1/2 top-[1472.03px]" data-name="Réalisations">
-      <Group5 />
     </div>
   );
 }
