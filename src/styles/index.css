@@ -2,14 +2,28 @@
 @import './tailwind.css';
 @import './theme.css';
 
+html, body, #root {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
 html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+  overscroll-behavior-y: none;
+}
+
+body {
+  overflow-x: hidden;
+  overscroll-behavior-y: none;
+}
+
+#root {
+  width: 100%;
 }
 
 @keyframes marquee-right {
   from { transform: translateX(-1378.377px); }
   to   { transform: translateX(0); }
 }
-

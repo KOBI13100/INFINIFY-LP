@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
+import { useRef, useState } from 'react';
+import { motion, useInView, useReducedMotion } from 'motion/react';
 import svgPaths from "./svg-6slkny0mf7";
 import imgEarthBackground from "../../EARTH BACKGROUND.svg";
 import imgDesktop144 from "../assets/050199014e18c0cb60e9c252c2ef39002648cc6a.png";
@@ -10,11 +10,24 @@ import imgTestimonialImage1 from "../assets/dec5cbce46710d057f06833cca1d54055e9a
 import imgHero from "../assets/ddfa34054bfd6efd1effd17a798c9746bde8d5f1.png";
 import { imgGroup, imgOffres, imgInfinify, imgTeam, imgFrame, imgGroup1 } from "./svg-ithsc";
 
+const SECTION_EASE = [0.16, 1, 0.3, 1] as const;
+const SECTION_Y = 56;
+const SECTION_DURATION = 0.9;
+const SECTION_VIEWPORT = { once: true, amount: 0.35 } as const;
+const TEAM_VIEWPORT = { once: true, amount: 0.5 } as const;
+const HERO_INTRO_DURATION = 0.8;
+
 function BackgroundContainer() {
+  const reduced = useReducedMotion();
   return (
-    <div className="absolute contents left-[-1.35px] top-[4251.44px]" data-name="Background Container">
-      <div className="absolute bg-black h-[269.561px] left-[-1.35px] top-[4251.44px] w-[1442.694px]" data-name="Background Shape" />
-    </div>
+    <motion.div
+      className="absolute -translate-x-1/2 bg-black h-[269.561px] left-1/2 top-[4251.44px] w-[100dvw]"
+      data-name="Background Shape"
+      initial={{ opacity: 0, y: reduced ? 0 : SECTION_Y }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={SECTION_VIEWPORT}
+      transition={{ duration: SECTION_DURATION, ease: SECTION_EASE }}
+    />
   );
 }
 
@@ -135,17 +148,25 @@ function LegalLinks() {
 }
 
 function ContentGroup() {
+  const reduced = useReducedMotion();
   return (
-    <div className="-translate-x-1/2 absolute content-stretch flex gap-[620px] items-start leading-[0] left-1/2 top-[4298.87px] w-[1211px]" data-name="Content Group">
+    <motion.div
+      className="-translate-x-1/2 absolute content-stretch flex gap-[620px] items-start leading-[0] left-1/2 top-[4298.87px] w-[1211px]"
+      data-name="Content Group"
+      initial={{ opacity: 0, y: reduced ? 0 : SECTION_Y }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={SECTION_VIEWPORT}
+      transition={{ duration: SECTION_DURATION, ease: SECTION_EASE, delay: 0.12 }}
+    >
       <ContentColumn />
       <LegalLinks />
-    </div>
+    </motion.div>
   );
 }
 
 function Footer() {
   return (
-    <div className="-translate-x-1/2 absolute contents left-1/2 top-[4251.44px]" data-name="Footer">
+    <div className="absolute -translate-x-1/2 left-1/2 top-0 w-[100dvw]" data-name="Footer">
       <BackgroundContainer />
       <ContentGroup />
     </div>
@@ -552,10 +573,11 @@ function CallToActionTexts() {
 
 function CallToActionButtonGroup() {
   return (
-    <div className="-translate-x-1/2 absolute contents left-[calc(50%-0.5px)] top-[3712.79px]" data-name="Call to Action Button Group">
-      <div className="absolute bg-white h-[49.577px] left-[625.62px] rounded-[100px] top-[3712.79px] w-[187.752px]" data-name="Reserve Call Button" />
-      <div className="-translate-x-1/2 -translate-y-1/2 absolute flex flex-col font-['Neue_Montreal:Medium',sans-serif] font-medium justify-center leading-[0] left-[calc(50%-1px)] text-[#0e0e0e] text-[17px] text-center top-[3737.58px] whitespace-nowrap">
-        <p className="leading-[normal]">Réserver un appel</p>
+    <div className="-translate-x-1/2 absolute left-1/2 top-[3712.79px]" data-name="Call to Action Button Group">
+      <div className="bg-white flex h-[49.577px] items-center justify-center rounded-[100px] w-[187.752px]" data-name="Reserve Call Button">
+        <p className="font-['Neue_Montreal:Medium',sans-serif] font-medium leading-[normal] text-[#0e0e0e] text-[17px] text-center whitespace-nowrap">
+          Réserver un appel
+        </p>
       </div>
     </div>
   );
@@ -603,17 +625,33 @@ function TestimonialInfo() {
 }
 
 function Cta() {
+  const ctaTriggerRef = useRef<HTMLDivElement | null>(null);
+  const isCtaInView = useInView(ctaTriggerRef, { once: true, amount: 0.7 });
+  const reduced = useReducedMotion();
   return (
-    <div className="-translate-x-1/2 absolute contents left-1/2 top-[3380.17px]" data-name="CTA">
-      <div className="absolute flex h-[439px] items-center justify-center left-[275.5px] top-[3380.17px] w-[889px]">
-        <div className="flex-none rotate-180">
-          <UpMe />
+    <>
+      <div
+        aria-hidden="true"
+        className="-translate-x-1/2 absolute h-[439px] left-1/2 pointer-events-none top-[3380.17px] w-[889px]"
+        ref={ctaTriggerRef}
+      />
+      <motion.div
+        className="absolute left-0 top-0 w-full"
+        data-name="CTA"
+        initial={{ opacity: 0, y: reduced ? 0 : CARD_Y }}
+        animate={isCtaInView ? { opacity: 1, y: 0 } : { opacity: 0, y: reduced ? 0 : CARD_Y }}
+        transition={{ duration: CARD_DURATION, ease: CARD_EASE }}
+      >
+        <div className="absolute flex h-[439px] items-center justify-center left-[275.5px] top-[3380.17px] w-[889px]">
+          <div className="flex-none rotate-180">
+            <UpMe />
+          </div>
         </div>
-      </div>
-      <EarthBackground />
-      <CallToActionContainer />
-      <TestimonialInfo />
-    </div>
+        <EarthBackground />
+        <CallToActionContainer />
+        <TestimonialInfo />
+      </motion.div>
+    </>
   );
 }
 
@@ -665,7 +703,7 @@ const CAROUSEL_PROJECTS: CarouselProject[] = [
       { label: 'Landing page', icon: 'page' },
       { label: 'Agence',       icon: 'building' },
     ],
-    description: "Mindscale est une entreprise spécialisée dans l'optimisation\ndes tunnels de vente grâce à l'intelligence comportementale et à l'IA.",
+    description: "Mindscale est une entreprise spécialisée dans l’optimisation\ndes tunnels de vente grâce à l’intelligence comportementale et à l’IA.",
   },
   {
     id: 1,
@@ -675,7 +713,7 @@ const CAROUSEL_PROJECTS: CarouselProject[] = [
       { label: 'Identité visuelle', icon: 'page' },
       { label: 'Branding',          icon: 'building' },
     ],
-    description: "Refonte complète de l'identité visuelle pour une marque\nambitieuse avec une présence cohérente sur tous les supports.",
+    description: "Version test 1 : même visuel Mindscale pour évaluer\nla lisibilité du texte dans le carrousel.",
   },
   {
     id: 2,
@@ -685,27 +723,13 @@ const CAROUSEL_PROJECTS: CarouselProject[] = [
       { label: 'E-commerce', icon: 'page' },
       { label: 'SaaS',       icon: 'building' },
     ],
-    description: "Conception d'une interface e-commerce premium axée\nsur la conversion et l'expérience utilisateur haut de gamme.",
+    description: "Version test 2 : même image, texte alternatif pour\ncomparer l’équilibre visuel sur deux lignes.",
   },
 ];
 
-const C_EASE = [0.22, 1, 0.36, 1] as const;
-
-const imageVariants = {
-  enter:  { scale: 1.08, opacity: 0, filter: 'blur(8px)' },
-  center: { scale: 1,    opacity: 1, filter: 'blur(0px)',
-    transition: { duration: 0.6, ease: C_EASE } },
-  exit:   { scale: 1.03, opacity: 0, filter: 'blur(8px)',
-    transition: { duration: 0.4, ease: C_EASE } },
-};
-
-const textVariants = {
-  enter:  { opacity: 0, y: 10, filter: 'blur(6px)' },
-  center: { opacity: 1, y: 0,  filter: 'blur(0px)',
-    transition: { duration: 0.45, ease: C_EASE, delay: 0.1 } },
-  exit:   { opacity: 0, y: 10, filter: 'blur(6px)',
-    transition: { duration: 0.25, ease: C_EASE } },
-};
+const TOP_FRAME = { left: 43.22, top: 0, width: 405.781, height: 142.187 };
+const CENTER_FRAME = { left: 0, top: 157.14, width: 482.868, height: 291.353 };
+const BOTTOM_FRAME = { left: 38.54, top: 463.44, width: 405.781, height: 142.19 };
 
 // ─── Tag helpers ─────────────────────────────────────────────────────────────
 
@@ -748,61 +772,44 @@ function CarouselTag({ label, icon }: { label: string; icon: 'page' | 'building'
 
 function Realisations() {
   const [activeIndex, setActiveIndex] = useState(0);
-  const [isAnimating, setIsAnimating] = useState(false);
-  const reduced = useReducedMotion();
   const total = CAROUSEL_PROJECTS.length;
 
-  useEffect(() => {
-    CAROUSEL_PROJECTS.forEach(p => {
-      const img = new window.Image();
-      img.src = p.image;
-    });
-  }, []);
-
   const go = (delta: number) => {
-    if (isAnimating) return;
-    setIsAnimating(true);
+    if (total < 2) return;
     setActiveIndex(i => (i + delta + total) % total);
   };
 
   const project = CAROUSEL_PROJECTS[activeIndex];
+  const previousProject = CAROUSEL_PROJECTS[(activeIndex - 1 + total) % total];
+  const nextProject = CAROUSEL_PROJECTS[(activeIndex + 1) % total];
 
   return (
     <div className="absolute" style={{ left: 166.28, top: 1472.03, width: 957, height: 606 }} data-name="Réalisations">
 
-      {/* Top gradient */}
-      <div className="absolute pointer-events-none" style={{ left: 43.22, top: 0, width: 405.781, height: 142.187 }}>
-        <div className="flex-none rotate-180">
-          <div className="bg-gradient-to-b from-[#d1d1d1] h-[142.187px] rounded-tl-[15px] rounded-tr-[15px] to-[rgba(255,255,255,0)] w-[405.781px]" />
+      {/* Cards stack */}
+      <div className="absolute inset-0">
+        <div
+          className="absolute overflow-hidden pointer-events-none rounded-tl-[15px] rounded-tr-[15px]"
+          style={{ left: TOP_FRAME.left, top: TOP_FRAME.top, width: TOP_FRAME.width, height: TOP_FRAME.height }}
+        >
+          <img alt="" className="absolute inset-0 max-w-none object-cover size-full" src={previousProject.image} loading="lazy" decoding="async" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[rgba(209,209,209,0.88)] to-[rgba(255,255,255,0)]" />
         </div>
-      </div>
 
-      {/* Animated image */}
-      <div
-        className="absolute rounded-[15px] overflow-hidden"
-        style={{ left: 0, top: 157.14, width: 482.868, height: 291.353, willChange: 'transform, filter, opacity' }}
-      >
-        <AnimatePresence mode="wait" initial={false} onExitComplete={() => setIsAnimating(false)}>
-          <motion.div
-            key={project.id}
-            className="absolute inset-0"
-            style={{ transformOrigin: 'center center' }}
-            variants={reduced ? undefined : imageVariants}
-            initial="enter"
-            animate="center"
-            exit="exit"
-            transition={reduced ? { duration: 0 } : undefined}
-          >
-            <img alt="" className="absolute inset-0 max-w-none object-cover size-full" src={project.image} />
-            <div className="absolute inset-0 shadow-[inset_0px_0px_10px_0px_rgba(104,104,104,0.25)]" />
-          </motion.div>
-        </AnimatePresence>
-      </div>
+        <div
+          className="absolute overflow-hidden pointer-events-none rounded-[15px] bg-[#0e0e0e]"
+          style={{ left: CENTER_FRAME.left, top: CENTER_FRAME.top, width: CENTER_FRAME.width, height: CENTER_FRAME.height }}
+        >
+          <img alt="" className="absolute inset-0 max-w-none object-cover size-full" src={project.image} loading="lazy" decoding="async" />
+          <div className="absolute inset-0 shadow-[inset_0px_0px_10px_0px_rgba(104,104,104,0.25)]" />
+        </div>
 
-      {/* Bottom gradient */}
-      <div className="absolute pointer-events-none" style={{ left: 38.54, top: 463.44, width: 405.781, height: 142.19 }}>
-        <div className="-scale-y-100 rotate-180">
-          <div className="bg-gradient-to-b from-[#d1d1d1] h-[142.19px] rounded-tl-[15px] rounded-tr-[15px] to-[rgba(255,255,255,0)] w-[405.781px]" />
+        <div
+          className="absolute overflow-hidden pointer-events-none rounded-bl-[15px] rounded-br-[15px]"
+          style={{ left: BOTTOM_FRAME.left, top: BOTTOM_FRAME.top, width: BOTTOM_FRAME.width, height: BOTTOM_FRAME.height }}
+        >
+          <img alt="" className="absolute inset-0 max-w-none object-cover size-full" src={nextProject.image} loading="lazy" decoding="async" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[rgba(209,209,209,0.88)] to-[rgba(255,255,255,0)]" />
         </div>
       </div>
 
@@ -854,38 +861,30 @@ function Realisations() {
         </div>
       </div>
 
-      {/* Animated text */}
-      <AnimatePresence mode="wait" initial={false}>
-        <motion.div
-          key={`text-${project.id}`}
-          className="absolute flex flex-col"
-          style={{ left: 606.44, top: 195.1 }}
-          variants={reduced ? undefined : textVariants}
-          initial="enter"
-          animate="center"
-          exit="exit"
-          transition={reduced ? { duration: 0 } : undefined}
+      <div className="absolute flex flex-col" style={{ left: 606.44, top: 195.1 }}>
+        {project.brandContent ?? (
+          <div className="relative flex items-center justify-center rounded-[20.041px] bg-[#0e0e0e]" style={{ width: 136.82, height: 40.082 }}>
+            <span className="font-['Geist:SemiBold',sans-serif] font-semibold text-white text-[11px] tracking-[0.05em] whitespace-nowrap">
+              {project.brandLabel}
+            </span>
+          </div>
+        )}
+        <div className="flex gap-[6px] items-center" style={{ marginTop: 21.48 }}>
+          {project.tags.map(tag => (
+            <CarouselTag key={tag.label} label={tag.label} icon={tag.icon} />
+          ))}
+        </div>
+        <div
+          className="font-['Neue_Montreal:Regular',sans-serif] font-normal text-[#686868] text-[16px] leading-[22px]"
+          style={{ marginTop: 21.29 }}
         >
-          {project.brandContent ?? (
-            <div className="relative flex items-center justify-center rounded-[20.041px] bg-[#0e0e0e]" style={{ width: 136.82, height: 40.082 }}>
-              <span className="font-['Geist:SemiBold',sans-serif] font-semibold text-white text-[11px] tracking-[0.05em] whitespace-nowrap">
-                {project.brandLabel}
-              </span>
-            </div>
-          )}
-          <div className="flex gap-[6px] items-center" style={{ marginTop: 21.48 }}>
-            {project.tags.map(tag => (
-              <CarouselTag key={tag.label} label={tag.label} icon={tag.icon} />
-            ))}
-          </div>
-          <div
-            className="font-['Neue_Montreal:Regular',sans-serif] font-normal text-[#686868] text-[16px] leading-[22px] whitespace-pre-line"
-            style={{ marginTop: 21.29, maxWidth: 340 }}
-          >
-            {project.description}
-          </div>
-        </motion.div>
-      </AnimatePresence>
+          {project.description.split('\n').map((line, index) => (
+            <p key={`${project.id}-desc-${index}`} className={index === 0 ? 'mb-0 whitespace-nowrap' : 'whitespace-nowrap'}>
+              {line}
+            </p>
+          ))}
+        </div>
+      </div>
 
     </div>
   );
@@ -1136,13 +1135,20 @@ function Group4() {
   );
 }
 
-function MaskGroup() {
+function MaskGroup({ animateIn }: { animateIn: boolean }) {
+  const reduced = useReducedMotion();
   return (
-    <div className="-translate-x-1/2 absolute h-[353px] left-1/2 top-[2117.32px] w-[897px]" data-name="Mask Group">
+    <motion.div
+      className="-translate-x-1/2 absolute h-[353px] left-1/2 top-[2117.32px] w-[897px]"
+      data-name="Mask Group"
+      initial={{ opacity: 0, y: reduced ? 0 : CARD_Y }}
+      animate={animateIn ? { opacity: 1, y: 0 } : { opacity: 0, y: reduced ? 0 : CARD_Y }}
+      transition={{ duration: SECTION_DURATION + 0.05, ease: SECTION_EASE }}
+    >
       <div className="-translate-x-1/2 -translate-y-1/2 absolute flex flex-col font-['Geist:SemiBold',sans-serif] font-semibold justify-center leading-[0] left-[448.61px] mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[-0.111px_0px] mask-size-[896.66px_353.049px] text-[#d8d8d8] text-[300px] text-center top-[195px] whitespace-nowrap" style={{ maskImage: `url('${imgOffres}')` }}>
         <p className="leading-[normal]">Offres</p>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -1542,39 +1548,64 @@ function BenefitsList() {
   );
 }
 
-function BenefitsSection() {
+function BenefitsSection({ animateIn }: { animateIn: boolean }) {
+  const reduced = useReducedMotion();
   return (
-    <div className="absolute contents left-[452.71px] top-[2406.12px]" data-name="Benefits Section">
+    <motion.div
+      className="absolute left-0 top-0 w-full"
+      data-name="Benefits Section"
+      initial={{ opacity: 0, y: reduced ? 0 : CARD_Y }}
+      animate={animateIn ? { opacity: 1, y: 0 } : { opacity: 0, y: reduced ? 0 : CARD_Y }}
+      transition={{ duration: CARD_DURATION, ease: CARD_EASE, delay: 0.4 }}
+    >
       <OfferOptions />
       <BenefitsList />
-    </div>
+    </motion.div>
   );
 }
 
-function Offres() {
+function Offres({ animateIn }: { animateIn: boolean }) {
   return (
     <div className="-translate-x-1/2 absolute contents left-1/2 top-[2406.12px]" data-name="Offres">
-      <BenefitsSection />
+      <BenefitsSection animateIn={animateIn} />
     </div>
   );
 }
 
 function OffresGroupe() {
+  const offersTriggerRef = useRef<HTMLDivElement | null>(null);
+  const isOffersInView = useInView(offersTriggerRef, { once: true, amount: 0.7 });
+
   return (
-    <div className="-translate-x-1/2 absolute contents left-1/2 top-[2117.32px]" data-name="Offres Groupe">
-      <MaskGroup />
-      <Offres />
-    </div>
+    <>
+      <div
+        aria-hidden="true"
+        className="-translate-x-1/2 absolute h-[695px] left-1/2 pointer-events-none top-[2117.32px] w-[897px]"
+        ref={offersTriggerRef}
+      />
+      <div className="-translate-x-1/2 absolute contents left-1/2 top-[2117.32px]" data-name="Offres Groupe">
+        <MaskGroup animateIn={isOffersInView} />
+        <Offres animateIn={isOffersInView} />
+      </div>
+    </>
   );
 }
 
 function InfinifyMask() {
+  const reduced = useReducedMotion();
   return (
-    <div className="-translate-x-1/2 absolute h-[353px] left-[calc(50%-3.55px)] top-[3921.3px] w-[1057px]" data-name="Infinify Mask">
+    <motion.div
+      className="-translate-x-1/2 absolute h-[353px] left-[calc(50%-3.55px)] top-[3921.3px] w-[1057px]"
+      data-name="Infinify Mask"
+      initial={{ opacity: 0, y: reduced ? 0 : SECTION_Y }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={SECTION_VIEWPORT}
+      transition={{ duration: SECTION_DURATION + 0.05, ease: SECTION_EASE }}
+    >
       <div className="-translate-x-1/2 -translate-y-1/2 absolute flex flex-col font-['Geist:SemiBold',sans-serif] font-semibold justify-center leading-[0] left-[528.5px] mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[-19.5px_0px] mask-size-[1056.66px_353.049px] text-[#d8d8d8] text-[300px] text-center top-[195px] whitespace-nowrap" style={{ maskImage: `url('${imgInfinify}')` }}>
         <p className="leading-[normal]">Infinify</p>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -1584,10 +1615,10 @@ function TeamMask() {
     <motion.div
       className="absolute h-[353px] left-[335.5px] top-[827.37px] w-[769px]"
       data-name="Team Mask"
-      initial={{ opacity: 0, y: reduced ? 0 : 70 }}
+      initial={{ opacity: 0, y: reduced ? 0 : SECTION_Y }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: false, amount: 0.1 }}
-      transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
+      viewport={TEAM_VIEWPORT}
+      transition={{ duration: SECTION_DURATION + 0.05, ease: SECTION_EASE }}
     >
       <div className="-translate-x-1/2 -translate-y-1/2 absolute flex flex-col font-['Geist:SemiBold',sans-serif] font-semibold justify-center leading-[0] left-[384.77px] mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[-0.273px_0.484px] mask-size-[768.66px_353.049px] text-[#d8d8d8] text-[300px] text-center top-[194.52px] whitespace-nowrap" style={{ maskImage: `url('${imgTeam}')` }}>
         <p className="leading-[normal]">Team</p>
@@ -1651,7 +1682,7 @@ function TestimonialColumn() {
       </div>
       <div className="absolute h-[114.876px] left-[20.25px] rounded-[8.353px] top-[20.77px] w-[114.52px]" data-name="Testimonial Image">
         <div className="absolute inset-0 overflow-hidden pointer-events-none rounded-[8.353px]">
-          <img alt="" className="absolute h-[149.54%] left-0 max-w-none top-[-25.3%] w-full" src={imgTestimonialImage} />
+          <img alt="" className="absolute h-[149.54%] left-0 max-w-none top-[-25.3%] w-full" src={imgTestimonialImage} loading="lazy" decoding="async" />
         </div>
       </div>
       <TestimonialInfo1 />
@@ -1737,7 +1768,7 @@ function TestimonialColumn1() {
         <div className="-scale-y-100 flex-none rotate-180">
           <div className="h-[114.876px] relative rounded-[8.353px] w-[114.52px]" data-name="Testimonial Image">
             <div className="absolute inset-0 overflow-hidden pointer-events-none rounded-[8.353px]">
-              <img alt="" className="absolute h-[131.82%] left-[-35.39%] max-w-none top-[-31.82%] w-[164.12%]" src={imgTestimonialImage1} />
+              <img alt="" className="absolute h-[131.82%] left-[-35.39%] max-w-none top-[-31.82%] w-[164.12%]" src={imgTestimonialImage1} loading="lazy" decoding="async" />
             </div>
           </div>
         </div>
@@ -1768,7 +1799,7 @@ function Team() {
         className="absolute left-0 top-0 w-[783.209px] h-full"
         initial={{ opacity: 0, y: reduced ? 0 : CARD_Y }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: false, amount: 0.2 }}
+        viewport={TEAM_VIEWPORT}
         transition={{ duration: CARD_DURATION, ease: CARD_EASE, delay: 0.15 }}
       >
         <TestimonialColumn />
@@ -1778,7 +1809,7 @@ function Team() {
         className="absolute left-0 top-0 w-[783.209px] h-full"
         initial={{ opacity: 0, y: reduced ? 0 : CARD_Y }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: false, amount: 0.2 }}
+        viewport={TEAM_VIEWPORT}
         transition={{ duration: CARD_DURATION, ease: CARD_EASE, delay: 0.35 }}
       >
         <TestimonialColumn1 />
@@ -1836,21 +1867,34 @@ function Group6() {
 }
 
 function NavBar() {
+  const reduced = useReducedMotion();
   return (
-    <div className="fixed left-1/2 -translate-x-1/2 top-[50px] z-[9999]" data-name="Nav bar-fixed">
+    <motion.div
+      className="fixed left-1/2 -translate-x-1/2 top-[50px] z-[9999]"
+      data-name="Nav bar-fixed"
+      initial={{ opacity: 0, y: reduced ? 0 : -18 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: HERO_INTRO_DURATION, ease: SECTION_EASE, delay: 0.05 }}
+    >
       <div className="grid-cols-[max-content] grid-rows-[max-content] inline-grid leading-[0] place-items-start relative shrink-0" data-name="Nav bar">
         <TestimonialName2 />
         <Group6 />
         <div className="bg-[#565656] col-1 h-[1.2px] ml-[117.15px] mt-[27.87px] relative row-1 w-[30.126px] z-10" />
         <div className="bg-[#565656] col-1 h-[1.2px] ml-[117.15px] mt-[37.16px] relative row-1 w-[30.126px] z-10" />
       </div>
-    </div>
+    </motion.div>
   );
 }
 
 function Frame12() {
+  const reduced = useReducedMotion();
   return (
-    <div className="content-stretch flex flex-col gap-[16px] items-start not-italic relative shrink-0">
+    <motion.div
+      className="content-stretch flex flex-col gap-[16px] items-start not-italic relative shrink-0"
+      initial={{ opacity: 0, y: reduced ? 0 : 26 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: HERO_INTRO_DURATION, ease: SECTION_EASE, delay: 0.22 }}
+    >
       <div className="flex flex-col font-['Neue_Montreal:Medium',sans-serif] justify-center leading-[1.1] relative shrink-0 text-[#f0f0f0] text-[55px] tracking-[-1.1px] w-[798.124px]">
         <p className="mb-0">Design stratégique</p>
         <p>pour marques ambitieuses</p>
@@ -1858,7 +1902,7 @@ function Frame12() {
       <div className="flex flex-col font-['Neue_Montreal:Regular',sans-serif] justify-center leading-[0] relative shrink-0 text-[#e0e3e6] text-[20.035px] tracking-[-0.4007px] w-[616.411px]">
         <p className="leading-[1.5]">Identités et expériences digitales pensées avec une obsession du détail pour convertir et élever la perception de votre marque.</p>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -1876,14 +1920,21 @@ function Frame() {
 }
 
 function Cta2() {
+  const reduced = useReducedMotion();
   return (
-    <div className="bg-white content-stretch flex gap-[8.014px] items-center justify-center overflow-clip px-[30px] py-[15px] relative rounded-[10016.271px] shadow-[0px_4.007px_3.005px_-4.007px_rgba(0,0,0,0.5)] shrink-0" data-name="CTA">
+    <motion.div
+      className="bg-white content-stretch flex gap-[8.014px] items-center justify-center overflow-clip px-[30px] py-[15px] relative rounded-[10016.271px] shadow-[0px_4.007px_3.005px_-4.007px_rgba(0,0,0,0.5)] shrink-0"
+      data-name="CTA"
+      initial={{ opacity: 0, y: reduced ? 0 : 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: HERO_INTRO_DURATION, ease: SECTION_EASE, delay: 0.4 }}
+    >
       <div className="flex flex-col font-['Neue_Montreal:Bold',sans-serif] font-[500] justify-center leading-[0] not-italic relative shrink-0 text-[16.028px] text-black text-center tracking-[-0.3206px] whitespace-nowrap">
         <p className="leading-[1.2]">Voir nos offres</p>
       </div>
       <Frame />
       <div className="absolute inset-0 pointer-events-none rounded-[inherit] shadow-[inset_0px_0px_3.005px_2.003px_rgba(255,255,255,0.2),inset_0px_0px_12.021px_4.007px_rgba(255,255,255,0.13)]" />
-    </div>
+    </motion.div>
   );
 }
 
@@ -2028,10 +2079,17 @@ function Features() {
 }
 
 function Right() {
+  const reduced = useReducedMotion();
   return (
-    <div className="content-stretch flex flex-col items-start relative shrink-0 w-[477.824px]" data-name="Right">
+    <motion.div
+      className="content-stretch flex flex-col items-start relative shrink-0 w-[477.824px]"
+      data-name="Right"
+      initial={{ opacity: 0, y: reduced ? 0 : 24 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: HERO_INTRO_DURATION, ease: SECTION_EASE, delay: 0.58 }}
+    >
       <Features />
-    </div>
+    </motion.div>
   );
 }
 
@@ -2052,7 +2110,7 @@ function Hero() {
   return (
     <div className="content-stretch flex flex-col h-[700px] items-center justify-end overflow-clip pb-[64.111px] relative rounded-[32.055px] shrink-0 w-full" data-name="Hero">
       <div aria-hidden="true" className="absolute inset-0 pointer-events-none">
-        <img alt="" className="absolute max-w-none object-cover size-full" src={imgHero} />
+        <img alt="" className="absolute max-w-none object-cover size-full" src={imgHero} decoding="async" fetchPriority="high" />
         <div className="absolute bg-gradient-to-b from-[45%] from-[rgba(2,2,2,0)] inset-0 to-black" />
       </div>
       <Content />
@@ -2246,8 +2304,15 @@ function Logos1() {
 }
 
 function Logos() {
+  const reduced = useReducedMotion();
   return (
-    <div className="max-w-[1606.7705078125px] relative shrink-0 w-full" data-name="Logos">
+    <motion.div
+      className="max-w-[1606.7705078125px] relative shrink-0 w-full"
+      data-name="Logos"
+      initial={{ opacity: 0, y: reduced ? 0 : 22 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: HERO_INTRO_DURATION, ease: SECTION_EASE, delay: 0.78 }}
+    >
       <div className="flex flex-row items-center max-w-[inherit] size-full">
         <div className="content-stretch flex gap-[32.055px] items-center max-w-[inherit] pb-[10.017px] pt-[32.055px] px-[32.055px] relative w-full">
           <div className="flex flex-col font-['Neue_Montreal:Regular',sans-serif] font-semibold justify-center leading-[0] max-w-[1202.07275390625px] not-italic relative shrink-0 text-[14.024px] text-[rgba(44,44,44,0.6)] tracking-[-0.2805px] w-[132.228px]" style={{ fontFeatureSettings: "'cv09', 'ss11', 'calt' 0, 'liga' 0" }}>
@@ -2256,13 +2321,13 @@ function Logos() {
           <Logos1 />
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
 function HeroLogos() {
   return (
-    <div className="absolute content-stretch flex flex-col h-[922px] items-center left-[20px] top-[21.87px] w-[1400px]" data-name="Hero + Logos">
+    <div className="-translate-x-1/2 absolute content-stretch flex flex-col h-[922px] items-center left-1/2 top-[21.87px] w-[1400px]" data-name="Hero + Logos">
       <Hero />
       <Logos />
     </div>
