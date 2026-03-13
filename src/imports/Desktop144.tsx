@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { motion, useInView, useReducedMotion } from 'motion/react';
+import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
 import svgPaths from "./svg-6slkny0mf7";
 import imgEarthBackground from "../../EARTH BACKGROUND.svg";
 import imgDesktop144 from "../assets/050199014e18c0cb60e9c252c2ef39002648cc6a.png";
@@ -599,7 +599,7 @@ function TestimonialName() {
         <div aria-hidden="true" className="absolute backdrop-blur-[25.29px] bg-[rgba(128,128,128,0.2)] inset-0 mix-blend-luminosity rounded-[100px]" />
         <div aria-hidden="true" className="absolute inset-0 rounded-[100px]" style={{ boxShadow: 'inset 0 0.708px 0 rgba(255,255,255,0.4), inset 0 -0.708px 0 rgba(255,255,255,0.1), inset 0.708px 0 0 rgba(255,255,255,0.15), inset -0.708px 0 0 rgba(255,255,255,0.15)' }} />
       </div>
-      <div className="-translate-x-1/2 -translate-y-1/2 absolute flex flex-col font-['Neue_Montreal:Regular',sans-serif] font-normal justify-center leading-[0] left-[calc(50%+14.83px)] text-[14.112px] text-center text-white top-[3459.57px] whitespace-nowrap">
+      <div className="-translate-x-1/2 -translate-y-1/2 absolute flex flex-col font-['Neue_Montreal:Regular',sans-serif] font-normal justify-center leading-[0] left-1/2 text-[14.112px] text-center text-white top-[3459.57px] whitespace-nowrap">
         <p className="leading-[normal]">Prêt à passer à la vitesse supérieure ?</p>
       </div>
     </div>
@@ -727,9 +727,9 @@ const CAROUSEL_PROJECTS: CarouselProject[] = [
   },
 ];
 
-const TOP_FRAME = { left: 43.22, top: 0, width: 405.781, height: 142.187 };
-const CENTER_FRAME = { left: 0, top: 157.14, width: 482.868, height: 291.353 };
-const BOTTOM_FRAME = { left: 38.54, top: 463.44, width: 405.781, height: 142.19 };
+const TOP_FRAME    = { left: 43.22, top: 0,      width: 405.781, height: 142.187 };
+const CENTER_FRAME = { left: 0,     top: 157.14, width: 482.868, height: 291.353 };
+const BOTTOM_FRAME = { left: 38.54, top: 463.44, width: 405.781, height: 142.19  };
 
 // ─── Tag helpers ─────────────────────────────────────────────────────────────
 
@@ -780,8 +780,6 @@ function Realisations() {
   };
 
   const project = CAROUSEL_PROJECTS[activeIndex];
-  const previousProject = CAROUSEL_PROJECTS[(activeIndex - 1 + total) % total];
-  const nextProject = CAROUSEL_PROJECTS[(activeIndex + 1) % total];
 
   return (
     <div className="absolute" style={{ left: 166.28, top: 1472.03, width: 957, height: 606 }} data-name="Réalisations">
@@ -792,7 +790,6 @@ function Realisations() {
           className="absolute overflow-hidden pointer-events-none rounded-tl-[15px] rounded-tr-[15px]"
           style={{ left: TOP_FRAME.left, top: TOP_FRAME.top, width: TOP_FRAME.width, height: TOP_FRAME.height }}
         >
-          <img alt="" className="absolute inset-0 max-w-none object-cover size-full" src={previousProject.image} loading="lazy" decoding="async" />
           <div className="absolute inset-0 bg-gradient-to-b from-[rgba(209,209,209,0.88)] to-[rgba(255,255,255,0)]" />
         </div>
 
@@ -808,7 +805,6 @@ function Realisations() {
           className="absolute overflow-hidden pointer-events-none rounded-bl-[15px] rounded-br-[15px]"
           style={{ left: BOTTOM_FRAME.left, top: BOTTOM_FRAME.top, width: BOTTOM_FRAME.width, height: BOTTOM_FRAME.height }}
         >
-          <img alt="" className="absolute inset-0 max-w-none object-cover size-full" src={nextProject.image} loading="lazy" decoding="async" />
           <div className="absolute inset-0 bg-gradient-to-t from-[rgba(209,209,209,0.88)] to-[rgba(255,255,255,0)]" />
         </div>
       </div>
@@ -1168,7 +1164,7 @@ function CallToActionTitleBackground() {
     <div className="col-1 grid-cols-[max-content] grid-rows-[max-content] inline-grid ml-0 mt-0 place-items-start relative row-1" data-name="Call to Action Title Background">
       <div className="col-1 content-stretch flex gap-[9.151px] h-[56.188px] items-center justify-center ml-0 mt-0 p-[6.863px] pointer-events-none relative rounded-[100px] row-1 w-[467.72px]" data-name="Toolbar - Symbols">
         <div aria-hidden="true" className="absolute backdrop-blur-[28.598px] bg-[rgba(128,128,128,0.2)] inset-0 mix-blend-luminosity rounded-[100px]" />
-        <div aria-hidden="true" className="absolute border-[0.801px] border-[rgba(255,255,255,0.4)] border-solid inset-0 rounded-[100px]" />
+        <div aria-hidden="true" className="absolute inset-0 rounded-[100px]" style={{ boxShadow: 'inset 0 0.801px 0 rgba(255,255,255,0.4), inset 0 -0.801px 0 rgba(255,255,255,0.1), inset 0.801px 0 0 rgba(255,255,255,0.15), inset -0.801px 0 0 rgba(255,255,255,0.15)' }} />
       </div>
     </div>
   );
@@ -1182,384 +1178,299 @@ function OfferTitleBackground1() {
   );
 }
 
-function Title() {
+// ─── Offer data ──────────────────────────────────────────────────────────────
+
+interface OfferData {
+  id: number;
+  label: string;
+  tabWidth: number;
+  descriptionLines: [string, string];
+  price: string;
+  benefits: string[];
+}
+
+const OFFERS: OfferData[] = [
+  {
+    id: 0,
+    label: 'Landing Page',
+    tabWidth: 112.704,
+    descriptionLines: [
+      'Une page unique sur mesure, conçue pour capter',
+      "l'attention, renforcer ta crédibilité et convertir davantage.",
+    ],
+    price: '1990€',
+    benefits: [
+      'Branding & direction artistique sur-mesure',
+      'Wireframe + UX/UI Figma',
+      'Copywriting stratégique',
+      'Développement pixel-perfect',
+      'Animations premium & micro-interactions',
+      'Optimisation du Taux de Conversion (CRO)',
+      'Optimisation SEO',
+      'Révisions illimitées',
+    ],
+  },
+  {
+    id: 1,
+    label: 'Site E-commerce',
+    tabWidth: 130.915,
+    descriptionLines: [
+      'Une boutique en ligne premium, optimisée pour',
+      "la conversion et l'expérience utilisateur.",
+    ],
+    price: '3490€',
+    benefits: [
+      'Branding & direction artistique sur-mesure',
+      'Design UX/UI Figma complet',
+      'Développement e-commerce sur-mesure',
+      'Intégration paiement & logistique',
+      'Animations premium & micro-interactions',
+      'Optimisation du Taux de Conversion (CRO)',
+      'Optimisation SEO',
+      'Révisions illimitées',
+    ],
+  },
+  {
+    id: 2,
+    label: 'Identité visuelle',
+    tabWidth: 118.965,
+    descriptionLines: [
+      'Une identité de marque forte et cohérente,',
+      'conçue pour marquer les esprits durablement.',
+    ],
+    price: '1490€',
+    benefits: [
+      'Stratégie de marque approfondie',
+      'Logo & déclinaisons complètes',
+      'Charte graphique premium',
+      'Typographie & palette de couleurs',
+      'Templates & assets marketing',
+      "Guide d'utilisation de la marque",
+      'Formats tous supports',
+      'Révisions illimitées',
+    ],
+  },
+  {
+    id: 3,
+    label: 'SaaS',
+    tabWidth: 62.613,
+    descriptionLines: [
+      'Une interface SaaS premium, conçue pour',
+      "maximiser l'adoption et la rétention utilisateur.",
+    ],
+    price: '4990€',
+    benefits: [
+      'Audit UX & stratégie produit',
+      'Design system complet',
+      'Wireframes & prototypes interactifs',
+      'UI Kit sur-mesure',
+      'Animations & micro-interactions',
+      'Handoff développement Figma',
+      'Tests utilisateurs & itérations',
+      'Support 3 mois post-livraison',
+    ],
+  },
+];
+
+const OFFER_EASE = [0.22, 1, 0.36, 1] as const;
+
+const offerContentVariants = {
+  enter:  { x: 40,  opacity: 0, filter: 'blur(6px)' },
+  center: { x: 0,   opacity: 1, filter: 'blur(0px)',
+    transition: { duration: 0.45, ease: OFFER_EASE } },
+  exit:   { x: -40, opacity: 0, filter: 'blur(6px)',
+    transition: { duration: 0.25, ease: OFFER_EASE } },
+};
+
+// Generic tab pill (active = white bg + dark text, inactive = frosted + faded white)
+function OfferTab({ offer, active, onClick }: { offer: OfferData; active: boolean; onClick: () => void }) {
   return (
-    <div className="grid-cols-[max-content] grid-rows-[max-content] inline-grid place-items-center relative shrink-0" data-name="Title">
-      <div className="col-1 content-stretch flex gap-[7.828px] h-[34.437px] items-center justify-center ml-0 mt-0 p-[5.871px] pointer-events-none relative rounded-[100px] row-1 w-[112.704px]" data-name="Toolbar - Symbols">
-        <div aria-hidden="true" className="absolute backdrop-blur-[24.461px] bg-white inset-0 mix-blend-luminosity rounded-[100px]" />
-        <div aria-hidden="true" className="absolute border-[0.685px] border-[rgba(255,255,255,0.4)] border-solid inset-0 rounded-[100px]" />
+    <button
+      onClick={onClick}
+      className="grid-cols-[max-content] grid-rows-[max-content] inline-grid place-items-center relative shrink-0 cursor-pointer"
+    >
+      <div
+        className="col-1 content-stretch flex h-[34.437px] items-center justify-center p-[5.871px] relative rounded-[100px] row-1"
+        style={{ width: offer.tabWidth }}
+      >
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 mix-blend-luminosity rounded-[100px] transition-colors duration-300"
+          style={{
+            backdropFilter: 'blur(24.461px)',
+            backgroundColor: active ? 'white' : 'rgba(128,128,128,0.2)',
+          }}
+        />
+        <div aria-hidden="true" className="absolute inset-0 rounded-[100px]" style={{ boxShadow: 'inset 0 0.685px 0 rgba(255,255,255,0.4), inset 0 -0.685px 0 rgba(255,255,255,0.1), inset 0.685px 0 0 rgba(255,255,255,0.15), inset -0.685px 0 0 rgba(255,255,255,0.15)' }} />
       </div>
-      <div className="col-1 flex flex-col font-['Neue_Montreal:Medium',sans-serif] font-medium justify-center relative row-1 text-[#0e0e0e] text-[12.078px] text-center whitespace-nowrap">
-        <p className="leading-[normal]">Landing Page</p>
+      <div
+        className="col-1 flex flex-col justify-center relative row-1 text-[12.078px] text-center whitespace-nowrap transition-colors duration-300"
+        style={{
+          fontFamily: active ? "'Neue_Montreal:Medium', sans-serif" : "'Neue_Montreal:Regular', sans-serif",
+          fontWeight: active ? 500 : 400,
+          color: active ? '#0e0e0e' : 'rgba(255,255,255,0.65)',
+        }}
+      >
+        <p className="leading-[normal]">{offer.label}</p>
+      </div>
+    </button>
+  );
+}
+
+// Tick icon for benefits
+function OfferBenefitTick() {
+  return (
+    <div className="col-1 h-[20px] ml-0 mt-0 relative row-1 w-[21px]">
+      <div className="absolute inset-[17.38%_16.47%_15.57%_0.19%]">
+        <svg className="absolute block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 17.5 13.41">
+          <path d={svgPaths.p26b70600} fill="black" />
+        </svg>
       </div>
     </div>
   );
 }
 
-function ECommerceText() {
-  return (
-    <div className="grid-cols-[max-content] grid-rows-[max-content] inline-grid place-items-center relative shrink-0" data-name="E-commerce Text">
-      <div className="col-1 content-stretch flex gap-[7.828px] h-[34.509px] items-center justify-center ml-0 mt-0 p-[5.871px] pointer-events-none relative rounded-[100px] row-1 w-[130.915px]" data-name="Toolbar - Symbols">
-        <div aria-hidden="true" className="absolute backdrop-blur-[24.461px] bg-[rgba(128,128,128,0.2)] inset-0 mix-blend-luminosity rounded-[100px]" />
-        <div aria-hidden="true" className="absolute border-[0.685px] border-[rgba(255,255,255,0.4)] border-solid inset-0 rounded-[100px]" />
-      </div>
-      <div className="col-1 flex flex-col font-['Neue_Montreal:Regular',sans-serif] font-normal justify-center relative row-1 text-[12.078px] text-[rgba(255,255,255,0.65)] text-center whitespace-nowrap">
-        <p className="leading-[normal]">Site E-commerce</p>
-      </div>
-    </div>
-  );
-}
-
-function BrandIdentityText() {
-  return (
-    <div className="grid-cols-[max-content] grid-rows-[max-content] inline-grid place-items-center relative shrink-0" data-name="Brand Identity Text">
-      <div className="col-1 content-stretch flex gap-[7.828px] h-[34.437px] items-center justify-center ml-0 mt-0 p-[5.871px] pointer-events-none relative rounded-[100px] row-1 w-[118.965px]" data-name="Toolbar - Symbols">
-        <div aria-hidden="true" className="absolute backdrop-blur-[24.461px] bg-[rgba(128,128,128,0.2)] inset-0 mix-blend-luminosity rounded-[100px]" />
-        <div aria-hidden="true" className="absolute border-[0.685px] border-[rgba(255,255,255,0.4)] border-solid inset-0 rounded-[100px]" />
-      </div>
-      <div className="col-1 flex flex-col font-['Neue_Montreal:Regular',sans-serif] font-normal justify-center relative row-1 text-[12.078px] text-[rgba(255,255,255,0.65)] text-center whitespace-nowrap">
-        <p className="leading-[normal]">Identité visuelle</p>
-      </div>
-    </div>
-  );
-}
-
-function SaaSText() {
-  return (
-    <div className="grid-cols-[max-content] grid-rows-[max-content] inline-grid place-items-center relative shrink-0" data-name="SaaS Text">
-      <div className="col-1 content-stretch flex gap-[7.828px] h-[34.437px] items-center justify-center ml-0 mt-0 p-[5.871px] pointer-events-none relative rounded-[100px] row-1 w-[62.613px]" data-name="Toolbar - Symbols">
-        <div aria-hidden="true" className="absolute backdrop-blur-[24.461px] bg-[rgba(128,128,128,0.2)] inset-0 mix-blend-luminosity rounded-[100px]" />
-        <div aria-hidden="true" className="absolute border-[0.685px] border-[rgba(255,255,255,0.4)] border-solid inset-0 rounded-[100px]" />
-      </div>
-      <div className="col-1 flex flex-col font-['Neue_Montreal:Regular',sans-serif] font-normal justify-center relative row-1 text-[12.078px] text-[rgba(255,255,255,0.65)] text-center whitespace-nowrap">
-        <p className="leading-[normal]">SaaS</p>
-      </div>
-    </div>
-  );
-}
-
-function OfferTitlesGroup() {
-  return (
-    <div className="col-1 content-stretch flex gap-[6.261px] h-[42px] items-center ml-0 mt-0 relative row-1 w-[444.919px]" data-name="Offer Titles Group">
-      <Title />
-      <ECommerceText />
-      <BrandIdentityText />
-      <SaaSText />
-    </div>
-  );
-}
-
-function OfferTitle() {
-  return (
-    <div className="col-1 grid-cols-[max-content] grid-rows-[max-content] inline-grid ml-[calc(50%-222.46px)] mt-[7.21px] place-items-start relative row-1" data-name="Offer Title">
-      <OfferTitlesGroup />
-    </div>
-  );
-}
-
-function OfferTitleBackground() {
-  return (
-    <div className="col-1 grid-cols-[max-content] grid-rows-[max-content] inline-grid ml-[33.43px] mt-[39.08px] place-items-start relative row-1" data-name="Offer Title Background">
-      <OfferTitleBackground1 />
-      <OfferTitle />
-    </div>
-  );
-}
-
-function OfferOptionsBackground() {
-  return (
-    <div className="col-1 grid-cols-[max-content] grid-rows-[max-content] inline-grid ml-0 mt-0 place-items-start relative row-1" data-name="Offer Options Background">
-      <div className="bg-[#0e0e0e] col-1 h-[408.093px] ml-0 mt-0 relative rounded-tl-[20px] rounded-tr-[20px] row-1 w-[534.581px]" data-name="Offer Options Background">
-        <div className="absolute inset-0 pointer-events-none rounded-[inherit] shadow-[inset_0px_0px_10px_0px_rgba(104,104,104,0.25)]" />
-      </div>
-      <ReserveCallGroup />
-      <OfferTitleBackground />
-    </div>
-  );
-}
-
-function OfferTitle1() {
-  return (
-    <div className="content-stretch flex flex-col items-center relative shrink-0 w-[198px]" data-name="Offer Title">
-      <div className="flex flex-col font-['Geist:Regular',sans-serif] font-normal justify-center leading-[0] relative shrink-0 text-[#f8f8f8] text-[10px] text-center whitespace-nowrap">
-        <p className="leading-[normal]">Cliquez sur l’offre de votre choix pour voir les détails</p>
-      </div>
-    </div>
-  );
-}
-
-function CustomPageDescription() {
-  return (
-    <div className="content-stretch flex flex-col items-center relative shrink-0 w-[198px]" data-name="Custom Page Description">
-      <div className="flex flex-col font-['Geist:Regular',sans-serif] font-normal justify-center leading-[normal] relative shrink-0 text-[#888] text-[16px] text-center whitespace-nowrap">
-        <p className="mb-0">Une page unique sur mesure, conçue pour capter</p>
-        <p>l’attention, renforcer ta crédibilité et convertir davantage.</p>
-      </div>
-    </div>
-  );
-}
-
-function OfferDescriptionText() {
-  return (
-    <div className="content-stretch flex flex-col gap-[50px] items-start relative shrink-0" data-name="Offer Description Text">
-      <OfferTitle1 />
-      <CustomPageDescription />
-    </div>
-  );
-}
-
-function PriceAndSymbol() {
-  return (
-    <div className="col-1 grid-cols-[max-content] grid-rows-[max-content] inline-grid ml-0 mt-0 place-items-start relative row-1" data-name="Price and Symbol">
-      <div className="col-1 content-stretch flex gap-[8.331px] h-[36.73px] items-center justify-center ml-0 mt-0 p-[6.249px] pointer-events-none relative rounded-[7.346px] row-1 w-[97.335px]" data-name="Toolbar - Symbols">
-        <div aria-hidden="true" className="absolute backdrop-blur-[26.036px] bg-[rgba(128,128,128,0.2)] inset-0 mix-blend-luminosity rounded-[7.346px]" />
-        <div aria-hidden="true" className="absolute border-[0.729px] border-[rgba(255,255,255,0.4)] border-solid inset-0 rounded-[7.346px]" />
-      </div>
-      <div className="col-1 flex flex-col font-['SF_Pro:Regular',sans-serif] font-normal justify-center ml-[14.69px] mt-[9.64px] relative row-1 text-[14.528px] text-center text-white whitespace-nowrap" style={{ fontVariationSettings: "'wdth' 100" }}>
-        <p>
-          <span className="leading-[normal]">{`1990€ `}</span>
-          <span className="leading-[normal] text-[rgba(255,255,255,0.6)]">HT</span>
-        </p>
-      </div>
-    </div>
-  );
-}
-
-function PriceGroup() {
-  return (
-    <div className="grid-cols-[max-content] grid-rows-[max-content] inline-grid place-items-start relative shrink-0" data-name="Price Group">
-      <PriceAndSymbol />
-    </div>
-  );
-}
-
-function PriceAndOptions() {
-  return (
-    <div className="content-stretch flex gap-[11px] items-center leading-[0] relative shrink-0 w-full" data-name="Price and Options">
-      <PriceGroup />
-      <div className="flex flex-col font-['SF_Pro:Ultralight',sans-serif] font-[30.925003051757812] justify-center relative shrink-0 text-[#7c7c7c] text-[18px] text-center whitespace-nowrap" style={{ fontVariationSettings: "'wdth' 100" }}>
-        <p className="leading-[normal]">︱</p>
-      </div>
-      <div className="flex flex-col font-['SF_Pro:Regular',sans-serif] font-normal justify-center relative shrink-0 text-[#dbdbdb] text-[12px] text-center tracking-[-0.06px] whitespace-nowrap" style={{ fontVariationSettings: "'wdth' 100" }}>
-        <p className="leading-[normal]">Payable en plusieurs fois</p>
-      </div>
-    </div>
-  );
-}
-
-function OfferDescriptionGroup() {
-  return (
-    <div className="col-1 content-stretch flex flex-col gap-[30px] h-[177px] items-center ml-[129.29px] mt-[114.29px] relative rounded-tl-[20px] rounded-tr-[20px] row-1 w-[276px]" data-name="Offer Description Group">
-      <OfferDescriptionText />
-      <PriceAndOptions />
-    </div>
-  );
-}
-
-function OfferDetails() {
-  return (
-    <div className="grid-cols-[max-content] grid-rows-[max-content] inline-grid leading-[0] place-items-start relative shrink-0" data-name="Offer Details">
-      <OfferOptionsBackground />
-      <OfferDescriptionGroup />
-    </div>
-  );
-}
-
-function OfferOptions() {
-  return (
-    <div className="-translate-x-1/2 absolute content-stretch flex items-center left-1/2 top-[2406.12px]" data-name="Offer Options">
-      <OfferDetails />
-    </div>
-  );
-}
-
-function BenefitText() {
-  return (
-    <div className="grid-cols-[max-content] grid-rows-[max-content] inline-grid place-items-start relative shrink-0" data-name="Benefit Text">
-      <div className="col-1 h-[20px] ml-0 mt-[0.11px] relative row-1 w-[21px]" data-name="mdi:tick">
-        <div className="absolute inset-[17.38%_16.47%_15.57%_0.19%]" data-name="Vector">
-          <svg className="absolute block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 17.5 13.41">
-            <path d={svgPaths.p26b70600} fill="var(--fill-0, black)" id="Vector" />
-          </svg>
-        </div>
-      </div>
-      <div className="col-1 h-[20px] ml-0 mt-[0.11px] relative row-1 w-[21px]" data-name="Tick Icon">
-        <div className="absolute inset-[17.38%_16.47%_15.57%_0.19%]" data-name="Vector">
-          <svg className="absolute block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 17.5 13.41">
-            <path d={svgPaths.p26b70600} fill="var(--fill-0, black)" id="Vector" />
-          </svg>
-        </div>
-      </div>
-      <div className="col-1 flex flex-col font-['Neue_Montreal:Regular',sans-serif] font-normal justify-center ml-[38.04px] mt-0 relative row-1 text-[#0e0e0e] text-[16px] whitespace-nowrap">
-        <p className="leading-[normal]">{`Branding & direction artistique sur-mesure`}</p>
-      </div>
-    </div>
-  );
-}
-
-function BenefitText1() {
-  return (
-    <div className="grid-cols-[max-content] grid-rows-[max-content] inline-grid place-items-start relative shrink-0" data-name="Benefit Text">
-      <div className="col-1 h-[20px] ml-0 mt-0 relative row-1 w-[21px]" data-name="Tick Icon">
-        <div className="absolute inset-[17.38%_16.47%_15.57%_0.19%]" data-name="Vector">
-          <svg className="absolute block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 17.5 13.41">
-            <path d={svgPaths.p26b70600} fill="var(--fill-0, black)" id="Vector" />
-          </svg>
-        </div>
-      </div>
-      <div className="col-1 flex flex-col font-['Neue_Montreal:Regular',sans-serif] font-normal justify-center ml-[41.5px] mt-[2px] relative row-1 text-[#0e0e0e] text-[16px] whitespace-nowrap">
-        <p className="leading-[normal]">Wireframe + UX/UI Figma</p>
-      </div>
-    </div>
-  );
-}
-
-function BenefitText2() {
-  return (
-    <div className="grid-cols-[max-content] grid-rows-[max-content] inline-grid place-items-start relative shrink-0" data-name="Benefit Text">
-      <div className="col-1 h-[20px] ml-0 mt-0 relative row-1 w-[21px]" data-name="Tick Icon">
-        <div className="absolute inset-[17.38%_16.47%_15.57%_0.19%]" data-name="Vector">
-          <svg className="absolute block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 17.5 13.41">
-            <path d={svgPaths.p26b70600} fill="var(--fill-0, black)" id="Vector" />
-          </svg>
-        </div>
-      </div>
-      <div className="col-1 flex flex-col font-['Neue_Montreal:Regular',sans-serif] font-normal justify-center ml-[41.5px] mt-[2px] relative row-1 text-[#0e0e0e] text-[16px] whitespace-nowrap">
-        <p className="leading-[normal]">Copywriting stratégique</p>
-      </div>
-    </div>
-  );
-}
-
-function BenefitText3() {
-  return (
-    <div className="grid-cols-[max-content] grid-rows-[max-content] inline-grid place-items-start relative shrink-0" data-name="Benefit Text">
-      <div className="col-1 h-[20px] ml-0 mt-0 relative row-1 w-[21px]" data-name="Tick Icon">
-        <div className="absolute inset-[17.38%_16.47%_15.57%_0.19%]" data-name="Vector">
-          <svg className="absolute block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 17.5 13.41">
-            <path d={svgPaths.p26b70600} fill="var(--fill-0, black)" id="Vector" />
-          </svg>
-        </div>
-      </div>
-      <div className="col-1 flex flex-col font-['Neue_Montreal:Regular',sans-serif] font-normal justify-center ml-[41.5px] mt-[2px] relative row-1 text-[#0e0e0e] text-[16px] whitespace-nowrap">
-        <p className="leading-[normal]">Développement pixel-perfect</p>
-      </div>
-    </div>
-  );
-}
-
-function BenefitText4() {
-  return (
-    <div className="grid-cols-[max-content] grid-rows-[max-content] inline-grid place-items-start relative shrink-0" data-name="Benefit Text">
-      <div className="col-1 h-[20px] ml-0 mt-0 relative row-1 w-[21px]" data-name="Tick Icon">
-        <div className="absolute inset-[17.38%_16.47%_15.57%_0.19%]" data-name="Vector">
-          <svg className="absolute block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 17.5 13.41">
-            <path d={svgPaths.p26b70600} fill="var(--fill-0, black)" id="Vector" />
-          </svg>
-        </div>
-      </div>
-      <div className="col-1 flex flex-col font-['Neue_Montreal:Regular',sans-serif] font-normal justify-center ml-[41.5px] mt-[2px] relative row-1 text-[#0e0e0e] text-[16px] whitespace-nowrap">
-        <p className="leading-[normal]">{`Animations premium & micro-interactions`}</p>
-      </div>
-    </div>
-  );
-}
-
-function BenefitText5() {
-  return (
-    <div className="grid-cols-[max-content] grid-rows-[max-content] inline-grid place-items-start relative shrink-0" data-name="Benefit Text">
-      <div className="col-1 h-[20px] ml-0 mt-0 relative row-1 w-[21px]" data-name="Tick Icon">
-        <div className="absolute inset-[17.38%_16.47%_15.57%_0.19%]" data-name="Vector">
-          <svg className="absolute block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 17.5 13.41">
-            <path d={svgPaths.p26b70600} fill="var(--fill-0, black)" id="Vector" />
-          </svg>
-        </div>
-      </div>
-      <div className="col-1 flex flex-col font-['Neue_Montreal:Regular',sans-serif] font-normal justify-center ml-[41.5px] mt-[2px] relative row-1 text-[#0e0e0e] text-[16px] whitespace-nowrap">
-        <p className="leading-[normal]">Optimisation du Taux de Conversion (CRO)</p>
-      </div>
-    </div>
-  );
-}
-
-function BenefitText6() {
-  return (
-    <div className="grid-cols-[max-content] grid-rows-[max-content] inline-grid place-items-start relative shrink-0" data-name="Benefit Text">
-      <div className="col-1 h-[20px] ml-0 mt-0 relative row-1 w-[21px]" data-name="Tick Icon">
-        <div className="absolute inset-[17.38%_16.47%_15.57%_0.19%]" data-name="Vector">
-          <svg className="absolute block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 17.5 13.41">
-            <path d={svgPaths.p26b70600} fill="var(--fill-0, black)" id="Vector" />
-          </svg>
-        </div>
-      </div>
-      <div className="col-1 flex flex-col font-['Neue_Montreal:Regular',sans-serif] font-normal justify-center ml-[41.5px] mt-[2px] relative row-1 text-[#0e0e0e] text-[16px] whitespace-nowrap">
-        <p className="leading-[normal]">Optimisation SEO</p>
-      </div>
-    </div>
-  );
-}
-
-function BenefitText7() {
-  return (
-    <div className="grid-cols-[max-content] grid-rows-[max-content] inline-grid place-items-start relative shrink-0" data-name="Benefit Text">
-      <div className="col-1 h-[20px] ml-0 mt-0 relative row-1 w-[21px]" data-name="Tick Icon">
-        <div className="absolute inset-[17.38%_16.47%_15.57%_0.19%]" data-name="Vector">
-          <svg className="absolute block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 17.5 13.41">
-            <path d={svgPaths.p26b70600} fill="var(--fill-0, black)" id="Vector" />
-          </svg>
-        </div>
-      </div>
-      <div className="col-1 flex flex-col font-['Neue_Montreal:Regular',sans-serif] font-normal justify-center ml-[41.5px] mt-[2px] relative row-1 text-[#0e0e0e] text-[16px] whitespace-nowrap">
-        <p className="leading-[normal]">{`Révisions illimitées `}</p>
-      </div>
-    </div>
-  );
-}
-
-function BenefitItemContainer() {
-  return (
-    <div className="content-stretch flex flex-[1_0_0] flex-col gap-[20px] items-start leading-[0] min-h-px min-w-px relative" data-name="Benefit Item Container">
-      <BenefitText />
-      <BenefitText1 />
-      <BenefitText2 />
-      <BenefitText3 />
-      <BenefitText4 />
-      <BenefitText5 />
-      <BenefitText6 />
-      <BenefitText7 />
-    </div>
-  );
-}
-
-function BenefitItem() {
-  return (
-    <div className="content-stretch flex items-center relative shrink-0 w-[350px]" data-name="Benefit Item">
-      <BenefitItemContainer />
-    </div>
-  );
-}
-
-function BenefitsList() {
-  return (
-    <div className="absolute bg-white content-stretch flex flex-col h-[406px] items-start left-[453px] pb-[35px] pl-[40px] pr-[150px] pt-[40px] rounded-bl-[20px] rounded-br-[20px] top-[2814.41px] w-[534px]" data-name="Benefits List">
-      <BenefitItem />
-      <div className="absolute inset-0 pointer-events-none rounded-[inherit] shadow-[inset_0px_0px_10px_0px_rgba(104,104,104,0.25)]" />
-    </div>
-  );
-}
-
-function BenefitsSection({ animateIn }: { animateIn: boolean }) {
+// Stateful offer card — dark card + white benefits, both animated on tab switch
+function OfferCard({ animateIn }: { animateIn: boolean }) {
+  const [activeId, setActiveId] = useState(0);
+  const [isAnimating, setIsAnimating] = useState(false);
   const reduced = useReducedMotion();
+
+  const offer = OFFERS[activeId];
+
+  const switchTo = (id: number) => {
+    if (isAnimating || id === activeId) return;
+    setIsAnimating(true);
+    setActiveId(id);
+  };
+
   return (
     <motion.div
       className="absolute left-0 top-0 w-full"
-      data-name="Benefits Section"
       initial={{ opacity: 0, y: reduced ? 0 : CARD_Y }}
       animate={animateIn ? { opacity: 1, y: 0 } : { opacity: 0, y: reduced ? 0 : CARD_Y }}
       transition={{ duration: CARD_DURATION, ease: CARD_EASE, delay: 0.4 }}
     >
-      <OfferOptions />
-      <BenefitsList />
+
+      {/* ── Dark card ─────────────────────────────────────────────── */}
+      <div className="-translate-x-1/2 absolute content-stretch flex items-center left-1/2 top-[2406.12px]">
+        <div className="grid-cols-[max-content] grid-rows-[max-content] inline-grid leading-[0] place-items-start relative shrink-0">
+
+          {/* Dark background block */}
+          <div className="col-1 grid-cols-[max-content] grid-rows-[max-content] inline-grid ml-0 mt-0 place-items-start relative row-1">
+            <div className="bg-[#0e0e0e] col-1 h-[408.093px] ml-0 mt-0 relative rounded-tl-[20px] rounded-tr-[20px] row-1 w-[534.581px]">
+              <div className="absolute inset-0 pointer-events-none rounded-[inherit] shadow-[inset_0px_0px_10px_0px_rgba(104,104,104,0.25)]" />
+            </div>
+            {/* Reserve call button — absolutely centered in the dark card */}
+            <div className="absolute -translate-x-1/2 grid-cols-[max-content] grid-rows-[max-content] inline-grid left-1/2 place-items-center" style={{ top: 317.35 }}>
+              <div className="bg-white col-1 h-[49.577px] ml-0 mt-0 rounded-[100px] row-1 w-[186.038px]" />
+              <div className="col-1 flex flex-col font-['Neue_Montreal:Medium',sans-serif] font-medium h-[49.577px] items-center justify-center relative row-1 text-[#0e0e0e] text-[17px] text-center whitespace-nowrap">
+                <p className="leading-[normal]">Réserver un appel</p>
+              </div>
+            </div>
+            {/* Tab bar */}
+            <div className="col-1 grid-cols-[max-content] grid-rows-[max-content] inline-grid ml-[33.43px] mt-[39.08px] place-items-start relative row-1">
+              {/* Pill backdrop */}
+              <div className="col-1 grid-cols-[max-content] grid-rows-[max-content] inline-grid ml-0 mt-0 place-items-start relative row-1">
+                <div className="col-1 content-stretch flex gap-[9.151px] h-[56.188px] items-center justify-center ml-0 mt-0 p-[6.863px] pointer-events-none relative rounded-[100px] row-1 w-[467.72px]">
+                  <div aria-hidden="true" className="absolute backdrop-blur-[28.598px] bg-[rgba(128,128,128,0.2)] inset-0 mix-blend-luminosity rounded-[100px]" />
+                  <div aria-hidden="true" className="absolute inset-0 rounded-[100px]" style={{ boxShadow: 'inset 0 0.801px 0 rgba(255,255,255,0.4), inset 0 -0.801px 0 rgba(255,255,255,0.1), inset 0.801px 0 0 rgba(255,255,255,0.15), inset -0.801px 0 0 rgba(255,255,255,0.15)' }} />
+                </div>
+              </div>
+              {/* Tab pills */}
+              <div className="col-1 grid-cols-[max-content] grid-rows-[max-content] inline-grid ml-[calc(50%-222.46px)] mt-[7.21px] place-items-start relative row-1">
+                <div className="col-1 content-stretch flex gap-[6.261px] h-[42px] items-center ml-0 mt-0 relative row-1 w-[444.919px]">
+                  {OFFERS.map(o => (
+                    <OfferTab key={o.id} offer={o} active={o.id === activeId} onClick={() => switchTo(o.id)} />
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Animated description + price */}
+          <div className="col-1 row-1 relative" style={{ height: 177, width: 276, marginLeft: 129.29, marginTop: 114.29 }}>
+            {/* Fixed label — never animates */}
+            <div className="flex justify-center w-full">
+              <div className="flex flex-col font-['Geist:Regular',sans-serif] font-normal justify-center leading-[0] relative shrink-0 text-[#f8f8f8] text-[10px] text-center whitespace-nowrap">
+                <p className="leading-[normal]">Cliquez sur l'offre de votre choix pour voir les détails</p>
+              </div>
+            </div>
+            <AnimatePresence mode="wait" initial={false} onExitComplete={() => setIsAnimating(false)}>
+              <motion.div
+                key={`desc-${activeId}`}
+                className="absolute inset-x-0 bottom-0 flex flex-col gap-[30px] items-center"
+                style={{ top: 27 }}
+                variants={reduced ? undefined : offerContentVariants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={reduced ? { duration: 0 } : undefined}
+              >
+                {/* Description */}
+                <div className="content-stretch flex flex-col items-start relative shrink-0">
+                  <div className="content-stretch flex flex-col items-center relative shrink-0 w-[198px]">
+                    <div className="flex flex-col font-['Geist:Regular',sans-serif] font-normal justify-center leading-[normal] relative shrink-0 text-[#888] text-[16px] text-center whitespace-nowrap">
+                      <p className="mb-0">{offer.descriptionLines[0]}</p>
+                      <p>{offer.descriptionLines[1]}</p>
+                    </div>
+                  </div>
+                </div>
+                {/* Price */}
+                <div className="content-stretch flex gap-[11px] items-center leading-[0] relative shrink-0 w-full">
+                  <div className="col-1 grid-cols-[max-content] grid-rows-[max-content] inline-grid ml-0 mt-0 place-items-start relative row-1">
+                    <div className="col-1 content-stretch flex h-[36.73px] items-center justify-center ml-0 mt-0 p-[6.249px] pointer-events-none relative rounded-[7.346px] row-1 w-[97.335px]">
+                      <div aria-hidden="true" className="absolute backdrop-blur-[26.036px] bg-[rgba(128,128,128,0.2)] inset-0 mix-blend-luminosity rounded-[7.346px]" />
+                      <div aria-hidden="true" className="absolute inset-0 rounded-[7.346px]" style={{ boxShadow: 'inset 0 0.729px 0 rgba(255,255,255,0.4), inset 0 -0.729px 0 rgba(255,255,255,0.1), inset 0.729px 0 0 rgba(255,255,255,0.15), inset -0.729px 0 0 rgba(255,255,255,0.15)' }} />
+                    </div>
+                    <div className="col-1 flex flex-col font-['SF_Pro:Regular',sans-serif] font-normal justify-center ml-[14.69px] mt-[9.64px] relative row-1 text-[14.528px] text-center text-white whitespace-nowrap" style={{ fontVariationSettings: "'wdth' 100" }}>
+                      <p>
+                        <span className="leading-[normal]">{offer.price} </span>
+                        <span className="leading-[normal] text-[rgba(255,255,255,0.6)]">HT</span>
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex flex-col font-['SF_Pro:Ultralight',sans-serif] justify-center relative shrink-0 text-[#7c7c7c] text-[18px] text-center whitespace-nowrap" style={{ fontVariationSettings: "'wdth' 100" }}>
+                    <p className="leading-[normal]">︱</p>
+                  </div>
+                  <div className="flex flex-col font-['SF_Pro:Regular',sans-serif] font-normal justify-center relative shrink-0 text-[#dbdbdb] text-[12px] text-center tracking-[-0.06px] whitespace-nowrap" style={{ fontVariationSettings: "'wdth' 100" }}>
+                    <p className="leading-[normal]">Payable en plusieurs fois</p>
+                  </div>
+                </div>
+              </motion.div>
+            </AnimatePresence>
+          </div>
+
+        </div>
+      </div>
+
+      {/* ── White benefits card ────────────────────────────────────── */}
+      <div className="-translate-x-1/2 absolute bg-white left-1/2 overflow-hidden rounded-bl-[20px] rounded-br-[20px]" style={{ top: 2814.41, width: 534, height: 406 }}>
+        <div className="absolute inset-0 pointer-events-none rounded-[inherit] shadow-[inset_0px_0px_10px_0px_rgba(104,104,104,0.25)]" />
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={`benefits-${activeId}`}
+            className="absolute inset-0 flex flex-col items-start pb-[35px] pl-[40px] pr-[150px] pt-[40px]"
+            variants={reduced ? undefined : offerContentVariants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={reduced ? { duration: 0 } : undefined}
+          >
+            <div className="content-stretch flex flex-[1_0_0] flex-col gap-[20px] items-start leading-[0] min-h-px min-w-px relative w-full">
+              {offer.benefits.map((text, i) => (
+                <div key={i} className="grid-cols-[max-content] grid-rows-[max-content] inline-grid place-items-start relative shrink-0">
+                  <OfferBenefitTick />
+                  <div className="col-1 flex flex-col font-['Neue_Montreal:Regular',sans-serif] font-normal justify-center ml-[41.5px] mt-[2px] relative row-1 text-[#0e0e0e] text-[16px] whitespace-nowrap">
+                    <p className="leading-[normal]">{text}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        </AnimatePresence>
+      </div>
+
     </motion.div>
   );
 }
@@ -1567,7 +1478,7 @@ function BenefitsSection({ animateIn }: { animateIn: boolean }) {
 function Offres({ animateIn }: { animateIn: boolean }) {
   return (
     <div className="-translate-x-1/2 absolute contents left-1/2 top-[2406.12px]" data-name="Offres">
-      <BenefitsSection animateIn={animateIn} />
+      <OfferCard animateIn={animateIn} />
     </div>
   );
 }
@@ -1579,6 +1490,7 @@ function OffresGroupe() {
   return (
     <>
       <div
+        id="offres"
         aria-hidden="true"
         className="-translate-x-1/2 absolute h-[695px] left-1/2 pointer-events-none top-[2117.32px] w-[897px]"
         ref={offersTriggerRef}
@@ -1921,20 +1833,39 @@ function Frame() {
 
 function Cta2() {
   const reduced = useReducedMotion();
+  const [hovered, setHovered] = useState(false);
+
+  const scrollToOffres = (e: React.MouseEvent) => {
+    e.preventDefault();
+    document.getElementById('offres')?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   return (
-    <motion.div
-      className="bg-white content-stretch flex gap-[8.014px] items-center justify-center overflow-clip px-[30px] py-[15px] relative rounded-[10016.271px] shadow-[0px_4.007px_3.005px_-4.007px_rgba(0,0,0,0.5)] shrink-0"
+    <motion.button
+      onClick={scrollToOffres}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      className="bg-white content-stretch flex gap-[8.014px] items-center justify-center overflow-clip px-[30px] py-[15px] relative rounded-[10016.271px] shadow-[0px_4.007px_3.005px_-4.007px_rgba(0,0,0,0.5)] shrink-0 cursor-pointer border-0"
       data-name="CTA"
       initial={{ opacity: 0, y: reduced ? 0 : 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: HERO_INTRO_DURATION, ease: SECTION_EASE, delay: 0.4 }}
     >
-      <div className="flex flex-col font-['Neue_Montreal:Bold',sans-serif] font-[500] justify-center leading-[0] not-italic relative shrink-0 text-[16.028px] text-black text-center tracking-[-0.3206px] whitespace-nowrap">
+      <motion.div
+        className="flex flex-col font-['Neue_Montreal:Bold',sans-serif] font-[500] justify-center leading-[0] not-italic relative shrink-0 text-[16.028px] text-black text-center tracking-[-0.3206px] whitespace-nowrap"
+        animate={hovered && !reduced ? { x: 4, scale: 1.04 } : { x: 0, scale: 1 }}
+        transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+      >
         <p className="leading-[1.2]">Voir nos offres</p>
-      </div>
-      <Frame />
+      </motion.div>
+      <motion.div
+        animate={hovered && !reduced ? { x: 4, scale: 1.18 } : { x: 0, scale: 1 }}
+        transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+      >
+        <Frame />
+      </motion.div>
       <div className="absolute inset-0 pointer-events-none rounded-[inherit] shadow-[inset_0px_0px_3.005px_2.003px_rgba(255,255,255,0.2),inset_0px_0px_12.021px_4.007px_rgba(255,255,255,0.13)]" />
-    </motion.div>
+    </motion.button>
   );
 }
 
