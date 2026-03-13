@@ -1,0 +1,15 @@
+@import './fonts.css';
+@import './tailwind.css';
+@import './theme.css';
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+@keyframes marquee-right {
+  from { transform: translateX(-1378.377px); }
+  to   { transform: translateX(0); }
+}
+
