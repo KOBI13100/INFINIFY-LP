@@ -1,7 +1,7 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
 import svgPaths from "./svg-6slkny0mf7";
-import imgEarthBackground from "../../EARTH BACKGROUND.svg";
+import imgEarthBackground from "../../img.png";
 import imgDesktop144 from "../assets/050199014e18c0cb60e9c252c2ef39002648cc6a.png";
 import imgLogoInfinify1 from "../assets/bf1d602331298fa70e56da6d7bd2fe71a3de2b7a.png";
 import imgCardImage from "../assets/cd7a05401aabdba4cde42cc5ba650095bf45699b.png";
@@ -547,11 +547,23 @@ function Group() {
 
 function EarthBackground() {
   return (
-    <img
-      src={imgEarthBackground}
-      className="absolute h-[347px] left-[275.5px] rounded-[25px] top-[3380.17px] w-[888px] object-cover"
-      data-name="EARTH BACKGROUND"
-      alt=""
+    <div className="absolute h-[439px] left-[275.5px] overflow-hidden rounded-[25px] top-[3380.17px] w-[889px]" data-name="EARTH BACKGROUND">
+      <img
+        src={imgEarthBackground}
+        className="h-full w-full object-cover"
+        style={{ objectPosition: 'center 38%' }}
+        alt=""
+      />
+    </div>
+  );
+}
+
+function CtaBottomGradient() {
+  return (
+    <div
+      aria-hidden="true"
+      className="absolute h-[220px] left-[275.5px] pointer-events-none rounded-b-[25px] top-[3599.17px] w-[889px]"
+      style={{ background: 'linear-gradient(180deg, rgba(2,2,2,0) 0%, rgba(0,0,0,1) 100%)' }}
     />
   );
 }
@@ -648,6 +660,7 @@ function Cta() {
           </div>
         </div>
         <EarthBackground />
+        <CtaBottomGradient />
         <CallToActionContainer />
         <TestimonialInfo />
       </motion.div>
@@ -1184,7 +1197,9 @@ interface OfferData {
   id: number;
   label: string;
   tabWidth: number;
-  descriptionLines: [string, string];
+  cardHeight: number;
+  descriptionLines: string[];
+  pricePrefix?: string;
   price: string;
   benefits: string[];
 }
@@ -1194,6 +1209,7 @@ const OFFERS: OfferData[] = [
     id: 0,
     label: 'Landing Page',
     tabWidth: 112.704,
+    cardHeight: 814.29,
     descriptionLines: [
       'Une page unique sur mesure, conçue pour capter',
       "l'attention, renforcer ta crédibilité et convertir davantage.",
@@ -1214,39 +1230,50 @@ const OFFERS: OfferData[] = [
     id: 1,
     label: 'Site E-commerce',
     tabWidth: 130.915,
+    cardHeight: 940.04,
     descriptionLines: [
-      'Une boutique en ligne premium, optimisée pour',
-      "la conversion et l'expérience utilisateur.",
+      'Un site e-commerce premium, pensé pour sublimer tes',
+      "produits, fluidifier l’achat et maximiser tes conversions.",
     ],
-    price: '3490€',
+    pricePrefix: 'À partir de',
+    price: '2990€',
     benefits: [
       'Branding & direction artistique sur-mesure',
-      'Design UX/UI Figma complet',
-      'Développement e-commerce sur-mesure',
-      'Intégration paiement & logistique',
+      'Wireframe + UX/UI Figma',
+      'Copywriting stratégique',
+      'Développement pixel-perfect',
       'Animations premium & micro-interactions',
+      'Expérience d’achat fluide & premium',
+      'Pages produit pensées pour convertir',
+      'Intégration paiement, panier & checkout',
       'Optimisation du Taux de Conversion (CRO)',
       'Optimisation SEO',
-      'Révisions illimitées',
+      'Révisions illimitées '
     ],
   },
   {
     id: 2,
     label: 'Identité visuelle',
     tabWidth: 118.965,
+    cardHeight: 980.08,
     descriptionLines: [
-      'Une identité de marque forte et cohérente,',
-      'conçue pour marquer les esprits durablement.',
+      'Une identité de marque complète, conçue pour donner',
+      'à ton projet une image forte, cohérente et',
+      'immédiatement mémorable.',
     ],
-    price: '1490€',
+    price: '890€',
     benefits: [
-      'Stratégie de marque approfondie',
-      'Logo & déclinaisons complètes',
-      'Charte graphique premium',
-      'Typographie & palette de couleurs',
-      'Templates & assets marketing',
-      "Guide d'utilisation de la marque",
-      'Formats tous supports',
+      'Recherche stratégique de marque',
+      '3 concepts créatifs sur-mesure',
+      'Logo principal + déclinaisons',
+      'Versions monochrome & transparentes',
+      'Palette couleur & système typographique',
+      'Système d’identité visuelle complet',
+      'Brandbook premium de 20 pages',
+      'Guide d’utilisation de la marque',
+      'Fichiers sources, vectoriels et print-ready',
+      'Kit social media & supports de papeterie',
+      'Mockups premium de présentation',
       'Révisions illimitées',
     ],
   },
@@ -1254,20 +1281,26 @@ const OFFERS: OfferData[] = [
     id: 3,
     label: 'SaaS',
     tabWidth: 62.613,
+    cardHeight: 977.56,
     descriptionLines: [
-      'Une interface SaaS premium, conçue pour',
-      "maximiser l'adoption et la rétention utilisateur.",
+      'Un SaaS sur mesure, conçu et développé pour',
+      'transformer ton idée en un vrai produit',
+      'digital clair, solide et scalable.',
     ],
-    price: '4990€',
+    price: 'Sur Devis',
     benefits: [
-      'Audit UX & stratégie produit',
-      'Design system complet',
-      'Wireframes & prototypes interactifs',
-      'UI Kit sur-mesure',
-      'Animations & micro-interactions',
-      'Handoff développement Figma',
-      'Tests utilisateurs & itérations',
-      'Support 3 mois post-livraison',
+      'Branding & direction artistique sur-mesure',
+      'Wireframe + UX/UI Figma',
+      'Copywriting stratégique',
+      'Architecture produit pensée pour l’usage',
+      'Copywriting stratégique',
+      'Interfaces multi-pages',
+      'Développement pixel-perfect',
+      'Animations premium & micro-interactions',
+      'Performance, fluidité & stabilité',
+      'Intégrations API, paiement, CRM ou automatisations',
+      'Base produit propre pour scaler',
+      'Révisions illimitées',
     ],
   },
 ];
@@ -1334,9 +1367,44 @@ function OfferBenefitTick() {
 function OfferCard({ animateIn }: { animateIn: boolean }) {
   const [activeId, setActiveId] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [reserveButtonTop, setReserveButtonTop] = useState(317.35);
+  const darkCardRef = useRef<HTMLDivElement | null>(null);
+  const priceRowRef = useRef<HTMLDivElement | null>(null);
   const reduced = useReducedMotion();
 
   const offer = OFFERS[activeId];
+  const whiteCardHeight = offer.cardHeight - (2814.41 - 2406.12);
+  const isQuotePrice = offer.price.toLowerCase().includes('devis');
+  const isEcommerceOffer = offer.id === 1;
+  const hasPricePrefix = Boolean(offer.pricePrefix);
+  const priceChipWidth = hasPricePrefix ? 172 : 97.335;
+  const priceChipHeight = hasPricePrefix ? 37 : 36.73;
+  const labelToTitleGap = offer.descriptionLines.length === 2 ? 63 : 47;
+  const descriptionFrameStyle = isEcommerceOffer
+    ? { height: 177, width: 350, marginLeft: 92.29, marginTop: 114.288 }
+    : { height: 177, width: 276, marginLeft: 129.29, marginTop: 114.288 };
+
+  useEffect(() => {
+    const updateReserveSpacing = () => {
+      const darkCardNode = darkCardRef.current;
+      const priceRowNode = priceRowRef.current;
+      if (!darkCardNode || !priceRowNode) return;
+
+      const darkCardRect = darkCardNode.getBoundingClientRect();
+      const priceRowRect = priceRowNode.getBoundingClientRect();
+      const nextTop = priceRowRect.bottom - darkCardRect.top + 26.34;
+
+      setReserveButtonTop((prevTop) => (Math.abs(prevTop - nextTop) > 0.1 ? nextTop : prevTop));
+    };
+
+    const rafId = requestAnimationFrame(updateReserveSpacing);
+    window.addEventListener('resize', updateReserveSpacing);
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      window.removeEventListener('resize', updateReserveSpacing);
+    };
+  }, [activeId, labelToTitleGap]);
 
   const switchTo = (id: number) => {
     if (isAnimating || id === activeId) return;
@@ -1357,19 +1425,22 @@ function OfferCard({ animateIn }: { animateIn: boolean }) {
         <div className="grid-cols-[max-content] grid-rows-[max-content] inline-grid leading-[0] place-items-start relative shrink-0">
 
           {/* Dark background block */}
-          <div className="col-1 grid-cols-[max-content] grid-rows-[max-content] inline-grid ml-0 mt-0 place-items-start relative row-1">
-            <div className="bg-[#0e0e0e] col-1 h-[408.093px] ml-0 mt-0 relative rounded-tl-[20px] rounded-tr-[20px] row-1 w-[534.581px]">
+          <div className="col-1 grid-cols-[max-content] grid-rows-[max-content] inline-grid ml-0 mt-0 place-items-start relative row-1" ref={darkCardRef}>
+            <div className="bg-[#0e0e0e] col-1 h-[408.9px] ml-0 mt-0 relative rounded-tl-[20px] rounded-tr-[20px] row-1 w-[534.581px]">
               <div className="absolute inset-0 pointer-events-none rounded-[inherit] shadow-[inset_0px_0px_10px_0px_rgba(104,104,104,0.25)]" />
             </div>
             {/* Reserve call button — absolutely centered in the dark card */}
-            <div className="absolute -translate-x-1/2 grid-cols-[max-content] grid-rows-[max-content] inline-grid left-1/2 place-items-center" style={{ top: 317.35 }}>
+            <div className="absolute -translate-x-1/2 grid-cols-[max-content] grid-rows-[max-content] inline-grid left-1/2 place-items-center" style={{ bottom: 41.16 }}>
               <div className="bg-white col-1 h-[49.577px] ml-0 mt-0 rounded-[100px] row-1 w-[186.038px]" />
               <div className="col-1 flex flex-col font-['Neue_Montreal:Medium',sans-serif] font-medium h-[49.577px] items-center justify-center relative row-1 text-[#0e0e0e] text-[17px] text-center whitespace-nowrap">
                 <p className="leading-[normal]">Réserver un appel</p>
               </div>
             </div>
             {/* Tab bar */}
-            <div className="col-1 grid-cols-[max-content] grid-rows-[max-content] inline-grid ml-[33.43px] mt-[39.08px] place-items-start relative row-1">
+            <div
+              className="col-1 grid-cols-[max-content] grid-rows-[max-content] inline-grid ml-[33.43px] place-items-start relative row-1"
+              style={{ marginTop: 39.08 }}
+            >
               {/* Pill backdrop */}
               <div className="col-1 grid-cols-[max-content] grid-rows-[max-content] inline-grid ml-0 mt-0 place-items-start relative row-1">
                 <div className="col-1 content-stretch flex gap-[9.151px] h-[56.188px] items-center justify-center ml-0 mt-0 p-[6.863px] pointer-events-none relative rounded-[100px] row-1 w-[467.72px]">
@@ -1379,7 +1450,7 @@ function OfferCard({ animateIn }: { animateIn: boolean }) {
               </div>
               {/* Tab pills */}
               <div className="col-1 grid-cols-[max-content] grid-rows-[max-content] inline-grid ml-[calc(50%-222.46px)] mt-[7.21px] place-items-start relative row-1">
-                <div className="col-1 content-stretch flex gap-[6.261px] h-[42px] items-center ml-0 mt-0 relative row-1 w-[444.919px]">
+                <div className="col-1 content-stretch flex gap-[6px] h-[42px] items-center ml-0 mt-0 relative row-1 w-[444.919px]">
                   {OFFERS.map(o => (
                     <OfferTab key={o.id} offer={o} active={o.id === activeId} onClick={() => switchTo(o.id)} />
                   ))}
@@ -1389,7 +1460,7 @@ function OfferCard({ animateIn }: { animateIn: boolean }) {
           </div>
 
           {/* Animated description + price */}
-          <div className="col-1 row-1 relative" style={{ height: 177, width: 276, marginLeft: 129.29, marginTop: 114.29 }}>
+          <div className="col-1 row-1 relative" style={descriptionFrameStyle}>
             {/* Fixed label — never animates */}
             <div className="flex justify-center w-full">
               <div className="flex flex-col font-['Geist:Regular',sans-serif] font-normal justify-center leading-[0] relative shrink-0 text-[#f8f8f8] text-[10px] text-center whitespace-nowrap">
@@ -1399,8 +1470,8 @@ function OfferCard({ animateIn }: { animateIn: boolean }) {
             <AnimatePresence mode="wait" initial={false} onExitComplete={() => setIsAnimating(false)}>
               <motion.div
                 key={`desc-${activeId}`}
-                className="absolute inset-x-0 bottom-0 flex flex-col gap-[30px] items-center"
-                style={{ top: 27 }}
+                className="absolute inset-x-0 bottom-0 flex flex-col items-center"
+                style={{ top: labelToTitleGap, rowGap: 30 }}
                 variants={reduced ? undefined : offerContentVariants}
                 initial="enter"
                 animate="center"
@@ -1408,32 +1479,42 @@ function OfferCard({ animateIn }: { animateIn: boolean }) {
                 transition={reduced ? { duration: 0 } : undefined}
               >
                 {/* Description */}
-                <div className="content-stretch flex flex-col items-start relative shrink-0">
-                  <div className="content-stretch flex flex-col items-center relative shrink-0 w-[198px]">
-                    <div className="flex flex-col font-['Geist:Regular',sans-serif] font-normal justify-center leading-[normal] relative shrink-0 text-[#888] text-[16px] text-center whitespace-nowrap">
-                      <p className="mb-0">{offer.descriptionLines[0]}</p>
-                      <p>{offer.descriptionLines[1]}</p>
+                <div className="content-stretch flex flex-col items-center relative shrink-0">
+                  <div className="content-stretch flex flex-col items-center relative shrink-0 w-fit">
+                    <div className="flex flex-col font-['Geist:Regular',sans-serif] font-normal justify-center leading-[normal] relative shrink-0 text-[#888] text-[16px] text-center whitespace-nowrap w-fit">
+                      {offer.descriptionLines.map((line, index) => (
+                        <p key={`${offer.id}-line-${index}`} className={index < offer.descriptionLines.length - 1 ? "mb-0 text-center w-fit mx-auto" : "text-center w-fit mx-auto"}>
+                          {line}
+                        </p>
+                      ))}
                     </div>
                   </div>
                 </div>
                 {/* Price */}
-                <div className="content-stretch flex gap-[11px] items-center leading-[0] relative shrink-0 w-full">
+                <div className="content-stretch flex gap-[11px] items-center leading-[0] relative shrink-0 w-full" ref={priceRowRef}>
                   <div className="col-1 grid-cols-[max-content] grid-rows-[max-content] inline-grid ml-0 mt-0 place-items-start relative row-1">
-                    <div className="col-1 content-stretch flex h-[36.73px] items-center justify-center ml-0 mt-0 p-[6.249px] pointer-events-none relative rounded-[7.346px] row-1 w-[97.335px]">
+                    <div
+                      className="col-1 content-stretch flex h-[36.73px] items-center justify-center ml-0 mt-0 p-[6.249px] pointer-events-none relative rounded-[7.346px] row-1"
+                      style={{ width: priceChipWidth, height: priceChipHeight }}
+                    >
                       <div aria-hidden="true" className="absolute backdrop-blur-[26.036px] bg-[rgba(128,128,128,0.2)] inset-0 mix-blend-luminosity rounded-[7.346px]" />
                       <div aria-hidden="true" className="absolute inset-0 rounded-[7.346px]" style={{ boxShadow: 'inset 0 0.729px 0 rgba(255,255,255,0.4), inset 0 -0.729px 0 rgba(255,255,255,0.1), inset 0.729px 0 0 rgba(255,255,255,0.15), inset -0.729px 0 0 rgba(255,255,255,0.15)' }} />
                     </div>
-                    <div className="col-1 flex flex-col font-['SF_Pro:Regular',sans-serif] font-normal justify-center ml-[14.69px] mt-[9.64px] relative row-1 text-[14.528px] text-center text-white whitespace-nowrap" style={{ fontVariationSettings: "'wdth' 100" }}>
+                    <div className="col-1 flex flex-col font-['SF_Pro:Regular',sans-serif] font-normal h-[36.73px] items-center justify-center ml-0 mt-0 relative row-1 text-[14.528px] text-center text-white whitespace-nowrap" style={{ fontVariationSettings: "'wdth' 100", width: priceChipWidth, height: priceChipHeight }}>
                       <p>
-                        <span className="leading-[normal]">{offer.price} </span>
-                        <span className="leading-[normal] text-[rgba(255,255,255,0.6)]">HT</span>
+                        {offer.pricePrefix && <span className="leading-[normal] text-[rgba(255,255,255,0.6)]">{offer.pricePrefix} </span>}
+                        <span className="leading-[normal]">{offer.price}</span>
+                        {!isQuotePrice && <span className="leading-[normal] text-[rgba(255,255,255,0.6)]"> HT</span>}
                       </p>
                     </div>
                   </div>
                   <div className="flex flex-col font-['SF_Pro:Ultralight',sans-serif] justify-center relative shrink-0 text-[#7c7c7c] text-[18px] text-center whitespace-nowrap" style={{ fontVariationSettings: "'wdth' 100" }}>
                     <p className="leading-[normal]">︱</p>
                   </div>
-                  <div className="flex flex-col font-['SF_Pro:Regular',sans-serif] font-normal justify-center relative shrink-0 text-[#dbdbdb] text-[12px] text-center tracking-[-0.06px] whitespace-nowrap" style={{ fontVariationSettings: "'wdth' 100" }}>
+                  <div
+                    className="flex flex-col font-['SF_Pro:Regular',sans-serif] font-normal justify-center relative shrink-0 text-[#dbdbdb] text-[12px] text-center tracking-[-0.06px] whitespace-nowrap"
+                    style={{ fontVariationSettings: "'wdth' 100" }}
+                  >
                     <p className="leading-[normal]">Payable en plusieurs fois</p>
                   </div>
                 </div>
@@ -1445,7 +1526,7 @@ function OfferCard({ animateIn }: { animateIn: boolean }) {
       </div>
 
       {/* ── White benefits card ────────────────────────────────────── */}
-      <div className="-translate-x-1/2 absolute bg-white left-1/2 overflow-hidden rounded-bl-[20px] rounded-br-[20px]" style={{ top: 2814.41, width: 534, height: 406 }}>
+      <div className="-translate-x-1/2 absolute bg-white left-1/2 overflow-hidden rounded-bl-[20px] rounded-br-[20px]" style={{ top: 2814.41, width: 534.58, height: whiteCardHeight }}>
         <div className="absolute inset-0 pointer-events-none rounded-[inherit] shadow-[inset_0px_0px_10px_0px_rgba(104,104,104,0.25)]" />
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
@@ -1800,6 +1881,10 @@ function NavBar() {
 
 function Frame12() {
   const reduced = useReducedMotion();
+  const heroTitleLines = ['Design stratégique', 'pour marques ambitieuses'];
+  const heroWordsByLine = heroTitleLines.map((line) => line.split(' '));
+  const heroLineOffsets = heroWordsByLine.map((_, lineIndex) => heroWordsByLine.slice(0, lineIndex).reduce((total, words) => total + words.length, 0));
+
   return (
     <motion.div
       className="content-stretch flex flex-col gap-[16px] items-start not-italic relative shrink-0"
@@ -1808,8 +1893,35 @@ function Frame12() {
       transition={{ duration: HERO_INTRO_DURATION, ease: SECTION_EASE, delay: 0.22 }}
     >
       <div className="flex flex-col font-['Neue_Montreal:Medium',sans-serif] justify-center leading-[1.1] relative shrink-0 text-[#f0f0f0] text-[55px] tracking-[-1.1px] w-[798.124px]">
-        <p className="mb-0">Design stratégique</p>
-        <p>pour marques ambitieuses</p>
+        {heroWordsByLine.map((words, lineIndex) => (
+          <p key={heroTitleLines[lineIndex]} className={lineIndex === 0 ? "mb-0" : undefined}>
+            {words.map((word, wordIndex) => (
+              <motion.span
+                key={`${heroTitleLines[lineIndex]}-${word}-${wordIndex}`}
+                initial={{
+                  opacity: 0,
+                  y: reduced ? 0 : 34,
+                  scale: 1,
+                  filter: reduced ? 'blur(0px)' : 'blur(20px)'
+                }}
+                animate={{
+                  opacity: 1,
+                  y: 0,
+                  scale: 1,
+                  filter: 'blur(0px)'
+                }}
+                transition={{
+                  duration: reduced ? 0.35 : 1.1,
+                  delay: 0.22 + (heroLineOffsets[lineIndex] + wordIndex) * 0.06,
+                  ease: [0.19, 1, 0.22, 1],
+                }}
+                style={{ marginRight: 6, display: 'inline-block', transformOrigin: '50% 100%', willChange: 'transform, filter, opacity' }}
+              >
+                {word}
+              </motion.span>
+            ))}
+          </p>
+        ))}
       </div>
       <div className="flex flex-col font-['Neue_Montreal:Regular',sans-serif] justify-center leading-[0] relative shrink-0 text-[#e0e3e6] text-[20.035px] tracking-[-0.4007px] w-[616.411px]">
         <p className="leading-[1.5]">Identités et expériences digitales pensées avec une obsession du détail pour convertir et élever la perception de votre marque.</p>
