@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
 import svgPaths from "./svg-6slkny0mf7";
-import imgEarthBackground from "../../img.png";
+import imgMindscaleLogo from "../../mindscale.svg";
+import imgCtaBackground from "../assets/cta-background.png";
 import imgLogoInfinify1 from "../assets/bf1d602331298fa70e56da6d7bd2fe71a3de2b7a.png";
-import imgCardImage from "../assets/cd7a05401aabdba4cde42cc5ba650095bf45699b.png";
+import imgCardImage from "../assets/carousel-card.jpg";
 import imgTestimonialImage from "../assets/a77190103db78e6334f030692996578c4825b66d.png";
 import imgTestimonialImage1 from "../assets/dec5cbce46710d057f06833cca1d54055e9a4ed5.png";
 import imgHero from "../assets/bg.png";
@@ -22,10 +23,10 @@ function BackgroundContainer() {
     <motion.div
       className="absolute -translate-x-1/2 bg-black h-[269.561px] left-1/2 top-[4251.44px] w-[100dvw]"
       data-name="Background Shape"
-      initial={{ opacity: 0, y: reduced ? 0 : SECTION_Y }}
+      initial={{ opacity: 0, y: reduced ? 0 : FOOTER_Y }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={SECTION_VIEWPORT}
-      transition={{ duration: SECTION_DURATION, ease: SECTION_EASE }}
+      viewport={TEAM_VIEWPORT}
+      transition={{ duration: FOOTER_DURATION, ease: FOOTER_EASE, delay: 0.18 }}
     />
   );
 }
@@ -76,7 +77,7 @@ function ContentColumn() {
   return (
     <div className="grid-cols-[max-content] grid-rows-[max-content] inline-grid place-items-start relative shrink-0" data-name="Content Column">
       <LogoAndName />
-      <div className="col-1 flex flex-col font-['Neue_Montreal:Medium',sans-serif] font-medium justify-center ml-0 mt-[69.92px] overflow-hidden relative row-1 text-[16px] text-[rgba(255,255,255,0.3)] text-ellipsis tracking-[-0.0827px] whitespace-nowrap">
+      <div className="col-1 flex flex-col font-['Neue_Montreal:Medium',sans-serif] font-medium justify-center ml-0 mt-[69.92px] relative row-1 text-[16px] text-[rgba(255,255,255,0.3)] text-ellipsis tracking-[-0.0827px] whitespace-nowrap">
         <p className="leading-[20px]">© 2026 Infinify. Tous droits réservés.</p>
       </div>
     </div>
@@ -150,13 +151,13 @@ function SocialMediaSection() {
 function SocialMediaLinks() {
   return (
     <div className="col-1 content-stretch flex flex-col font-['Neue_Montreal:Regular',sans-serif] font-normal gap-[15px] items-center ml-[228.02px] mt-[71.04px] relative row-1 text-[#6f6f6f] text-[16px] text-ellipsis tracking-[-0.0827px] w-[77px]" data-name="Social Media Links">
-      <div className="flex flex-col justify-center overflow-hidden relative shrink-0 text-center w-full">
+      <div className="flex flex-col justify-center relative shrink-0 text-center w-full">
         <p className="leading-[normal]">LinkedIn</p>
       </div>
-      <div className="flex flex-col justify-center overflow-hidden relative shrink-0 w-full">
+      <div className="flex flex-col justify-center relative shrink-0 w-full">
         <p className="leading-[normal]">Instagram</p>
       </div>
-      <div className="flex flex-col justify-center overflow-hidden relative shrink-0 text-center w-full">
+      <div className="flex flex-col justify-center relative shrink-0 text-center w-full">
         <p className="leading-[normal]">Tiktok</p>
       </div>
     </div>
@@ -168,7 +169,7 @@ function LegalLinks() {
     <div className="grid-cols-[max-content] grid-rows-[max-content] inline-grid place-items-start relative shrink-0" data-name="Legal Links">
       <PoliciesSection />
       <SocialMediaSection />
-      <div className="col-1 flex flex-col font-['Neue_Montreal:Regular',sans-serif] font-normal justify-center ml-0 mt-[70.04px] overflow-hidden relative row-1 text-[#6f6f6f] text-[16px] text-ellipsis tracking-[-0.0827px] whitespace-nowrap">
+      <div className="col-1 flex flex-col font-['Neue_Montreal:Regular',sans-serif] font-normal justify-center ml-0 mt-[70.04px] relative row-1 text-[#6f6f6f] text-[16px] text-ellipsis tracking-[-0.0827px] whitespace-nowrap">
         <p className="leading-[normal]">Mentions Légales</p>
       </div>
       <SocialMediaLinks />
@@ -182,10 +183,10 @@ function ContentGroup() {
     <motion.div
       className="-translate-x-1/2 absolute content-stretch flex gap-[620px] items-start leading-[0] left-1/2 top-[4298.87px] w-[1211px]"
       data-name="Content Group"
-      initial={{ opacity: 0, y: reduced ? 0 : SECTION_Y }}
+      initial={{ opacity: 0, y: reduced ? 0 : FOOTER_Y }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={SECTION_VIEWPORT}
-      transition={{ duration: SECTION_DURATION, ease: SECTION_EASE, delay: 0.12 }}
+      viewport={TEAM_VIEWPORT}
+      transition={{ duration: FOOTER_DURATION, ease: FOOTER_EASE, delay: 0.42 }}
     >
       <ContentColumn />
       <LegalLinks />
@@ -203,7 +204,7 @@ function Footer() {
 }
 
 function UpMe() {
-  return <div className="bg-black h-[439px] rounded-[25px] w-[889px]" data-name="Up Me" />;
+  return <div className="absolute inset-0 bg-black rounded-[25px]" data-name="Up Me" />;
 }
 
 function Group() {
@@ -576,11 +577,12 @@ function Group() {
 
 function EarthBackground() {
   return (
-    <div className="absolute h-[439px] left-[275.5px] overflow-hidden rounded-[25px] top-[3380.17px] w-[889px]" data-name="EARTH BACKGROUND">
+    <div className="absolute inset-0 overflow-hidden rounded-[25px]" data-name="EARTH BACKGROUND">
       <img
-        src={imgEarthBackground}
+        src={imgCtaBackground}
         className="h-full w-full object-cover"
         style={{ objectPosition: 'center 38%' }}
+        decoding="async"
         alt=""
       />
     </div>
@@ -591,7 +593,7 @@ function CtaBottomGradient() {
   return (
     <div
       aria-hidden="true"
-      className="absolute h-[220px] left-[275.5px] pointer-events-none rounded-b-[25px] top-[3599.17px] w-[889px]"
+      className="absolute bottom-0 h-[220px] left-0 pointer-events-none rounded-b-[25px] w-full"
       style={{ background: 'linear-gradient(180deg, rgba(2,2,2,0) 0%, rgba(0,0,0,1) 100%)' }}
     />
   );
@@ -599,12 +601,12 @@ function CtaBottomGradient() {
 
 function CallToActionTexts() {
   return (
-    <div className="-translate-x-1/2 absolute contents left-[calc(50%-0.5px)] text-center top-[3497.02px] whitespace-nowrap whitespace-pre" data-name="Call to Action Texts">
-      <div className="-translate-x-1/2 -translate-y-1/2 absolute flex flex-col font-['Neue_Montreal:Regular',sans-serif] font-bold justify-center leading-[normal] left-[calc(50%-0.5px)] text-[40px] text-white top-[3549.02px] tracking-[0.6px]">
+    <div className="absolute inset-x-0 text-center top-[116.85px]" data-name="Call to Action Texts">
+      <div className="mx-auto flex max-w-[720px] flex-col font-['Neue_Montreal:Regular',sans-serif] font-bold justify-center leading-[normal] text-[40px] text-white tracking-[0.6px]">
         <p className="mb-0">{`Donnez à votre marque la `}</p>
         <p>présence qu’elle mérite</p>
       </div>
-      <div className="-translate-x-1/2 -translate-y-1/2 absolute flex flex-col font-['Neue_Montreal:Regular',sans-serif] font-normal justify-center leading-[22px] left-[calc(50%-1px)] text-[#BFBFBF] text-[16px] top-[3638.41px]">
+      <div className="mx-auto mt-[38.39px] flex max-w-[770px] flex-col font-['Neue_Montreal:Regular',sans-serif] font-normal justify-center leading-[22px] text-[#BFBFBF] text-[16px]">
         <p className="mb-0">{`Construisons une identité et une expérience digitale capables de `}</p>
         <p>renforcer votre perception, votre crédibilité et votre ambition.</p>
       </div>
@@ -614,7 +616,7 @@ function CallToActionTexts() {
 
 function CallToActionButtonGroup() {
   return (
-    <div className="-translate-x-1/2 absolute left-1/2 top-[3712.79px]" data-name="Call to Action Button Group">
+    <div className="-translate-x-1/2 absolute left-1/2 top-[332.62px]" data-name="Call to Action Button Group">
       <div className="bg-white flex h-[49.577px] items-center justify-center rounded-[100px] w-[187.752px]" data-name="Reserve Call Button">
         <p className="font-['Neue_Montreal:Medium',sans-serif] font-medium leading-[normal] text-[#0e0e0e] text-[17px] text-center whitespace-nowrap">
           Réserver un appel
@@ -626,7 +628,7 @@ function CallToActionButtonGroup() {
 
 function CallToActionContainer() {
   return (
-    <div className="absolute contents left-[480.5px] top-[3497.02px]" data-name="Call to Action Container">
+    <div className="absolute inset-0" data-name="Call to Action Container">
       <CallToActionTexts />
       <CallToActionButtonGroup />
     </div>
@@ -635,8 +637,8 @@ function CallToActionContainer() {
 
 function TestimonialName() {
   return (
-    <div className="absolute contents left-[571px] top-[3441.87px]" data-name="Testimonial Name">
-      <div className="absolute content-stretch flex gap-[8.093px] h-[36px] items-center justify-center left-[571px] p-[6.07px] pointer-events-none rounded-[100px] top-[3441.87px] w-[298px] backdrop-blur-[6px]" data-name="Toolbar - Symbols">
+    <div className="absolute left-0 top-0" data-name="Testimonial Name">
+      <div className="absolute content-stretch flex gap-[8.093px] h-[36px] items-center justify-center left-0 p-[6.07px] pointer-events-none rounded-[100px] top-0 w-[298px] backdrop-blur-[6px]" data-name="Toolbar - Symbols">
         <svg aria-hidden="true" className="absolute inset-0 pointer-events-none" width="100%" height="100%" viewBox="0 0 298 36" fill="none" xmlns="http://www.w3.org/2000/svg">
           <rect x="0.354" y="0.354" width="297.292" height="35.292" rx="18" fill="#808080" fillOpacity="0.2" style={{ mixBlendMode: 'luminosity' }} />
           <rect x="0.354" y="0.354" width="297.292" height="35.292" rx="18" stroke="url(#chipGrad6)" strokeWidth="0.708" />
@@ -650,7 +652,7 @@ function TestimonialName() {
           </defs>
         </svg>
       </div>
-      <div className="-translate-x-full -translate-y-1/2 absolute flex flex-col font-['Neue_Montreal:Regular',sans-serif] font-normal justify-center leading-[0] left-[857.33px] text-[14.112px] text-center text-white top-[3459.57px] whitespace-nowrap">
+      <div className="-translate-x-full -translate-y-1/2 absolute flex flex-col font-['Neue_Montreal:Regular',sans-serif] font-normal justify-center leading-[0] left-[286.33px] text-[14.112px] text-center text-white top-[17.7px] whitespace-nowrap">
         <p className="leading-[normal]">Prêt à passer à la vitesse supérieure ?</p>
       </div>
     </div>
@@ -659,14 +661,14 @@ function TestimonialName() {
 
 function TestimonialInfo() {
   return (
-    <div className="-translate-x-1/2 absolute contents left-1/2 top-[3441.87px]" data-name="Testimonial Info">
+    <div className="absolute left-[295.5px] top-[61.7px]" data-name="Testimonial Info">
       <TestimonialName />
-      <div className="absolute left-[577.92px] size-[25.834px] top-[3446.39px]">
+      <div className="absolute left-[6.92px] size-[25.834px] top-[4.52px]">
         <svg className="absolute block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 25.8335 25.8335">
           <circle cx="12.9168" cy="12.9168" fill="var(--fill-0, #0D0D0D)" id="Ellipse 46954" r="12.9168" />
         </svg>
       </div>
-      <div className="absolute h-[9.314px] left-[583.63px] top-[3454.65px] w-[14.411px]" data-name="Logo Infinify 1">
+      <div className="absolute h-[9.314px] left-[12.63px] top-[12.78px] w-[14.411px]" data-name="Logo Infinify 1">
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <img alt="" className="absolute h-[138.86%] left-[-6.67%] max-w-none top-[-17.73%] w-[114.53%]" src={imgLogoInfinify1} />
         </div>
@@ -678,26 +680,21 @@ function TestimonialInfo() {
 function Cta() {
   const reduced = useReducedMotion();
   return (
-    <>
-      <motion.div
-        className="absolute left-0 top-0 w-full"
-        data-name="CTA"
-        initial={{ opacity: 0, y: reduced ? 0 : CARD_Y }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={TEAM_VIEWPORT}
-        transition={{ duration: CARD_DURATION, ease: CARD_EASE }}
-      >
-        <div className="absolute flex h-[439px] items-center justify-center left-[275.5px] top-[3380.17px] w-[889px]">
-          <div className="flex-none rotate-180">
-            <UpMe />
-          </div>
-        </div>
-        <EarthBackground />
-        <CtaBottomGradient />
-        <CallToActionContainer />
-        <TestimonialInfo />
-      </motion.div>
-    </>
+    <motion.div
+      className="absolute overflow-hidden rounded-[25px]"
+      data-name="CTA"
+      style={{ left: 275.5, top: 3380.17, width: 889, height: 439 }}
+      initial={{ opacity: 0, y: reduced ? 0 : CARD_Y }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.15 }}
+      transition={{ duration: CARD_DURATION, ease: CARD_EASE }}
+    >
+      <UpMe />
+      <EarthBackground />
+      <CtaBottomGradient />
+      <CallToActionContainer />
+      <TestimonialInfo />
+    </motion.div>
   );
 }
 
@@ -712,30 +709,15 @@ interface CarouselProject {
   description: string;
 }
 
-// Mindscale logo pill — exact replica of the original design
+// Mindscale logo aligned on the same left edge as the supporting copy
 function MindscalePill() {
   return (
-    <div className="relative rounded-[20.041px] bg-[#0e0e0e]" style={{ width: 136.82, height: 40.082 }}>
-      <div className="absolute inset-0 flex items-center justify-center">
-        <div
-          className="relative mask-alpha mask-intersect mask-no-clip mask-no-repeat"
-          style={{
-            width: 97.52,
-            height: 10.669,
-            maskImage: `url('${imgGroup}')`,
-            maskSize: '97.52px 10.669px',
-            maskPosition: '-0.316px -0.069px',
-          }}
-        >
-          <svg className="absolute block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 96.8878 10.5744">
-            <path d={svgPaths.p2c1f7d80} fill="white" />
-            <path d={svgPaths.p2e09c700} fill="#D52121" />
-            <path d={svgPaths.p39f52b00} fill="#D52121" />
-            <path d={svgPaths.p1c2f3000} fill="#B70F0F" />
-          </svg>
-        </div>
-      </div>
-    </div>
+    <img
+      src={imgMindscaleLogo}
+      alt="Mindscale"
+      className="block shrink-0 max-w-none object-contain"
+      style={{ width: 97.52, height: 10.669 }}
+    />
   );
 }
 
@@ -773,9 +755,6 @@ const CAROUSEL_PROJECTS: CarouselProject[] = [
   },
 ];
 
-const TOP_FRAME    = { left: 43.22, top: 0,      width: 405.781, height: 142.187 };
-const BOTTOM_FRAME = { left: 38.54, top: 463.44, width: 405.781, height: 142.19  };
-
 // ─── Tag helpers ─────────────────────────────────────────────────────────────
 
 function CarouselTagIconPage() {
@@ -804,7 +783,7 @@ function CarouselTagIconBuilding() {
 
 function CarouselTag({ label, icon }: { label: string; icon: 'page' | 'building' }) {
   return (
-    <div className="inline-flex items-center gap-[3px] bg-[rgba(0,92,236,0.1)] rounded-[11.904px] px-[9.83px] py-[5.59px]">
+    <div className="inline-flex items-center gap-[3px] bg-[rgba(21,99,237,0.1)] rounded-[11.904px] px-[9.83px] py-[5.59px]">
       {icon === 'page' ? <CarouselTagIconPage /> : <CarouselTagIconBuilding />}
       <span className="font-['Neue_Montreal:Medium',sans-serif] font-medium text-[#005cec] text-[10px] leading-none whitespace-nowrap">
         {label}
@@ -815,7 +794,8 @@ function CarouselTag({ label, icon }: { label: string; icon: 'page' | 'building'
 
 // ─── Realisations carousel ────────────────────────────────────────────────────
 
-const CARD_TRANSITION = { duration: 0.85, ease: [0.76, 0, 0.24, 1] } as const;
+const CARD_TRANSITION = { duration: 1.02, ease: [0.22, 1, 0.36, 1] } as const;
+const CAROUSEL_VIEWPORT_MASK = 'linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.42) 10%, black 20%, black 80%, rgba(0,0,0,0.42) 90%, transparent 100%)';
 
 type SlotName = 'above' | 'top' | 'center' | 'bottom' | 'below';
 
@@ -828,11 +808,47 @@ const CARD_SLOTS: Record<SlotName, { left: number; top: number; width: number; h
   below:  { left: 38.54, top: 650,    width: 405.781, height: 142.19,  opacity: 0, borderRadius: '0px 0px 15px 15px' },
 };
 
+const CARD_IMAGE_EFFECTS: Record<SlotName, { scale: number; y: number; filter: string }> = {
+  above:  { scale: 1.08, y: -18, filter: 'blur(5px) brightness(0.84) saturate(0.92)' },
+  top:    { scale: 1.04, y: -8,  filter: 'blur(1.5px) brightness(0.92) saturate(0.96)' },
+  center: { scale: 1,    y: 0,   filter: 'blur(0px) brightness(1) saturate(1)' },
+  bottom: { scale: 1.04, y: 8,   filter: 'blur(1.5px) brightness(0.92) saturate(0.96)' },
+  below:  { scale: 1.08, y: 18,  filter: 'blur(5px) brightness(0.84) saturate(0.92)' },
+};
+
 function relToSlot(rel: number): SlotName {
   if (rel === -1) return 'top';
   if (rel ===  0) return 'center';
   if (rel ===  1) return 'bottom';
   return rel < 0 ? 'above' : 'below';
+}
+
+function CarouselSlotOverlay({ slotName }: { slotName: SlotName }) {
+  const topOpacity = slotName === 'top' ? 1 : 0;
+  const bottomOpacity = slotName === 'bottom' ? 1 : 0;
+
+  return (
+    <>
+      <motion.div
+        aria-hidden="true"
+        className="absolute inset-0 pointer-events-none"
+        initial={false}
+        animate={{ opacity: topOpacity }}
+        transition={CARD_TRANSITION}
+      >
+        <div className="absolute inset-0 bg-gradient-to-b from-[rgba(209,209,209,0.72)] to-[rgba(255,255,255,0)]" />
+      </motion.div>
+      <motion.div
+        aria-hidden="true"
+        className="absolute inset-0 pointer-events-none"
+        initial={false}
+        animate={{ opacity: bottomOpacity }}
+        transition={CARD_TRANSITION}
+      >
+        <div className="absolute inset-0 bg-gradient-to-t from-[rgba(209,209,209,0.72)] to-[rgba(255,255,255,0)]" />
+      </motion.div>
+    </>
+  );
 }
 
 function Realisations() {
@@ -853,43 +869,63 @@ function Realisations() {
     <div className="absolute" style={{ left: 166.28, top: 1472.03, width: 957, height: 606 }} data-name="Réalisations">
 
       {/* ── Card stack ── overflow:hidden clip les cartes hors-zone ──────── */}
-      <div className="absolute overflow-hidden" style={{ width: 483, height: 606 }}>
+      <div
+        className="absolute overflow-hidden"
+        style={{
+          width: 483,
+          height: 606,
+          WebkitMaskImage: CAROUSEL_VIEWPORT_MASK,
+          maskImage: CAROUSEL_VIEWPORT_MASK,
+          WebkitMaskRepeat: 'no-repeat',
+          maskRepeat: 'no-repeat',
+          WebkitMaskSize: '100% 100%',
+          maskSize: '100% 100%',
+        }}
+      >
         {cells.map(p => {
           const rel      = p - pos;
           const slotName = relToSlot(rel);
           const slot     = CARD_SLOTS[slotName];
           const projIdx  = ((p % total) + total) % total;
+          const imageEffect = CARD_IMAGE_EFFECTS[slotName];
 
           return (
             <motion.div
               key={p}
               className="absolute overflow-hidden bg-[#0e0e0e]"
-              style={{ zIndex: slotName === 'center' ? 2 : 1 }}
+              style={{
+                zIndex: slotName === 'center' ? 2 : 1,
+                backfaceVisibility: 'hidden',
+                transform: 'translateZ(0)',
+                willChange: 'transform, opacity, border-radius, width, height',
+              }}
               initial={false}
               animate={slot}
               transition={CARD_TRANSITION}
             >
-              <img
+              <motion.img
                 src={CAROUSEL_PROJECTS[projIdx].image}
                 alt=""
-                className="absolute inset-0 size-full max-w-none object-cover"
+                className="absolute max-w-none object-cover"
+                style={{
+                  left: -10,
+                  top: -10,
+                  width: 'calc(100% + 20px)',
+                  height: 'calc(100% + 20px)',
+                  backfaceVisibility: 'hidden',
+                  transform: 'translateZ(0)',
+                }}
+                initial={false}
+                animate={imageEffect}
+                transition={CARD_TRANSITION}
                 loading="lazy"
                 decoding="async"
               />
+              <CarouselSlotOverlay slotName={slotName} />
               <div className="absolute inset-0 shadow-[inset_0px_0px_10px_0px_rgba(104,104,104,0.25)]" />
             </motion.div>
           );
         })}
-
-        {/* Gradient masks fixes — fondu sur top et bottom */}
-        <div className="absolute pointer-events-none z-10 overflow-hidden rounded-tl-[15px] rounded-tr-[15px]"
-          style={{ left: TOP_FRAME.left, top: TOP_FRAME.top, width: TOP_FRAME.width, height: TOP_FRAME.height }}>
-          <div className="absolute inset-0 bg-gradient-to-b from-[rgba(209,209,209,0.88)] to-[rgba(255,255,255,0)]" />
-        </div>
-        <div className="absolute pointer-events-none z-10 overflow-hidden rounded-bl-[15px] rounded-br-[15px]"
-          style={{ left: BOTTOM_FRAME.left, top: BOTTOM_FRAME.top, width: BOTTOM_FRAME.width, height: BOTTOM_FRAME.height }}>
-          <div className="absolute inset-0 bg-gradient-to-t from-[rgba(209,209,209,0.88)] to-[rgba(255,255,255,0)]" />
-        </div>
       </div>
 
       {/* ── Chevrons ─────────────────────────────────────────────────────── */}
@@ -921,7 +957,7 @@ function Realisations() {
       </div>
 
       {/* ── Text block ───────────────────────────────────────────────────── */}
-      <div className="absolute" style={{ left: 606.44, top: 195.1, width: 461.91, height: 147.21 }}>
+      <div className="absolute" style={{ left: 606.44, top: 229.21, width: 461.91, height: 147.21 }}>
         {/* Testimonial Background SVG */}
         <svg className="absolute inset-0 size-full" viewBox="0 0 461.913 147.206" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
           <g filter="url(#tbFilter0)">
@@ -1146,7 +1182,7 @@ function FeatureSection() {
 function DropdownBackground() {
   return (
     <div className="col-1 grid-cols-[max-content] grid-rows-[max-content] inline-grid ml-0 mt-0 place-items-start relative row-1" data-name="Dropdown Background">
-      <div className="bg-[rgba(0,92,236,0.1)] col-1 h-[24.174px] ml-0 mt-0 rounded-[11.904px] row-1 w-[99.348px]" />
+      <div className="bg-[rgba(21,99,237,0.1)] col-1 h-[24.174px] ml-0 mt-0 rounded-[11.904px] row-1 w-[99.348px]" />
     </div>
   );
 }
@@ -1188,7 +1224,7 @@ function MainNavigationLink() {
 function DropdownBackground1() {
   return (
     <div className="col-1 grid-cols-[max-content] grid-rows-[max-content] inline-grid ml-0 mt-0 place-items-start relative row-1" data-name="Dropdown Background">
-      <div className="bg-[rgba(0,92,236,0.1)] col-1 h-[24.174px] ml-0 mt-0 rounded-[11.904px] row-1 w-[72.789px]" />
+      <div className="bg-[rgba(21,99,237,0.1)] col-1 h-[24.174px] ml-0 mt-0 rounded-[11.904px] row-1 w-[72.789px]" />
     </div>
   );
 }
@@ -1702,10 +1738,10 @@ function InfinifyMask() {
     <motion.div
       className="-translate-x-1/2 absolute h-[353px] left-[calc(50%-3.55px)] top-[3921.3px] w-[1057px]"
       data-name="Infinify Mask"
-      initial={{ opacity: 0, y: reduced ? 0 : SECTION_Y }}
+      initial={{ opacity: 0, y: reduced ? 0 : CARD_Y }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={SECTION_VIEWPORT}
-      transition={{ duration: SECTION_DURATION + 0.05, ease: SECTION_EASE }}
+      viewport={TEAM_VIEWPORT}
+      transition={{ duration: CARD_DURATION, ease: CARD_EASE, delay: 0.15 }}
     >
       <div className="-translate-x-1/2 -translate-y-1/2 absolute flex flex-col font-['Geist:SemiBold',sans-serif] font-semibold justify-center leading-[0] left-[528.5px] mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[-19.5px_0px] mask-size-[1056.66px_353.049px] text-[#d8d8d8] text-[300px] text-center top-[195px] whitespace-nowrap" style={{ maskImage: `url('${imgInfinify}')` }}>
         <p className="leading-[normal]">Infinify</p>
@@ -1912,6 +1948,9 @@ function TestimonialColumn1() {
 const CARD_EASE = [0.16, 1, 0.3, 1] as const;
 const CARD_DURATION = 0.95;
 const CARD_Y = 60;
+const FOOTER_EASE = [0.22, 1, 0.36, 1] as const;
+const FOOTER_DURATION = CARD_DURATION * 1.2;
+const FOOTER_Y = 48;
 
 function Team() {
   const reduced = useReducedMotion();
@@ -2368,14 +2407,21 @@ function Content() {
 }
 
 function Hero() {
+  const reduced = useReducedMotion();
   return (
-    <div className="content-stretch flex flex-col h-[700px] items-center justify-end overflow-clip pb-[64.111px] relative rounded-[32.055px] shrink-0 w-[1400px] border border-black" data-name="Hero">
+    <motion.div
+      className="content-stretch flex flex-col h-[700px] items-center justify-end overflow-clip pb-[64.111px] relative rounded-[32.055px] shrink-0 w-[1400px] border border-black"
+      data-name="Hero"
+      initial={{ opacity: 0, y: reduced ? 0 : 24 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: HERO_INTRO_DURATION, ease: SECTION_EASE, delay: 0 }}
+    >
       <div aria-hidden="true" className="absolute inset-0 pointer-events-none">
         <img alt="" className="absolute w-full h-auto left-0" src={imgHero} decoding="async" fetchPriority="high" style={{ top: '' }} />
         <div className="absolute bg-gradient-to-b from-[45%] from-[rgba(2,2,2,0)] inset-0 to-black" />
       </div>
       <Content />
-    </div>
+    </motion.div>
   );
 }
 
