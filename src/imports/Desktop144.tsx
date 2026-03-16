@@ -2,12 +2,11 @@ import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
 import svgPaths from "./svg-6slkny0mf7";
 import imgEarthBackground from "../../img.png";
-import imgDesktop144 from "../assets/050199014e18c0cb60e9c252c2ef39002648cc6a.png";
 import imgLogoInfinify1 from "../assets/bf1d602331298fa70e56da6d7bd2fe71a3de2b7a.png";
 import imgCardImage from "../assets/cd7a05401aabdba4cde42cc5ba650095bf45699b.png";
 import imgTestimonialImage from "../assets/a77190103db78e6334f030692996578c4825b66d.png";
 import imgTestimonialImage1 from "../assets/dec5cbce46710d057f06833cca1d54055e9a4ed5.png";
-import imgHero from "../assets/ddfa34054bfd6efd1effd17a798c9746bde8d5f1.png";
+import imgHero from "../assets/bg.png";
 import { imgGroup, imgOffres, imgInfinify, imgTeam, imgFrame, imgGroup1 } from "./svg-ithsc";
 
 const SECTION_EASE = [0.16, 1, 0.3, 1] as const;
@@ -34,9 +33,19 @@ function BackgroundContainer() {
 function NameAndIcon() {
   return (
     <div className="col-1 grid-cols-[max-content] grid-rows-[max-content] inline-grid ml-0 mt-0 place-items-start relative row-1" data-name="Name and Icon">
-      <div className="col-1 content-stretch flex gap-[10.318px] h-[44.622px] items-center justify-center ml-0 mt-0 p-[7.738px] pointer-events-none relative rounded-[100px] row-1 w-[124.943px]" data-name="Toolbar - Symbols">
-        <div aria-hidden="true" className="absolute backdrop-blur-[32.243px] bg-[rgba(128,128,128,0.2)] inset-0 mix-blend-luminosity rounded-[100px]" />
-        <div aria-hidden="true" className="absolute inset-0 rounded-[100px]" style={{ boxShadow: 'inset 0 0.903px 0 rgba(255,255,255,0.4), inset 0 -0.903px 0 rgba(255,255,255,0.1), inset 0.903px 0 0 rgba(255,255,255,0.15), inset -0.903px 0 0 rgba(255,255,255,0.15)' }} />
+      <div className="col-1 content-stretch flex gap-[10.318px] h-[44.622px] items-center justify-center ml-0 mt-0 p-[7.738px] pointer-events-none relative rounded-[100px] row-1 w-[124.943px] backdrop-blur-[6px]" data-name="Toolbar - Symbols">
+        <svg aria-hidden="true" className="absolute inset-0 pointer-events-none" width="100%" height="100%" viewBox="0 0 124.943 44.622" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="0.354" y="0.354" width="124.235" height="43.914" rx="22.311" fill="#808080" fillOpacity="0.2" style={{ mixBlendMode: 'luminosity' }} />
+          <rect x="0.354" y="0.354" width="124.235" height="43.914" rx="22.311" stroke="url(#chipGrad1)" strokeWidth="0.708" />
+          <defs>
+            <linearGradient id="chipGrad1" x1="0.5" y1="0" x2="0.5" y2="1" gradientUnits="objectBoundingBox">
+              <stop stopColor="white" stopOpacity="0.4" />
+              <stop offset="0.405687" stopColor="white" stopOpacity="0.01" />
+              <stop offset="0.574372" stopColor="white" stopOpacity="0.01" />
+              <stop offset="1" stopColor="white" stopOpacity="0.1" />
+            </linearGradient>
+          </defs>
+        </svg>
       </div>
       <div className="col-1 flex flex-col font-['Geist:Regular',sans-serif] font-normal justify-center ml-[51.67px] mt-[10.07px] relative row-1 text-[17.991px] text-center text-white whitespace-nowrap">
         <p className="leading-[normal]">Infinify</p>
@@ -77,9 +86,19 @@ function ContentColumn() {
 function PoliciesSectionInner() {
   return (
     <div className="col-1 grid-cols-[max-content] grid-rows-[max-content] inline-grid ml-0 mt-0 place-items-center relative row-1" data-name="Policies Section Inner">
-      <div className="col-1 content-stretch flex gap-[10.318px] h-[44px] items-center justify-center ml-0 mt-0 p-[7.738px] pointer-events-none relative rounded-[100px] row-1 w-[119px]" data-name="Toolbar - Symbols">
-        <div aria-hidden="true" className="absolute backdrop-blur-[32.243px] bg-[rgba(128,128,128,0.2)] inset-0 mix-blend-luminosity rounded-[100px]" />
-        <div aria-hidden="true" className="absolute inset-0 rounded-[100px]" style={{ boxShadow: 'inset 0 0.903px 0 rgba(255,255,255,0.4), inset 0 -0.903px 0 rgba(255,255,255,0.1), inset 0.903px 0 0 rgba(255,255,255,0.15), inset -0.903px 0 0 rgba(255,255,255,0.15)' }} />
+      <div className="col-1 content-stretch flex gap-[10.318px] h-[44px] items-center justify-center ml-0 mt-0 p-[7.738px] pointer-events-none relative rounded-[100px] row-1 w-[119px] backdrop-blur-[6px]" data-name="Toolbar - Symbols">
+        <svg aria-hidden="true" className="absolute inset-0 pointer-events-none" width="100%" height="100%" viewBox="0 0 119 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="0.354" y="0.354" width="118.292" height="43.292" rx="22" fill="#808080" fillOpacity="0.2" style={{ mixBlendMode: 'luminosity' }} />
+          <rect x="0.354" y="0.354" width="118.292" height="43.292" rx="22" stroke="url(#chipGrad2)" strokeWidth="0.708" />
+          <defs>
+            <linearGradient id="chipGrad2" x1="0.5" y1="0" x2="0.5" y2="1" gradientUnits="objectBoundingBox">
+              <stop stopColor="white" stopOpacity="0.4" />
+              <stop offset="0.405687" stopColor="white" stopOpacity="0.01" />
+              <stop offset="0.574372" stopColor="white" stopOpacity="0.01" />
+              <stop offset="1" stopColor="white" stopOpacity="0.1" />
+            </linearGradient>
+          </defs>
+        </svg>
       </div>
       <div className="col-1 flex flex-col font-['Neue_Montreal:Regular',sans-serif] font-normal h-[44px] items-center justify-center relative row-1 text-[17.991px] text-center text-white whitespace-nowrap">
         <p className="leading-[normal]">Politiques</p>
@@ -99,9 +118,19 @@ function PoliciesSection() {
 function SocialMediaSectionInner() {
   return (
     <div className="col-1 grid-cols-[max-content] grid-rows-[max-content] inline-grid ml-0 mt-0 place-items-center relative row-1" data-name="Social Media Section Inner">
-      <div className="col-1 content-stretch flex gap-[10.318px] h-[44px] items-center justify-center ml-0 mt-0 p-[7.738px] pointer-events-none relative rounded-[100px] row-1 w-[119px]" data-name="Toolbar - Symbols">
-        <div aria-hidden="true" className="absolute backdrop-blur-[32.243px] bg-[rgba(128,128,128,0.2)] inset-0 mix-blend-luminosity rounded-[100px]" />
-        <div aria-hidden="true" className="absolute inset-0 rounded-[100px]" style={{ boxShadow: 'inset 0 0.903px 0 rgba(255,255,255,0.4), inset 0 -0.903px 0 rgba(255,255,255,0.1), inset 0.903px 0 0 rgba(255,255,255,0.15), inset -0.903px 0 0 rgba(255,255,255,0.15)' }} />
+      <div className="col-1 content-stretch flex gap-[10.318px] h-[44px] items-center justify-center ml-0 mt-0 p-[7.738px] pointer-events-none relative rounded-[100px] row-1 w-[119px] backdrop-blur-[6px]" data-name="Toolbar - Symbols">
+        <svg aria-hidden="true" className="absolute inset-0 pointer-events-none" width="100%" height="100%" viewBox="0 0 119 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="0.354" y="0.354" width="118.292" height="43.292" rx="22" fill="#808080" fillOpacity="0.2" style={{ mixBlendMode: 'luminosity' }} />
+          <rect x="0.354" y="0.354" width="118.292" height="43.292" rx="22" stroke="url(#chipGrad3)" strokeWidth="0.708" />
+          <defs>
+            <linearGradient id="chipGrad3" x1="0.5" y1="0" x2="0.5" y2="1" gradientUnits="objectBoundingBox">
+              <stop stopColor="white" stopOpacity="0.4" />
+              <stop offset="0.405687" stopColor="white" stopOpacity="0.01" />
+              <stop offset="0.574372" stopColor="white" stopOpacity="0.01" />
+              <stop offset="1" stopColor="white" stopOpacity="0.1" />
+            </linearGradient>
+          </defs>
+        </svg>
       </div>
       <div className="col-1 flex flex-col font-['Neue_Montreal:Regular',sans-serif] font-normal h-[44px] items-center justify-center relative row-1 text-[17.991px] text-center text-white whitespace-nowrap">
         <p className="leading-[normal]">Réseaux</p>
@@ -575,7 +604,7 @@ function CallToActionTexts() {
         <p className="mb-0">{`Donnez à votre marque la `}</p>
         <p>présence qu’elle mérite</p>
       </div>
-      <div className="-translate-x-1/2 -translate-y-1/2 absolute flex flex-col font-['Neue_Montreal:Regular',sans-serif] font-normal justify-center leading-[22px] left-[calc(50%-1px)] text-[#686868] text-[16px] top-[3638.41px]">
+      <div className="-translate-x-1/2 -translate-y-1/2 absolute flex flex-col font-['Neue_Montreal:Regular',sans-serif] font-normal justify-center leading-[22px] left-[calc(50%-1px)] text-[#BFBFBF] text-[16px] top-[3638.41px]">
         <p className="mb-0">{`Construisons une identité et une expérience digitale capables de `}</p>
         <p>renforcer votre perception, votre crédibilité et votre ambition.</p>
       </div>
@@ -607,11 +636,21 @@ function CallToActionContainer() {
 function TestimonialName() {
   return (
     <div className="absolute contents left-[571px] top-[3441.87px]" data-name="Testimonial Name">
-      <div className="absolute content-stretch flex gap-[8.093px] h-[36px] items-center justify-center left-[571px] p-[6.07px] pointer-events-none rounded-[100px] top-[3441.87px] w-[298px]" data-name="Toolbar - Symbols">
-        <div aria-hidden="true" className="absolute backdrop-blur-[25.29px] bg-[rgba(128,128,128,0.2)] inset-0 mix-blend-luminosity rounded-[100px]" />
-        <div aria-hidden="true" className="absolute inset-0 rounded-[100px]" style={{ boxShadow: 'inset 0 0.708px 0 rgba(255,255,255,0.4), inset 0 -0.708px 0 rgba(255,255,255,0.1), inset 0.708px 0 0 rgba(255,255,255,0.15), inset -0.708px 0 0 rgba(255,255,255,0.15)' }} />
+      <div className="absolute content-stretch flex gap-[8.093px] h-[36px] items-center justify-center left-[571px] p-[6.07px] pointer-events-none rounded-[100px] top-[3441.87px] w-[298px] backdrop-blur-[6px]" data-name="Toolbar - Symbols">
+        <svg aria-hidden="true" className="absolute inset-0 pointer-events-none" width="100%" height="100%" viewBox="0 0 298 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="0.354" y="0.354" width="297.292" height="35.292" rx="18" fill="#808080" fillOpacity="0.2" style={{ mixBlendMode: 'luminosity' }} />
+          <rect x="0.354" y="0.354" width="297.292" height="35.292" rx="18" stroke="url(#chipGrad6)" strokeWidth="0.708" />
+          <defs>
+            <linearGradient id="chipGrad6" x1="0.5" y1="0" x2="0.5" y2="1" gradientUnits="objectBoundingBox">
+              <stop stopColor="white" stopOpacity="0.4" />
+              <stop offset="0.405687" stopColor="white" stopOpacity="0.01" />
+              <stop offset="0.574372" stopColor="white" stopOpacity="0.01" />
+              <stop offset="1" stopColor="white" stopOpacity="0.1" />
+            </linearGradient>
+          </defs>
+        </svg>
       </div>
-      <div className="-translate-x-1/2 -translate-y-1/2 absolute flex flex-col font-['Neue_Montreal:Regular',sans-serif] font-normal justify-center leading-[0] left-1/2 text-[14.112px] text-center text-white top-[3459.57px] whitespace-nowrap">
+      <div className="-translate-x-full -translate-y-1/2 absolute flex flex-col font-['Neue_Montreal:Regular',sans-serif] font-normal justify-center leading-[0] left-[857.33px] text-[14.112px] text-center text-white top-[3459.57px] whitespace-nowrap">
         <p className="leading-[normal]">Prêt à passer à la vitesse supérieure ?</p>
       </div>
     </div>
@@ -637,21 +676,15 @@ function TestimonialInfo() {
 }
 
 function Cta() {
-  const ctaTriggerRef = useRef<HTMLDivElement | null>(null);
-  const isCtaInView = useInView(ctaTriggerRef, { once: true, amount: 0.7 });
   const reduced = useReducedMotion();
   return (
     <>
-      <div
-        aria-hidden="true"
-        className="-translate-x-1/2 absolute h-[439px] left-1/2 pointer-events-none top-[3380.17px] w-[889px]"
-        ref={ctaTriggerRef}
-      />
       <motion.div
         className="absolute left-0 top-0 w-full"
         data-name="CTA"
         initial={{ opacity: 0, y: reduced ? 0 : CARD_Y }}
-        animate={isCtaInView ? { opacity: 1, y: 0 } : { opacity: 0, y: reduced ? 0 : CARD_Y }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={TEAM_VIEWPORT}
         transition={{ duration: CARD_DURATION, ease: CARD_EASE }}
       >
         <div className="absolute flex h-[439px] items-center justify-center left-[275.5px] top-[3380.17px] w-[889px]">
@@ -716,7 +749,7 @@ const CAROUSEL_PROJECTS: CarouselProject[] = [
       { label: 'Landing page', icon: 'page' },
       { label: 'Agence',       icon: 'building' },
     ],
-    description: "Mindscale est une entreprise spécialisée dans l’optimisation\ndes tunnels de vente grâce à l’intelligence comportementale et à l’IA.",
+    description: "Mindscale est une entreprise spécialisée dans l’optimisation des\ntunnels de vente grâce à l’intelligence comportementale et à l’IA.",
   },
   {
     id: 1,
@@ -741,7 +774,6 @@ const CAROUSEL_PROJECTS: CarouselProject[] = [
 ];
 
 const TOP_FRAME    = { left: 43.22, top: 0,      width: 405.781, height: 142.187 };
-const CENTER_FRAME = { left: 0,     top: 157.14, width: 482.868, height: 291.353 };
 const BOTTOM_FRAME = { left: 38.54, top: 463.44, width: 405.781, height: 142.19  };
 
 // ─── Tag helpers ─────────────────────────────────────────────────────────────
@@ -781,65 +813,91 @@ function CarouselTag({ label, icon }: { label: string; icon: 'page' | 'building'
   );
 }
 
-// ─── Realisations carousel ───────────────────────────────────────────────────
+// ─── Realisations carousel ────────────────────────────────────────────────────
+
+const CARD_TRANSITION = { duration: 0.85, ease: [0.76, 0, 0.24, 1] } as const;
+
+type SlotName = 'above' | 'top' | 'center' | 'bottom' | 'below';
+
+// Chaque slot définit la géométrie exacte de la carte dans cette position
+const CARD_SLOTS: Record<SlotName, { left: number; top: number; width: number; height: number; opacity: number; borderRadius: string }> = {
+  above:  { left: 43.22, top: -170,   width: 405.781, height: 142.187, opacity: 0, borderRadius: '15px 15px 0px 0px' },
+  top:    { left: 43.22, top: 0,      width: 405.781, height: 142.187, opacity: 1, borderRadius: '15px 15px 0px 0px' },
+  center: { left: 0,     top: 157.14, width: 482.868, height: 291.353, opacity: 1, borderRadius: '15px 15px 15px 15px' },
+  bottom: { left: 38.54, top: 463.44, width: 405.781, height: 142.19,  opacity: 1, borderRadius: '0px 0px 15px 15px' },
+  below:  { left: 38.54, top: 650,    width: 405.781, height: 142.19,  opacity: 0, borderRadius: '0px 0px 15px 15px' },
+};
+
+function relToSlot(rel: number): SlotName {
+  if (rel === -1) return 'top';
+  if (rel ===  0) return 'center';
+  if (rel ===  1) return 'bottom';
+  return rel < 0 ? 'above' : 'below';
+}
 
 function Realisations() {
-  const [activeIndex, setActiveIndex] = useState(0);
   const total = CAROUSEL_PROJECTS.length;
+  const [pos, setPos]                 = useState(0); // position linéaire cumulative
+  const [activeIndex, setActiveIndex] = useState(0);
 
   const go = (delta: number) => {
     if (total < 2) return;
+    setPos(p => p + delta);
     setActiveIndex(i => (i + delta + total) % total);
   };
 
   const project = CAROUSEL_PROJECTS[activeIndex];
+  const cells   = [pos - 2, pos - 1, pos, pos + 1, pos + 2];
 
   return (
     <div className="absolute" style={{ left: 166.28, top: 1472.03, width: 957, height: 606 }} data-name="Réalisations">
 
-      {/* Cards stack */}
-      <div className="absolute inset-0">
-        <div
-          className="absolute overflow-hidden pointer-events-none rounded-tl-[15px] rounded-tr-[15px]"
-          style={{ left: TOP_FRAME.left, top: TOP_FRAME.top, width: TOP_FRAME.width, height: TOP_FRAME.height }}
-        >
+      {/* ── Card stack ── overflow:hidden clip les cartes hors-zone ──────── */}
+      <div className="absolute overflow-hidden" style={{ width: 483, height: 606 }}>
+        {cells.map(p => {
+          const rel      = p - pos;
+          const slotName = relToSlot(rel);
+          const slot     = CARD_SLOTS[slotName];
+          const projIdx  = ((p % total) + total) % total;
+
+          return (
+            <motion.div
+              key={p}
+              className="absolute overflow-hidden bg-[#0e0e0e]"
+              style={{ zIndex: slotName === 'center' ? 2 : 1 }}
+              initial={false}
+              animate={slot}
+              transition={CARD_TRANSITION}
+            >
+              <img
+                src={CAROUSEL_PROJECTS[projIdx].image}
+                alt=""
+                className="absolute inset-0 size-full max-w-none object-cover"
+                loading="lazy"
+                decoding="async"
+              />
+              <div className="absolute inset-0 shadow-[inset_0px_0px_10px_0px_rgba(104,104,104,0.25)]" />
+            </motion.div>
+          );
+        })}
+
+        {/* Gradient masks fixes — fondu sur top et bottom */}
+        <div className="absolute pointer-events-none z-10 overflow-hidden rounded-tl-[15px] rounded-tr-[15px]"
+          style={{ left: TOP_FRAME.left, top: TOP_FRAME.top, width: TOP_FRAME.width, height: TOP_FRAME.height }}>
           <div className="absolute inset-0 bg-gradient-to-b from-[rgba(209,209,209,0.88)] to-[rgba(255,255,255,0)]" />
         </div>
-
-        <div
-          className="absolute overflow-hidden pointer-events-none rounded-[15px] bg-[#0e0e0e]"
-          style={{ left: CENTER_FRAME.left, top: CENTER_FRAME.top, width: CENTER_FRAME.width, height: CENTER_FRAME.height }}
-        >
-          <img alt="" className="absolute inset-0 max-w-none object-cover size-full" src={project.image} loading="lazy" decoding="async" />
-          <div className="absolute inset-0 shadow-[inset_0px_0px_10px_0px_rgba(104,104,104,0.25)]" />
-        </div>
-
-        <div
-          className="absolute overflow-hidden pointer-events-none rounded-bl-[15px] rounded-br-[15px]"
-          style={{ left: BOTTOM_FRAME.left, top: BOTTOM_FRAME.top, width: BOTTOM_FRAME.width, height: BOTTOM_FRAME.height }}
-        >
+        <div className="absolute pointer-events-none z-10 overflow-hidden rounded-bl-[15px] rounded-br-[15px]"
+          style={{ left: BOTTOM_FRAME.left, top: BOTTOM_FRAME.top, width: BOTTOM_FRAME.width, height: BOTTOM_FRAME.height }}>
           <div className="absolute inset-0 bg-gradient-to-t from-[rgba(209,209,209,0.88)] to-[rgba(255,255,255,0)]" />
         </div>
       </div>
 
-      {/* Chevrons — pill wrapping both buttons */}
-      <div
-        className="absolute overflow-hidden rounded-[100px]"
-        style={{ left: 523.65, top: 261.75, width: 42.344, height: 82.122 }}
-      >
-        {/* Frosted pill background */}
+      {/* ── Chevrons ─────────────────────────────────────────────────────── */}
+      <div className="absolute overflow-hidden rounded-[100px]"
+        style={{ left: 523.65, top: 261.75, width: 42.344, height: 82.122 }}>
         <div aria-hidden="true" className="absolute inset-0 backdrop-blur-[30px] bg-[#d9d9d9] mix-blend-luminosity pointer-events-none" />
-
-        {/* Buttons stacked inside pill */}
         <div className="relative z-10 flex flex-col items-center justify-center h-full gap-[4.908px]">
-
-          {/* Prev (up) */}
-          <button
-            onClick={() => go(-1)}
-            className="relative cursor-pointer flex-none"
-            style={{ width: 28.502, height: 28.502 }}
-            aria-label="Précédent"
-          >
+          <button onClick={() => go(-1)} className="relative cursor-pointer flex-none" style={{ width: 28.502, height: 28.502 }} aria-label="Précédent">
             <svg className="absolute inset-0 size-full" fill="none" viewBox="0 0 28.5016 28.5016">
               <circle cx="14.2508" cy="14.2508" fill="white" r="14.2508" />
             </svg>
@@ -849,14 +907,7 @@ function Realisations() {
               </svg>
             </div>
           </button>
-
-          {/* Next (down) */}
-          <button
-            onClick={() => go(1)}
-            className="relative cursor-pointer flex-none"
-            style={{ width: 28.502, height: 28.502 }}
-            aria-label="Suivant"
-          >
+          <button onClick={() => go(1)} className="relative cursor-pointer flex-none" style={{ width: 28.502, height: 28.502 }} aria-label="Suivant">
             <svg className="absolute inset-0 size-full" fill="none" viewBox="0 0 28.5016 28.5016">
               <circle cx="14.2508" cy="14.2508" fill="#BEBEBE" r="14.2508" />
             </svg>
@@ -866,32 +917,82 @@ function Realisations() {
               </svg>
             </div>
           </button>
-
         </div>
       </div>
 
-      <div className="absolute flex flex-col" style={{ left: 606.44, top: 195.1 }}>
-        {project.brandContent ?? (
-          <div className="relative flex items-center justify-center rounded-[20.041px] bg-[#0e0e0e]" style={{ width: 136.82, height: 40.082 }}>
-            <span className="font-['Geist:SemiBold',sans-serif] font-semibold text-white text-[11px] tracking-[0.05em] whitespace-nowrap">
-              {project.brandLabel}
-            </span>
-          </div>
-        )}
-        <div className="flex gap-[6px] items-center" style={{ marginTop: 21.48 }}>
-          {project.tags.map(tag => (
-            <CarouselTag key={tag.label} label={tag.label} icon={tag.icon} />
-          ))}
-        </div>
-        <div
-          className="font-['Neue_Montreal:Regular',sans-serif] font-normal text-[#686868] text-[16px] leading-[22px]"
-          style={{ marginTop: 21.29 }}
-        >
-          {project.description.split('\n').map((line, index) => (
-            <p key={`${project.id}-desc-${index}`} className={index === 0 ? 'mb-0 whitespace-nowrap' : 'whitespace-nowrap'}>
-              {line}
-            </p>
-          ))}
+      {/* ── Text block ───────────────────────────────────────────────────── */}
+      <div className="absolute" style={{ left: 606.44, top: 195.1, width: 461.91, height: 147.21 }}>
+        {/* Testimonial Background SVG */}
+        <svg className="absolute inset-0 size-full" viewBox="0 0 461.913 147.206" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+          <g filter="url(#tbFilter0)">
+            <path d="M461.913 62.6758H0V127.206C0 138.252 8.95432 147.206 20 147.206H441.913C452.959 147.206 461.913 138.252 461.913 127.206V62.6758Z" fill="white"/>
+          </g>
+          <g filter="url(#tbFilter1)">
+            <path d="M461.913 20C461.913 8.95431 452.959 0 441.913 0H20.001C8.95529 0 0.000976562 8.95431 0.000976562 20V62.6758H461.913V20Z" fill="url(#tbGrad)"/>
+          </g>
+          <defs>
+            <filter id="tbFilter0" x="0" y="62.6758" width="461.913" height="84.5304" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+              <feFlood floodOpacity="0" result="BackgroundImageFix"/>
+              <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+              <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+              <feOffset/><feGaussianBlur stdDeviation="5"/>
+              <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1"/>
+              <feColorMatrix type="matrix" values="0 0 0 0 0.405912 0 0 0 0 0.405912 0 0 0 0 0.405912 0 0 0 0.25 0"/>
+              <feBlend mode="normal" in2="shape" result="effect1_innerShadow"/>
+            </filter>
+            <filter id="tbFilter1" x="0.000976562" y="0" width="461.912" height="62.6758" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+              <feFlood floodOpacity="0" result="BackgroundImageFix"/>
+              <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+              <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+              <feOffset/><feGaussianBlur stdDeviation="5"/>
+              <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1"/>
+              <feColorMatrix type="matrix" values="0 0 0 0 0.405912 0 0 0 0 0.405912 0 0 0 0 0.405912 0 0 0 0.25 0"/>
+              <feBlend mode="normal" in2="shape" result="effect1_innerShadow"/>
+            </filter>
+            <linearGradient id="tbGrad" x1="230.957" y1="0" x2="230.957" y2="62.6758" gradientUnits="userSpaceOnUse">
+              <stop stopColor="#181818"/>
+              <stop offset="1" stopColor="#171717"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <div className="relative flex flex-col" style={{ width: 461.91, height: 147.21 }}>
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeIndex}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3, ease: 'easeInOut' }}
+            className="flex flex-col"
+            style={{ height: 147.21 }}
+          >
+            {/* Dark header zone */}
+            <div className="flex items-center" style={{ height: 62.68, marginLeft: 26.04, flexShrink: 0 }}>
+              {project.brandContent ?? (
+                <div className="relative flex items-center justify-center rounded-[20.041px] bg-[#0e0e0e]" style={{ width: 136.82, height: 40.082 }}>
+                  <span className="font-['Geist:SemiBold',sans-serif] font-semibold text-white text-[11px] tracking-[0.05em] whitespace-nowrap">
+                    {project.brandLabel}
+                  </span>
+                </div>
+              )}
+              <div className="flex items-center" style={{ marginLeft: 28.45, gap: 6 }}>
+                {project.tags.map(tag => (
+                  <CarouselTag key={tag.label} label={tag.label} icon={tag.icon} />
+                ))}
+              </div>
+            </div>
+            {/* White body zone — text centré verticalement */}
+            <div className="flex items-center" style={{ height: 84.53, paddingLeft: 26.04 }}>
+              <div className="font-['Neue_Montreal:Regular',sans-serif] font-normal text-[#0E0E0E] text-[15px] leading-[22px]">
+                {project.description.split('\n').map((line, index) => (
+                  <p key={`${project.id}-desc-${index}`} className={index === 0 ? 'mb-0 whitespace-nowrap' : 'whitespace-nowrap'}>
+                    {line}
+                  </p>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+        </AnimatePresence>
         </div>
       </div>
 
@@ -1494,11 +1595,22 @@ function OfferCard({ animateIn }: { animateIn: boolean }) {
                 <div className="content-stretch flex gap-[11px] items-center leading-[0] relative shrink-0 w-full" ref={priceRowRef}>
                   <div className="col-1 grid-cols-[max-content] grid-rows-[max-content] inline-grid ml-0 mt-0 place-items-start relative row-1">
                     <div
-                      className="col-1 content-stretch flex h-[36.73px] items-center justify-center ml-0 mt-0 p-[6.249px] pointer-events-none relative rounded-[7.346px] row-1"
+                      aria-hidden="true"
+                      className="col-1 pointer-events-none row-1"
                       style={{ width: priceChipWidth, height: priceChipHeight }}
                     >
-                      <div aria-hidden="true" className="absolute backdrop-blur-[26.036px] bg-[rgba(128,128,128,0.2)] inset-0 mix-blend-luminosity rounded-[7.346px]" />
-                      <div aria-hidden="true" className="absolute inset-0 rounded-[7.346px]" style={{ boxShadow: 'inset 0 0.729px 0 rgba(255,255,255,0.4), inset 0 -0.729px 0 rgba(255,255,255,0.1), inset 0.729px 0 0 rgba(255,255,255,0.15), inset -0.729px 0 0 rgba(255,255,255,0.15)' }} />
+                      <svg width={priceChipWidth} height={priceChipHeight} viewBox="0 0 98 37" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+                        <rect x="0.364499" y="0.364499" width="96.606" height="36.0012" rx="6.98154" fill="#808080" fillOpacity="0.2" style={{ mixBlendMode: 'luminosity' }}/>
+                        <rect x="0.364499" y="0.364499" width="96.606" height="36.0012" rx="6.98154" stroke={`url(#priceGrad_${offer.id})`} strokeWidth="0.728998"/>
+                        <defs>
+                          <linearGradient id={`priceGrad_${offer.id}`} x1="8.04583" y1="0" x2="16.0777" y2="46.4258" gradientUnits="userSpaceOnUse">
+                            <stop stopColor="white" stopOpacity="0.4"/>
+                            <stop offset="0.405687" stopColor="white" stopOpacity="0.01"/>
+                            <stop offset="0.574372" stopColor="white" stopOpacity="0.01"/>
+                            <stop offset="1" stopColor="white" stopOpacity="0.1"/>
+                          </linearGradient>
+                        </defs>
+                      </svg>
                     </div>
                     <div className="col-1 flex flex-col font-['SF_Pro:Regular',sans-serif] font-normal h-[36.73px] items-center justify-center ml-0 mt-0 relative row-1 text-[14.528px] text-center text-white whitespace-nowrap" style={{ fontVariationSettings: "'wdth' 100", width: priceChipWidth, height: priceChipHeight }}>
                       <p>
@@ -1636,9 +1748,19 @@ function TestimonialBackground() {
 function TestimonialName1() {
   return (
     <div className="absolute contents left-[165.05px] top-[32px]" data-name="Testimonial Name">
-      <div className="absolute content-stretch flex gap-[8.093px] h-[35.678px] items-center justify-center left-[165.05px] p-[6.07px] pointer-events-none rounded-[100px] top-[32px] w-[156.092px]" data-name="Toolbar - Symbols">
-        <div aria-hidden="true" className="absolute backdrop-blur-[25.29px] bg-[rgba(128,128,128,0.2)] inset-0 mix-blend-luminosity rounded-[100px]" />
-        <div aria-hidden="true" className="absolute inset-0 rounded-[100px]" style={{ boxShadow: 'inset 0 0.708px 0 rgba(255,255,255,0.4), inset 0 -0.708px 0 rgba(255,255,255,0.1), inset 0.708px 0 0 rgba(255,255,255,0.15), inset -0.708px 0 0 rgba(255,255,255,0.15)' }} />
+      <div className="absolute content-stretch flex gap-[8.093px] h-[35.678px] items-center justify-center left-[165.05px] p-[6.07px] pointer-events-none rounded-[100px] top-[32px] w-[156.092px] backdrop-blur-[6px]" data-name="Toolbar - Symbols">
+        <svg aria-hidden="true" className="absolute inset-0 pointer-events-none" width="100%" height="100%" viewBox="0 0 156.092 35.678" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="0.354" y="0.354" width="155.384" height="34.97" rx="17.839" fill="#808080" fillOpacity="0.2" style={{ mixBlendMode: 'luminosity' }} />
+          <rect x="0.354" y="0.354" width="155.384" height="34.97" rx="17.839" stroke="url(#chipGrad4)" strokeWidth="0.708" />
+          <defs>
+            <linearGradient id="chipGrad4" x1="0.5" y1="0" x2="0.5" y2="1" gradientUnits="objectBoundingBox">
+              <stop stopColor="white" stopOpacity="0.4" />
+              <stop offset="0.405687" stopColor="white" stopOpacity="0.01" />
+              <stop offset="0.574372" stopColor="white" stopOpacity="0.01" />
+              <stop offset="1" stopColor="white" stopOpacity="0.1" />
+            </linearGradient>
+          </defs>
+        </svg>
       </div>
       <div className="-translate-x-1/2 -translate-y-1/2 absolute flex flex-col font-['Geist:Regular',sans-serif] font-normal justify-center leading-[0] left-[calc(50%-135.33px)] text-[14.112px] text-center text-white top-[49.21px] whitespace-nowrap">
         <p className="leading-[normal]">Oscar VORTICE</p>
@@ -1679,14 +1801,13 @@ function TestimonialColumn() {
         </div>
       </div>
       <TestimonialInfo1 />
-      <div className="-translate-x-1/2 -translate-y-1/2 absolute flex flex-col font-['Geist:Regular',sans-serif] font-normal justify-center leading-[0] left-[calc(50%-161.21px)] text-[#b1b1b1] text-[16px] text-center top-[94.03px] whitespace-nowrap">
-        <p className="leading-[normal]">Fondateur Infinify</p>
+      <div className="-translate-x-1/2 -translate-y-1/2 absolute flex flex-col font-['Geist:Regular',sans-serif] font-normal justify-center leading-[0] left-[calc(50%-185.06px)] text-[#b1b1b1] text-[16px] text-center top-[94.03px] whitespace-nowrap">
+        <p className="leading-[normal]"><span style={{ WebkitTextStroke: '1px black', color: 'white', fontWeight: 700 }}>CEO</span> Infinify</p>
       </div>
-      <div className="-translate-x-1/2 -translate-y-1/2 absolute flex flex-col font-['SF_Pro:Regular',sans-serif] font-normal justify-center leading-[0] left-[calc(50%-185.06px)] text-[#b1b1b1] text-[16px] text-center top-[120.25px] whitespace-nowrap" style={{ fontVariationSettings: "'wdth' 100" }}>
-        <p>
+      <div className="-translate-x-1/2 -translate-y-1/2 absolute flex flex-col font-['SF_Pro:Regular',sans-serif] font-normal justify-center leading-[0] left-[calc(50%-185.06px)] text-[#b1b1b1] text-[16px] text-center top-[123.47px] whitespace-nowrap" style={{ fontVariationSettings: "'wdth' 100" }}>
+        <p className="flex items-center gap-[6px]">
           <span className="font-['Geist:Regular',sans-serif] font-normal leading-[normal] text-[#b1b1b1]">{`&`}</span>
-          <span className="font-['Geist:Regular',sans-serif] font-normal leading-[normal]">{` `}</span>
-          <span className="font-['Geist:SemiBold',sans-serif] font-semibold leading-[normal] text-white">Designer</span>
+          <span className="inline-flex items-center justify-center rounded-full font-['Geist:SemiBold',sans-serif] font-semibold leading-[normal] text-[10px] text-[#1563ED]" style={{ background: 'rgba(21,99,237,0.25)', width: 78.65, height: 24.17 }}>Designer</span>
         </p>
       </div>
     </div>
@@ -1717,9 +1838,19 @@ function TestimonialBackground1() {
 function TestimonialInfo2() {
   return (
     <div className="absolute contents left-[428.68px] top-[32px]" data-name="Testimonial Info">
-      <div className="absolute content-stretch flex gap-[9.073px] h-[40px] items-center justify-center left-[428.68px] p-[6.805px] pointer-events-none rounded-[100px] top-[32px] w-[198px]" data-name="Toolbar - Symbols">
-        <div aria-hidden="true" className="absolute backdrop-blur-[28.353px] bg-[rgba(128,128,128,0.2)] inset-0 mix-blend-luminosity rounded-[100px]" />
-        <div aria-hidden="true" className="absolute inset-0 rounded-[100px]" style={{ boxShadow: 'inset 0 0.794px 0 rgba(255,255,255,0.4), inset 0 -0.794px 0 rgba(255,255,255,0.1), inset 0.794px 0 0 rgba(255,255,255,0.15), inset -0.794px 0 0 rgba(255,255,255,0.15)' }} />
+      <div className="absolute content-stretch flex gap-[9.073px] h-[40px] items-center justify-center left-[428.68px] p-[6.805px] pointer-events-none rounded-[100px] top-[32px] w-[198px] backdrop-blur-[6px]" data-name="Toolbar - Symbols">
+        <svg aria-hidden="true" className="absolute inset-0 pointer-events-none" width="100%" height="100%" viewBox="0 0 198 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="0.354" y="0.354" width="197.292" height="39.292" rx="20" fill="#808080" fillOpacity="0.2" style={{ mixBlendMode: 'luminosity' }} />
+          <rect x="0.354" y="0.354" width="197.292" height="39.292" rx="20" stroke="url(#chipGrad5)" strokeWidth="0.708" />
+          <defs>
+            <linearGradient id="chipGrad5" x1="0.5" y1="0" x2="0.5" y2="1" gradientUnits="objectBoundingBox">
+              <stop stopColor="white" stopOpacity="0.4" />
+              <stop offset="0.405687" stopColor="white" stopOpacity="0.01" />
+              <stop offset="0.574372" stopColor="white" stopOpacity="0.01" />
+              <stop offset="1" stopColor="white" stopOpacity="0.1" />
+            </linearGradient>
+          </defs>
+        </svg>
       </div>
       <div className="-translate-x-1/2 -translate-y-1/2 absolute flex flex-col font-['Geist:Regular',sans-serif] font-normal justify-center leading-[0] left-[calc(50%+152.17px)] text-[15.821px] text-center text-white top-[51.84px] whitespace-nowrap">
         <p className="leading-[normal]">Benjamin BOTELLA</p>
@@ -1750,8 +1881,8 @@ function TestimonialColumn1() {
   return (
     <div className="absolute contents left-[405.28px] top-0" data-name="Testimonial Column">
       <TestimonialBackground1 />
-      <div className="-translate-x-1/2 -translate-y-1/2 absolute flex flex-col font-['Geist:Regular',sans-serif] font-normal justify-center leading-[0] left-[calc(50%+145.47px)] text-[#b1b1b1] text-[16px] text-center top-[94.03px] whitespace-nowrap">
-        <p className="leading-[normal]">Co-fondateur Infinify</p>
+      <div className="-translate-x-1/2 -translate-y-1/2 absolute flex flex-col font-['Geist:Regular',sans-serif] font-normal justify-center leading-[0] left-[calc(50%+168.47px)] text-[#b1b1b1] text-[16px] text-center top-[94.03px] whitespace-nowrap">
+        <p className="leading-[normal]"><span style={{ WebkitTextStroke: '1px black', color: 'white', fontWeight: 700 }}>Co-CEO</span> Infinify</p>
       </div>
       <div className="-translate-x-1/2 -translate-y-1/2 absolute flex flex-col font-['Neue_Montreal:Regular',sans-serif] font-normal justify-center leading-[normal] left-[calc(50%+203.14px)] text-[#0e0e0e] text-[14px] text-center top-[199.72px] whitespace-nowrap whitespace-pre">
         <p className="mb-0">{`“ Chaque détail visible dépend `}</p>
@@ -1767,11 +1898,10 @@ function TestimonialColumn1() {
         </div>
       </div>
       <LogoAndIcon />
-      <div className="-translate-x-1/2 -translate-y-1/2 absolute flex flex-col font-['SF_Pro:Regular',sans-serif] font-normal justify-center leading-[0] left-[calc(50%+168.47px)] text-[#b1b1b1] text-[16px] text-center top-[120.25px] whitespace-nowrap" style={{ fontVariationSettings: "'wdth' 100" }}>
-        <p>
+      <div className="-translate-x-1/2 -translate-y-1/2 absolute flex flex-col font-['SF_Pro:Regular',sans-serif] font-normal justify-center leading-[0] left-[calc(50%+168.47px)] text-[#b1b1b1] text-[16px] text-center top-[123.47px] whitespace-nowrap" style={{ fontVariationSettings: "'wdth' 100" }}>
+        <p className="flex items-center gap-[6px]">
           <span className="font-['Geist:Regular',sans-serif] font-normal leading-[normal] text-[#b1b1b1]">{`&`}</span>
-          <span className="font-['Geist:Regular',sans-serif] font-normal leading-[normal]">{` `}</span>
-          <span className="font-['Geist:SemiBold',sans-serif] font-semibold leading-[normal] text-white">Développeur</span>
+          <span className="inline-flex items-center justify-center rounded-full font-['Geist:SemiBold',sans-serif] font-semibold leading-[normal] text-[10px] text-[#1563ED]" style={{ background: 'rgba(21,99,237,0.25)', width: 79.66, height: 24.17 }}>Développeur</span>
         </p>
       </div>
     </div>
@@ -1822,7 +1952,7 @@ function TeamGroupe() {
 
 function Cta1() {
   return (
-    <div className="bg-white col-1 content-stretch flex items-center justify-center ml-[213.08px] mt-[16.43px] overflow-clip px-[20.381px] py-[10.19px] relative rounded-[6804.645px] row-1" data-name="CTA">
+    <div className="bg-white col-1 content-stretch flex items-center justify-center justify-self-end mr-[16.94px] mt-[16.43px] overflow-clip px-[20.381px] py-[10.19px] relative rounded-[6804.645px] row-1" data-name="CTA">
       <div className="flex flex-col font-['Neue_Montreal:Medium',sans-serif] font-medium justify-center leading-[0] not-italic relative shrink-0 text-[10.889px] text-black text-center tracking-[-0.2178px] whitespace-nowrap">
         <p className="leading-[1.2]">Réserver un appel</p>
       </div>
@@ -1833,9 +1963,27 @@ function Cta1() {
 function TestimonialName2() {
   return (
     <div className="col-1 grid-cols-[max-content] grid-rows-[max-content] inline-grid ml-0 mt-0 place-items-start relative row-1" data-name="Testimonial Name">
-      <div className="col-1 content-stretch flex gap-[8.093px] h-[68.636px] items-center justify-center ml-0 mt-0 p-[6.07px] pointer-events-none relative rounded-[100px] row-1 w-[364.847px] backdrop-blur-[6px]" data-name="Toolbar - Symbols">
-        <div aria-hidden="true" className="absolute bg-[rgba(128,128,128,0.2)] inset-0 mix-blend-luminosity rounded-[100px]" />
-        <div aria-hidden="true" className="absolute inset-0 rounded-[100px]" style={{ boxShadow: 'inset 0 0.708px 0 rgba(255,255,255,0.4), inset 0 -0.708px 0 rgba(255,255,255,0.1), inset 0.708px 0 0 rgba(255,255,255,0.15), inset -0.708px 0 0 rgba(255,255,255,0.15)' }} />
+      <div className="col-1 content-stretch flex gap-[8.093px] h-[68.636px] items-center justify-center ml-0 mt-0 p-[6.07px] pointer-events-none relative rounded-[50.58px] row-1 w-[364.847px] backdrop-blur-[6px]" data-name="Toolbar - Symbols">
+        <svg aria-hidden="true" className="absolute inset-0 pointer-events-none" width="100%" height="100%" viewBox="0 0 365 69" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ overflow: 'visible' }}>
+          <foreignObject x="-50.5798" y="-50.5798" width="466.007" height="169.796">
+            <div style={{ backdropFilter: 'blur(25.29px)', clipPath: 'url(#bgblur_0_70_2940_clip_path)', height: '100%', width: '100%' }} />
+          </foreignObject>
+          <g>
+            <rect x="0.354059" y="0.354059" width="364.139" height="67.9279" rx="33.964" fill="#808080" fillOpacity="0.2" style={{ mixBlendMode: 'luminosity' }} />
+            <rect x="0.354059" y="0.354059" width="364.139" height="67.9279" rx="33.964" stroke="url(#paint0_linear_70_2940)" strokeWidth="0.708117" />
+          </g>
+          <defs>
+            <clipPath id="bgblur_0_70_2940_clip_path" transform="translate(50.5798 50.5798)">
+              <rect x="0.354059" y="0.354059" width="364.139" height="67.9279" rx="33.964" />
+            </clipPath>
+            <linearGradient id="paint0_linear_70_2940" x1="30.1588" y1="0" x2="37.8081" y2="88.6906" gradientUnits="userSpaceOnUse">
+              <stop stopColor="white" stopOpacity="0.4" />
+              <stop offset="0.405687" stopColor="white" stopOpacity="0.01" />
+              <stop offset="0.574372" stopColor="white" stopOpacity="0.01" />
+              <stop offset="1" stopColor="white" stopOpacity="0.1" />
+            </linearGradient>
+          </defs>
+        </svg>
       </div>
       <Cta1 />
     </div>
@@ -1863,7 +2011,7 @@ function NavBar() {
   const reduced = useReducedMotion();
   return (
     <motion.div
-      className="fixed left-1/2 -translate-x-1/2 top-[50px] z-[9999]"
+      className="fixed left-1/2 -translate-x-1/2 top-[70px] z-[9999]"
       data-name="Nav bar-fixed"
       initial={{ opacity: 0, y: reduced ? 0 : -18 }}
       animate={{ opacity: 1, y: 0 }}
@@ -1981,11 +2129,81 @@ function Cta2() {
   );
 }
 
+function CtaRealisations() {
+  const reduced = useReducedMotion();
+  const [hovered, setHovered] = useState(false);
+
+  const scrollToRealisations = (e: React.MouseEvent) => {
+    e.preventDefault();
+    document.querySelector('[data-name="Réalisations"]')?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  return (
+    <motion.button
+      onClick={scrollToRealisations}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      className="relative flex items-center justify-center gap-[8.014px] cursor-pointer border-0 bg-transparent shrink-0 overflow-hidden"
+      style={{ width: 236.05, height: 50.03 }}
+      data-name="CTA Réalisations"
+      initial={{ opacity: 0, y: reduced ? 0 : 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: HERO_INTRO_DURATION, ease: SECTION_EASE, delay: 0.5 }}
+    >
+      {/* CTA.svg background */}
+      <div className="absolute inset-0 pointer-events-none">
+        <svg className="size-full" viewBox="0 0 236.048 50.0345" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+          <g filter="url(#ctaBgFilter)">
+            <path d="M0 25.0173C0 11.2006 11.2006 0 25.0173 0H211.031C224.848 0 236.048 11.2006 236.048 25.0173V25.0173C236.048 38.8339 224.848 50.0345 211.031 50.0345H25.0173C11.2006 50.0345 0 38.8339 0 25.0173V25.0173Z" fill="white" fillOpacity="0.08"/>
+          </g>
+          <defs>
+            <filter id="ctaBgFilter" x="0" y="0" width="236.048" height="50.0345" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+              <feFlood floodOpacity="0" result="BackgroundImageFix"/>
+              <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+              <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+              <feMorphology radius="4.00691" operator="erode" in="SourceAlpha" result="effect1_innerShadow"/>
+              <feOffset/>
+              <feGaussianBlur stdDeviation="6.01036"/>
+              <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1"/>
+              <feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.1 0"/>
+              <feBlend mode="normal" in2="shape" result="effect1_innerShadow"/>
+              <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+              <feMorphology radius="2.00345" operator="erode" in="SourceAlpha" result="effect2_innerShadow"/>
+              <feOffset/>
+              <feGaussianBlur stdDeviation="1.50259"/>
+              <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1"/>
+              <feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.1 0"/>
+              <feBlend mode="normal" in2="effect1_innerShadow" result="effect2_innerShadow"/>
+            </filter>
+          </defs>
+        </svg>
+      </div>
+      <motion.div
+        className="relative flex flex-col font-['Neue_Montreal:Bold',sans-serif] font-[500] justify-center leading-[0] not-italic text-[16.028px] text-white text-center tracking-[-0.3206px] whitespace-nowrap"
+        animate={hovered && !reduced ? { x: 4, scale: 1.04 } : { x: 0, scale: 1 }}
+        transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+      >
+        <p className="leading-[1.2]">Voir nos réalisations</p>
+      </motion.div>
+      <motion.div
+        className="relative"
+        animate={hovered && !reduced ? { x: 4, scale: 1.18 } : { x: 0, scale: 1 }}
+        transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+      >
+        <Frame1 />
+      </motion.div>
+    </motion.button>
+  );
+}
+
 function Left() {
   return (
     <div className="content-stretch flex flex-col gap-[32px] items-start justify-end relative shrink-0" data-name="Left">
       <Frame12 />
-      <Cta2 />
+      <div className="flex items-center gap-[32px]">
+        <Cta2 />
+        <CtaRealisations />
+      </div>
     </div>
   );
 }
@@ -2151,9 +2369,9 @@ function Content() {
 
 function Hero() {
   return (
-    <div className="content-stretch flex flex-col h-[700px] items-center justify-end overflow-clip pb-[64.111px] relative rounded-[32.055px] shrink-0 w-full" data-name="Hero">
+    <div className="content-stretch flex flex-col h-[700px] items-center justify-end overflow-clip pb-[64.111px] relative rounded-[32.055px] shrink-0 w-[1400px] border border-black" data-name="Hero">
       <div aria-hidden="true" className="absolute inset-0 pointer-events-none">
-        <img alt="" className="absolute max-w-none object-cover size-full" src={imgHero} decoding="async" fetchPriority="high" />
+        <img alt="" className="absolute w-full h-auto left-0" src={imgHero} decoding="async" fetchPriority="high" style={{ top: '' }} />
         <div className="absolute bg-gradient-to-b from-[45%] from-[rgba(2,2,2,0)] inset-0 to-black" />
       </div>
       <Content />
@@ -2370,7 +2588,7 @@ function Logos() {
 
 function HeroLogos() {
   return (
-    <div className="-translate-x-1/2 absolute content-stretch flex flex-col h-[922px] items-center left-1/2 top-[21.87px] w-[1400px]" data-name="Hero + Logos">
+    <div className="-translate-x-1/2 absolute content-stretch flex flex-col h-[922px] items-center left-1/2 top-[20px] w-[1400px]" data-name="Hero + Logos">
       <Hero />
       <Logos />
     </div>
@@ -2382,7 +2600,7 @@ export default function Desktop() {
     <div className="relative size-full" data-name="Desktop - 144">
       <div aria-hidden="true" className="absolute inset-0 pointer-events-none">
         <div className="absolute bg-white inset-0" />
-        <div className="absolute bg-size-[1024px_1024px] bg-top-left inset-0 opacity-7" style={{ backgroundImage: `url('${imgDesktop144}')` }} />
+
       </div>
       <NavBar />
       <Footer />
