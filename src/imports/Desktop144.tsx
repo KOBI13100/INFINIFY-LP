@@ -48,6 +48,7 @@ import imgTestimonialImage from "../assets/a77190103db78e6334f030692996578c4825b
 import imgTestimonialImage1 from "../assets/dec5cbce46710d057f06833cca1d54055e9a4ed5.png";
 import imgHero from "../assets/bg.png";
 import { imgGroup, imgOffres, imgInfinify, imgTeam, imgFrame } from "./svg-ithsc";
+import OfferButton from "../app/components/OfferButton";
 
 type ScrollDirection = 'up' | 'down';
 
@@ -1085,6 +1086,7 @@ function CarouselTag({ label, icon }: { label: string; icon: 'page' | 'building'
 // ─── Realisations carousel ────────────────────────────────────────────────────
 
 const CARD_TRANSITION = { duration: 1.02, ease: [0.22, 1, 0.36, 1] } as const;
+const CARD_IMAGE_DEZOOM_TRANSITION = { duration: 0.92, ease: [0.22, 1, 0.36, 1] } as const;
 const CAROUSEL_VIEWPORT_MASK = 'linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.42) 10%, black 20%, black 80%, rgba(0,0,0,0.42) 90%, transparent 100%)';
 const CAROUSEL_IMAGE_EDGE_CROP = 6;
 type SlotName = 'above' | 'top' | 'center' | 'bottom' | 'below';
@@ -1133,7 +1135,15 @@ function preloadCarouselImage(src: string) {
   });
 }
 
-function CarouselCardImage({ image }: { image: string }) {
+function CarouselCardImage({
+  image,
+  landingZoomKey,
+}: {
+  image: string;
+  landingZoomKey: number | null;
+}) {
+  const shouldAnimateDezoom = landingZoomKey !== null;
+
   return (
     <div
       className="absolute"
@@ -1143,19 +1153,32 @@ function CarouselCardImage({ image }: { image: string }) {
         transform: 'translateZ(0)',
       }}
     >
-      <img
-        src={image}
-        alt=""
-        className="absolute max-w-none object-cover"
-        loading="eager"
-        decoding="sync"
-        fetchPriority="high"
+      <motion.div
+        key={shouldAnimateDezoom ? `landing-${landingZoomKey}` : 'resting'}
+        className="absolute"
+        initial={shouldAnimateDezoom ? { scale: 1.045 } : false}
+        animate={{ scale: 1 }}
+        transition={shouldAnimateDezoom ? CARD_IMAGE_DEZOOM_TRANSITION : { duration: 0 }}
         style={{
           inset: -CAROUSEL_IMAGE_EDGE_CROP,
-          width: `calc(100% + ${CAROUSEL_IMAGE_EDGE_CROP * 2}px)`,
-          height: `calc(100% + ${CAROUSEL_IMAGE_EDGE_CROP * 2}px)`,
+          transformOrigin: 'center center',
+          willChange: shouldAnimateDezoom ? 'transform' : undefined,
         }}
-      />
+      >
+        <img
+          src={image}
+          alt=""
+          className="absolute max-w-none object-cover"
+          loading="eager"
+          decoding="sync"
+          fetchPriority="high"
+          style={{
+            inset: 0,
+            width: '100%',
+            height: '100%',
+          }}
+        />
+      </motion.div>
     </div>
   );
 }
@@ -1164,6 +1187,7 @@ function Realisations() {
   const total = CAROUSEL_PROJECTS.length;
   const [pos, setPos]                 = useState(0); // position linéaire cumulative
   const [activeIndex, setActiveIndex] = useState(0);
+  const [hasNavigatedCarousel, setHasNavigatedCarousel] = useState(false);
   const [areCarouselImagesReady, setAreCarouselImagesReady] = useState(false);
   const [projectFrameById, setProjectFrameById] = useState<Record<number, number>>(() =>
     Object.fromEntries(CAROUSEL_PROJECTS.map((carouselProject) => [carouselProject.id, 0])),
@@ -1171,6 +1195,8 @@ function Realisations() {
 
   const go = (delta: number) => {
     if (total < 2) return;
+    setHasNavigatedCarousel(true);
+
     const nextIndex = (activeIndex + delta + total) % total;
     const nextProject = CAROUSEL_PROJECTS[nextIndex];
 
@@ -1269,6 +1295,7 @@ function Realisations() {
             >
               <CarouselCardImage
                 image={visibleImage}
+                landingZoomKey={hasNavigatedCarousel && isCenterCard ? pos : null}
               />
             </motion.div>
           );
@@ -2191,11 +2218,15 @@ function TestimonialBackground() {
 
 function TestimonialName1() {
   return (
-    <div className="absolute contents left-[165.05px] top-[32px]" data-name="Testimonial Name">
-      <div className="absolute content-stretch flex gap-[8.093px] h-[35.678px] items-center justify-center left-[165.05px] p-[6.07px] pointer-events-none rounded-[100px] top-[32px] w-[156.092px] backdrop-blur-[6px]" data-name="Toolbar - Symbols">
-        <svg aria-hidden="true" className="absolute inset-0 pointer-events-none" width="100%" height="100%" viewBox="0 0 156.092 35.678" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect x="0.354" y="0.354" width="155.384" height="34.97" rx="17.839" fill="#808080" fillOpacity="0.2" style={{ mixBlendMode: 'luminosity' }} />
-          <rect x="0.354" y="0.354" width="155.384" height="34.97" rx="17.839" stroke="url(#chipGrad4)" strokeWidth="0.708" />
+    <div className="absolute contents left-[156.53px] top-[32px]" data-name="Testimonial Name">
+      <div
+        className="absolute content-stretch flex gap-[9.073px] h-[40px] items-center justify-center left-[156.53px] p-[6.805px] pointer-events-none rounded-[100px] top-[32px] backdrop-blur-[6px]"
+        data-name="Toolbar - Symbols"
+        style={{ width: OSCAR_NAME_CHIP_WIDTH }}
+      >
+        <svg aria-hidden="true" className="absolute inset-0 pointer-events-none" width="100%" height="100%" viewBox={`0 0 ${OSCAR_NAME_CHIP_WIDTH} 40`} fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="0.354" y="0.354" width={OSCAR_NAME_CHIP_WIDTH - 0.708} height="39.292" rx="20" fill="#808080" fillOpacity="0.2" style={{ mixBlendMode: 'luminosity' }} />
+          <rect x="0.354" y="0.354" width={OSCAR_NAME_CHIP_WIDTH - 0.708} height="39.292" rx="20" stroke="url(#chipGrad4)" strokeWidth="0.708" />
           <defs>
             <linearGradient id="chipGrad4" x1="0.5" y1="0" x2="0.5" y2="1" gradientUnits="objectBoundingBox">
               <stop stopColor="white" stopOpacity="0.4" />
@@ -2206,7 +2237,7 @@ function TestimonialName1() {
           </defs>
         </svg>
       </div>
-      <div className="-translate-x-1/2 -translate-y-1/2 absolute flex flex-col font-['Geist:Regular',sans-serif] font-normal justify-center leading-[0] left-[calc(50%-135.33px)] text-[14px] text-center text-white top-[49.21px] whitespace-nowrap">
+      <div className="-translate-x-1/2 -translate-y-1/2 absolute flex flex-col font-['Geist:Regular',sans-serif] font-normal justify-center leading-[0] left-[260.12px] text-[14px] text-center text-white top-[51.84px] whitespace-nowrap">
         <p className="leading-[normal]">Oscar VORTICE</p>
       </div>
     </div>
@@ -2215,14 +2246,14 @@ function TestimonialName1() {
 
 function TestimonialInfo1() {
   return (
-    <div className="absolute contents left-[165.05px] top-[32px]" data-name="Testimonial Info">
+    <div className="absolute contents left-[156.53px] top-[32px]" data-name="Testimonial Info">
       <TestimonialName1 />
-      <div className="absolute left-[171.67px] size-[25.834px] top-[36.66px]">
-        <svg className="absolute block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 25.8335 25.8335">
-          <circle cx="12.9168" cy="12.9168" fill="var(--fill-0, #0D0D0D)" id="Ellipse 46954" r="12.9168" />
+      <div className="absolute left-[164.39px] size-[28.963px] top-[37.36px]">
+        <svg className="absolute block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 28.9629 28.9629">
+          <circle cx="14.4814" cy="14.4814" fill="var(--fill-0, #0D0D0D)" id="Ellipse 46954" r="14.4814" />
         </svg>
       </div>
-      <div className="absolute h-[9.314px] left-[177.38px] top-[44.92px] w-[14.411px]" data-name="Logo Infinify 1">
+      <div className="absolute h-[10.442px] left-[170.79px] top-[46.62px] w-[16.156px]" data-name="Logo Infinify 1">
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <img alt="" className="absolute h-[138.86%] left-[-6.67%] max-w-none top-[-17.73%] w-[114.53%]" src={imgLogoInfinify1} />
         </div>
@@ -2230,6 +2261,18 @@ function TestimonialInfo1() {
     </div>
   );
 }
+
+const TEAM_ROLE_CHIP_STYLE = {
+  background: 'rgba(21,99,237,0.25)',
+  height: 24.17,
+  paddingInline: 10.5,
+} as const;
+
+const OSCAR_NAME_CHIP_WIDTH = 170.357;
+const OSCAR_INFO_LEFT_EDGE = 156.53;
+const BENJAMIN_INFO_RIGHT_EDGE = 156.53;
+const OSCAR_INFO_SHIFT_X = 367.483 * 0.015;
+const BENJAMIN_INFO_SHIFT_X = 377.927 * 0.015;
 
 function TestimonialColumn() {
   return (
@@ -2245,13 +2288,19 @@ function TestimonialColumn() {
         </div>
       </div>
       <TestimonialInfo1 />
-      <div className="-translate-x-1/2 -translate-y-1/2 absolute flex flex-col font-['Geist:Regular',sans-serif] font-normal justify-center leading-[0] left-[calc(50%-185.06px)] text-[#b1b1b1] text-[16px] text-center top-[94.03px] whitespace-nowrap">
+      <div
+        className="-translate-y-1/2 absolute flex flex-col font-['Geist:Regular',sans-serif] font-normal justify-center leading-[0] text-[#b1b1b1] text-[16px] text-left top-[94.03px] whitespace-nowrap"
+        style={{ left: OSCAR_INFO_LEFT_EDGE + OSCAR_INFO_SHIFT_X }}
+      >
         <p className="leading-[normal]"><span style={{ WebkitTextStroke: '1px black', color: 'white', fontWeight: 700 }}>CEO</span> Infinify</p>
       </div>
-      <div className="-translate-x-1/2 -translate-y-1/2 absolute flex flex-col font-['SF_Pro:Regular',sans-serif] font-normal justify-center leading-[0] left-[calc(50%-185.06px)] text-[#b1b1b1] text-[16px] text-center top-[123.47px] whitespace-nowrap" style={{ fontVariationSettings: "'wdth' 100" }}>
-        <p className="flex items-center gap-[6px]">
+      <div
+        className="-translate-y-1/2 absolute flex flex-col font-['SF_Pro:Regular',sans-serif] font-normal justify-center leading-[0] text-[#b1b1b1] text-[16px] text-left top-[123.47px] whitespace-nowrap"
+        style={{ fontVariationSettings: "'wdth' 100", left: OSCAR_INFO_LEFT_EDGE + OSCAR_INFO_SHIFT_X }}
+      >
+        <p className="flex items-center justify-start gap-[6px]">
           <span className="font-['Geist:Regular',sans-serif] font-normal leading-[normal] text-[#b1b1b1]">{`&`}</span>
-          <span className="inline-flex items-center justify-center rounded-full font-['Geist:SemiBold',sans-serif] font-semibold leading-[normal] text-[10px] text-[#1563ED]" style={{ background: 'rgba(21,99,237,0.25)', width: 78.65, height: 24.17 }}>Designer</span>
+          <span className="inline-flex items-center justify-center rounded-full font-['Geist:SemiBold',sans-serif] font-semibold leading-[normal] text-[10px] text-[#1563ED]" style={TEAM_ROLE_CHIP_STYLE}>Designer</span>
         </p>
       </div>
     </div>
@@ -2325,7 +2374,10 @@ function TestimonialColumn1() {
   return (
     <div className="absolute contents left-[405.28px] top-0" data-name="Testimonial Column">
       <TestimonialBackground1 />
-      <div className="-translate-x-1/2 -translate-y-1/2 absolute flex flex-col font-['Geist:Regular',sans-serif] font-normal justify-center leading-[0] left-[calc(50%+168.47px)] text-[#b1b1b1] text-[16px] text-center top-[94.03px] whitespace-nowrap">
+      <div
+        className="-translate-y-1/2 absolute flex flex-col font-['Geist:Regular',sans-serif] font-normal justify-center leading-[0] text-[#b1b1b1] text-[16px] text-right top-[94.03px] whitespace-nowrap"
+        style={{ right: BENJAMIN_INFO_RIGHT_EDGE + BENJAMIN_INFO_SHIFT_X }}
+      >
         <p className="leading-[normal]"><span style={{ WebkitTextStroke: '1px black', color: 'white', fontWeight: 700 }}>Co-CEO</span> Infinify</p>
       </div>
       <div className="-translate-x-1/2 -translate-y-1/2 absolute flex flex-col font-['Neue_Montreal:Regular',sans-serif] font-normal justify-center leading-[normal] left-[calc(50%+203.14px)] text-[#0e0e0e] text-[14px] text-center top-[199.72px] whitespace-nowrap whitespace-pre">
@@ -2342,10 +2394,13 @@ function TestimonialColumn1() {
         </div>
       </div>
       <LogoAndIcon />
-      <div className="-translate-x-1/2 -translate-y-1/2 absolute flex flex-col font-['SF_Pro:Regular',sans-serif] font-normal justify-center leading-[0] left-[calc(50%+168.47px)] text-[#b1b1b1] text-[16px] text-center top-[123.47px] whitespace-nowrap" style={{ fontVariationSettings: "'wdth' 100" }}>
-        <p className="flex items-center gap-[6px]">
+      <div
+        className="-translate-y-1/2 absolute flex flex-col font-['SF_Pro:Regular',sans-serif] font-normal justify-center leading-[0] text-[#b1b1b1] text-[16px] text-right top-[123.47px] whitespace-nowrap"
+        style={{ fontVariationSettings: "'wdth' 100", right: BENJAMIN_INFO_RIGHT_EDGE + BENJAMIN_INFO_SHIFT_X }}
+      >
+        <p className="flex items-center justify-end gap-[6px]">
           <span className="font-['Geist:Regular',sans-serif] font-normal leading-[normal] text-[#b1b1b1]">{`&`}</span>
-          <span className="inline-flex items-center justify-center rounded-full font-['Geist:SemiBold',sans-serif] font-semibold leading-[normal] text-[10px] text-[#1563ED]" style={{ background: 'rgba(21,99,237,0.25)', width: 79.66, height: 24.17 }}>Développeur</span>
+          <span className="inline-flex items-center justify-center rounded-full font-['Geist:SemiBold',sans-serif] font-semibold leading-[normal] text-[10px] text-[#1563ED]" style={TEAM_ROLE_CHIP_STYLE}>Développeur</span>
         </p>
       </div>
     </div>
@@ -2535,99 +2590,6 @@ function Frame12({ introActive }: { introActive: boolean }) {
   );
 }
 
-function Frame() {
-  return (
-    <div className="relative shrink-0 size-[20.035px]" data-name="Frame">
-      <svg className="absolute block inset-0 size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 20.0345 20.0345">
-        <path d="M5.31055 14.724L14.7239 5.31067" stroke="var(--stroke-0, black)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" />
-        <path d="M8.31445 5.31067H14.7239V11.7201" stroke="var(--stroke-0, black)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" />
-      </svg>
-    </div>
-  );
-}
-
-const ROLLING_TEXT_EASE = [0.6, 0.01, -0.05, 0.95] as const;
-const ROLLING_TEXT_DURATION = 0.5;
-const ROLLING_TEXT_STAGGER = 0.025;
-const ROLLING_TEXT_DELAY = 0.01;
-
-function RollingTextLabel({ text }: { text: string }) {
-  const characters = Array.from(text);
-  const rowClassName = "absolute inset-0 flex items-start whitespace-nowrap";
-  const letterClassName = "block whitespace-pre";
-  const letterClipStyle = { height: '1.2em' } as const;
-  const letterLineStyle = { lineHeight: '1.2em' } as const;
-  const rowVariants = {
-    hidden: { transition: { staggerChildren: ROLLING_TEXT_STAGGER, delayChildren: ROLLING_TEXT_DELAY } },
-    visible: { transition: { staggerChildren: ROLLING_TEXT_STAGGER, delayChildren: ROLLING_TEXT_DELAY } },
-    hover: { transition: { staggerChildren: ROLLING_TEXT_STAGGER, delayChildren: ROLLING_TEXT_DELAY } },
-  } as const;
-  const topLetterVariants = {
-    hidden: { y: '0%' },
-    visible: { y: '0%', transition: { duration: ROLLING_TEXT_DURATION, ease: ROLLING_TEXT_EASE } },
-    hover: { y: '-100%', transition: { duration: ROLLING_TEXT_DURATION, ease: ROLLING_TEXT_EASE } },
-  } as const;
-  const bottomLetterVariants = {
-    hidden: { y: '100%' },
-    visible: { y: '100%', transition: { duration: ROLLING_TEXT_DURATION, ease: ROLLING_TEXT_EASE } },
-    hover: { y: '0%', transition: { duration: ROLLING_TEXT_DURATION, ease: ROLLING_TEXT_EASE } },
-  } as const;
-
-  return (
-    <>
-      <span className="sr-only">{text}</span>
-      <span aria-hidden="true" className="relative inline-block overflow-hidden align-top" style={{ height: '1.2em' }}>
-        <span className="block opacity-0 select-none" style={{ lineHeight: '1.2em' }}>
-          {text}
-        </span>
-        <motion.div className={rowClassName} variants={rowVariants}>
-          {characters.map((character, index) => (
-            <span key={`top-wrap-${index}`} className="relative overflow-hidden" style={letterClipStyle}>
-              <motion.span className={letterClassName} style={letterLineStyle} variants={topLetterVariants}>
-                {character === ' ' ? '\u00A0' : character}
-              </motion.span>
-            </span>
-          ))}
-        </motion.div>
-        <motion.div className={rowClassName} variants={rowVariants}>
-          {characters.map((character, index) => (
-            <span key={`bottom-wrap-${index}`} className="relative overflow-hidden" style={letterClipStyle}>
-              <motion.span className={letterClassName} style={letterLineStyle} variants={bottomLetterVariants}>
-                {character === ' ' ? '\u00A0' : character}
-              </motion.span>
-            </span>
-          ))}
-        </motion.div>
-      </span>
-    </>
-  );
-}
-
-function RollingArrowIcon() {
-  return (
-    <div aria-hidden="true" className="relative overflow-hidden" style={{ width: 20.035, height: 20.035 }}>
-      <div className="opacity-0">
-        <Frame />
-      </div>
-      <motion.div
-        className="absolute inset-0 flex flex-col"
-        variants={{
-          hidden: { y: '0%' },
-          visible: { y: '0%', transition: { duration: ROLLING_TEXT_DURATION, ease: ROLLING_TEXT_EASE } },
-          hover: { y: '-50%', transition: { duration: ROLLING_TEXT_DURATION, ease: ROLLING_TEXT_EASE } },
-        }}
-      >
-        <div className="flex h-[20.035px] items-center justify-center">
-          <Frame />
-        </div>
-        <div className="flex h-[20.035px] items-center justify-center">
-          <Frame />
-        </div>
-      </motion.div>
-    </div>
-  );
-}
-
 function Cta2({ introActive }: { introActive: boolean }) {
   const reduced = useReducedMotion();
 
@@ -2637,27 +2599,20 @@ function Cta2({ introActive }: { introActive: boolean }) {
   };
 
   return (
-    <motion.button
-      onClick={scrollToOffres}
-      className="bg-white content-stretch flex gap-[8.014px] items-center justify-center overflow-hidden px-[30px] py-[15px] relative rounded-[10016.271px] shadow-[0px_4.007px_3.005px_-4.007px_rgba(0,0,0,0.5)] shrink-0 cursor-pointer border-0"
+    <motion.div
+      className="shrink-0"
       data-name="CTA"
-      variants={{
-        hidden: { opacity: 0, y: reduced ? 0 : HERO_CTA_Y },
-        visible: { opacity: 1, y: 0, transition: { duration: HERO_CONTENT_DURATION, ease: SECTION_EASE, delay: 0 } },
-        hover: {},
-      }}
-      initial="hidden"
-      animate={introActive ? "visible" : "hidden"}
-      whileHover={reduced ? undefined : 'hover'}
+      initial={{ opacity: 0, y: reduced ? 0 : HERO_CTA_Y }}
+      animate={introActive ? { opacity: 1, y: 0 } : { opacity: 0, y: reduced ? 0 : HERO_CTA_Y }}
+      transition={{ duration: HERO_CONTENT_DURATION, ease: SECTION_EASE, delay: 0 }}
     >
-      <div className="flex flex-col font-['Neue_Montreal:Bold',sans-serif] font-[500] justify-center leading-[0] not-italic relative shrink-0 text-[16.028px] text-black text-center tracking-[-0.3206px] whitespace-nowrap">
-        {reduced ? <p className="leading-[1.2]">Voir nos offres</p> : <RollingTextLabel text="Voir nos offres" />}
-      </div>
-      <div>
-        {reduced ? <Frame /> : <RollingArrowIcon />}
-      </div>
-      <div className="absolute inset-0 pointer-events-none rounded-[inherit] shadow-[inset_0px_0px_3.005px_2.003px_rgba(255,255,255,0.2),inset_0px_0px_12.021px_4.007px_rgba(255,255,255,0.13)]" />
-    </motion.button>
+      <OfferButton
+        className="content-stretch"
+        label="Voir nos offres"
+        onClick={scrollToOffres}
+        theme="light"
+      />
+    </motion.div>
   );
 }
 
