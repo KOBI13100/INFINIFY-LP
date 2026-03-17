@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import imgLogoInfinify from "../../assets/bf1d602331298fa70e56da6d7bd2fe71a3de2b7a.png";
+import ScrambledText from "./ScrambledText";
 
 type SplashPhase =
   | "loading"
@@ -154,12 +155,16 @@ export default function LoaderSplash({
         Chargement du site Infinify
       </span>
 
-      <div aria-hidden="true" className="splash-screen__loader">
-        <div className="splash-screen__loader-track" />
-        <div
-          className="splash-screen__loader-fill"
-          style={{ transform: `scaleX(${loaderScale})` }}
-        />
+      <div aria-hidden="true" className="splash-screen__loading-group">
+        <ScrambledText word="CHARGEMENT" />
+
+        <div className="splash-screen__loader">
+          <div className="splash-screen__loader-track" />
+          <div
+            className="splash-screen__loader-fill"
+            style={{ transform: `scaleX(${loaderScale})` }}
+          />
+        </div>
       </div>
 
       <div

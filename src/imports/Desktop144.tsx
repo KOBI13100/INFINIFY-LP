@@ -1628,10 +1628,19 @@ function Group4() {
   );
 }
 
-function MaskGroup({ animateIn, scrollDirection }: { animateIn: boolean; scrollDirection: ScrollDirection }) {
+function MaskGroup({
+  animateIn,
+  maskTriggerRef,
+  scrollDirection,
+}: {
+  animateIn: boolean;
+  maskTriggerRef?: React.RefObject<HTMLDivElement | null>;
+  scrollDirection: ScrollDirection;
+}) {
   const reduced = useReducedMotion();
   return (
     <motion.div
+      ref={maskTriggerRef}
       className="-translate-x-1/2 absolute h-[353px] left-1/2 top-[2117.32px] w-[897px]"
       data-name="Mask Group"
       initial={{ opacity: 0, y: reduced ? 0 : CARD_Y }}
@@ -1848,7 +1857,15 @@ function OfferBenefitTick() {
 }
 
 // Stateful offer card — dark card + white benefits, both animated on tab switch
-function OfferCard({ animateIn, scrollDirection }: { animateIn: boolean; scrollDirection: ScrollDirection }) {
+function OfferCard({
+  animateIn,
+  cardTriggerRef,
+  scrollDirection,
+}: {
+  animateIn: boolean;
+  cardTriggerRef?: React.RefObject<HTMLDivElement | null>;
+  scrollDirection: ScrollDirection;
+}) {
   const [activeId, setActiveId] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const [reserveButtonTop, setReserveButtonTop] = useState(317.35);
@@ -1905,7 +1922,10 @@ function OfferCard({ animateIn, scrollDirection }: { animateIn: boolean; scrollD
     >
 
       {/* ── Dark card ─────────────────────────────────────────────── */}
-      <div className="-translate-x-1/2 absolute content-stretch flex items-center left-1/2 top-[2406.12px]">
+      <div
+        ref={cardTriggerRef}
+        className="-translate-x-1/2 absolute content-stretch flex items-center left-1/2 top-[2406.12px]"
+      >
         <div className="grid-cols-[max-content] grid-rows-[max-content] inline-grid leading-[0] place-items-start relative shrink-0">
 
           {/* Dark background block */}
@@ -2051,29 +2071,59 @@ function OfferCard({ animateIn, scrollDirection }: { animateIn: boolean; scrollD
   );
 }
 
-function Offres({ animateIn, scrollDirection }: { animateIn: boolean; scrollDirection: ScrollDirection }) {
+function Offres({
+  animateIn,
+  cardTriggerRef,
+  scrollDirection,
+}: {
+  animateIn: boolean;
+  cardTriggerRef?: React.RefObject<HTMLDivElement | null>;
+  scrollDirection: ScrollDirection;
+}) {
   return (
     <div className="-translate-x-1/2 absolute contents left-1/2 top-[2406.12px]" data-name="Offres">
-      <OfferCard animateIn={animateIn} scrollDirection={scrollDirection} />
+      <OfferCard
+        animateIn={animateIn}
+        cardTriggerRef={cardTriggerRef}
+        scrollDirection={scrollDirection}
+      />
     </div>
   );
 }
 
 function OffresGroupe({ scrollDirection }: { scrollDirection: ScrollDirection }) {
-  const offersTriggerRef = useRef<HTMLDivElement | null>(null);
-  const isOffersInView = useInView(offersTriggerRef, { amount: 0.7 });
+  const offersMaskRef = useRef<HTMLDivElement | null>(null);
+  const offersCardRef = useRef<HTMLDivElement | null>(null);
+  const isOffersMaskInView = useInView(offersMaskRef, { amount: 0.35 });
+  const isOffersCardInView = useInView(offersCardRef, { amount: 0.35 });
+  const isOffersInView = isOffersMaskInView || isOffersCardInView;
+  const [shouldShowOffers, setShouldShowOffers] = useState(false);
+
+  useEffect(() => {
+    if (isOffersInView) {
+      setShouldShowOffers(true);
+      return;
+    }
+
+    if (scrollDirection === 'up') {
+      setShouldShowOffers(false);
+    }
+  }, [isOffersInView, scrollDirection]);
 
   return (
     <>
-      <div
-        id="offres"
-        aria-hidden="true"
-        className="-translate-x-1/2 absolute h-[695px] left-1/2 pointer-events-none top-[2117.32px] w-[897px]"
-        ref={offersTriggerRef}
-      />
+      <div id="offres" className="-translate-x-1/2 absolute left-1/2 top-[2406.12px]" />
       <div className="-translate-x-1/2 absolute contents left-1/2 top-[2117.32px]" data-name="Offres Groupe">
-        <MaskGroup animateIn={isOffersInView} scrollDirection={scrollDirection} />
-        <Offres animateIn={isOffersInView} scrollDirection={scrollDirection} />
+        <MaskGroup
+          animateIn={shouldShowOffers}
+          maskTriggerRef={offersMaskRef}
+          scrollDirection={scrollDirection}
+        />
+        <Offres
+          animateIn={shouldShowOffers}
+          cardTriggerRef={offersCardRef}
+          scrollDirection={scrollDirection}
+        />
       </div>
     </>
   );
