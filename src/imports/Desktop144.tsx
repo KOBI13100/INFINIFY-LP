@@ -58,6 +58,43 @@ const SECTION_VIEWPORT = { once: true, amount: 0.35 } as const;
 const TEAM_VIEWPORT = { once: true, amount: 0.5 } as const;
 const HERO_INTRO_DURATION = 0.8;
 const CTA_IMAGE_EDGE_CROP = 6;
+const MARQUEE_LOGO_COLOR = '#131313';
+const MARQUEE_LOGO_CLASS = 'h-[19px] w-[125%] max-w-none shrink-0';
+const MARQUEE_LOGO_CLASS_LARGE = 'h-[26.57px] w-[125%] max-w-none shrink-0';
+const MARQUEE_LOGO_CLASS_TALL = 'h-[36.38px] w-[125%] max-w-none shrink-0';
+
+function MarqueeLogo({
+  src,
+  alt,
+  className,
+  maskPosition = 'center',
+  maskSize = 'auto 100%',
+}: {
+  src: string;
+  alt: string;
+  className: string;
+  maskPosition?: string;
+  maskSize?: string;
+}) {
+  return (
+    <div
+      role="img"
+      aria-label={alt}
+      className={className}
+      style={{
+        backgroundColor: MARQUEE_LOGO_COLOR,
+        WebkitMaskImage: `url('${src}')`,
+        maskImage: `url('${src}')`,
+        WebkitMaskRepeat: 'no-repeat',
+        maskRepeat: 'no-repeat',
+        WebkitMaskPosition: maskPosition,
+        maskPosition,
+        WebkitMaskSize: maskSize,
+        maskSize,
+      }}
+    />
+  );
+}
 
 function useScrollDirection(): ScrollDirection {
   const [scrollDirection, setScrollDirection] = useState<ScrollDirection>('down');
@@ -2427,19 +2464,98 @@ function Frame12() {
 function Frame() {
   return (
     <div className="relative shrink-0 size-[20.035px]" data-name="Frame">
-      <svg className="absolute block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 20.0345 20.0345">
-        <g id="Frame">
-          <path d="M4.17397 10.0175H15.8608" id="Vector" stroke="var(--stroke-0, black)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.66955" />
-          <path d={svgPaths.p29eb7280} id="Vector_2" stroke="var(--stroke-0, black)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.66955" />
-        </g>
+      <svg className="absolute block inset-0 size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 20.0345 20.0345">
+        <path d="M5.31055 14.724L14.7239 5.31067" stroke="var(--stroke-0, black)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" />
+        <path d="M8.31445 5.31067H14.7239V11.7201" stroke="var(--stroke-0, black)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" />
       </svg>
+    </div>
+  );
+}
+
+const ROLLING_TEXT_EASE = [0.6, 0.01, -0.05, 0.95] as const;
+const ROLLING_TEXT_DURATION = 0.5;
+const ROLLING_TEXT_STAGGER = 0.025;
+const ROLLING_TEXT_DELAY = 0.01;
+
+function RollingTextLabel({ text }: { text: string }) {
+  const characters = Array.from(text);
+  const rowClassName = "absolute inset-0 flex items-start whitespace-nowrap";
+  const letterClassName = "block whitespace-pre";
+  const letterClipStyle = { height: '1.2em' } as const;
+  const letterLineStyle = { lineHeight: '1.2em' } as const;
+  const rowVariants = {
+    hidden: { transition: { staggerChildren: ROLLING_TEXT_STAGGER, delayChildren: ROLLING_TEXT_DELAY } },
+    visible: { transition: { staggerChildren: ROLLING_TEXT_STAGGER, delayChildren: ROLLING_TEXT_DELAY } },
+    hover: { transition: { staggerChildren: ROLLING_TEXT_STAGGER, delayChildren: ROLLING_TEXT_DELAY } },
+  } as const;
+  const topLetterVariants = {
+    hidden: { y: '0%' },
+    visible: { y: '0%', transition: { duration: ROLLING_TEXT_DURATION, ease: ROLLING_TEXT_EASE } },
+    hover: { y: '-100%', transition: { duration: ROLLING_TEXT_DURATION, ease: ROLLING_TEXT_EASE } },
+  } as const;
+  const bottomLetterVariants = {
+    hidden: { y: '100%' },
+    visible: { y: '100%', transition: { duration: ROLLING_TEXT_DURATION, ease: ROLLING_TEXT_EASE } },
+    hover: { y: '0%', transition: { duration: ROLLING_TEXT_DURATION, ease: ROLLING_TEXT_EASE } },
+  } as const;
+
+  return (
+    <>
+      <span className="sr-only">{text}</span>
+      <span aria-hidden="true" className="relative inline-block overflow-hidden align-top" style={{ height: '1.2em' }}>
+        <span className="block opacity-0 select-none" style={{ lineHeight: '1.2em' }}>
+          {text}
+        </span>
+        <motion.div className={rowClassName} variants={rowVariants}>
+          {characters.map((character, index) => (
+            <span key={`top-wrap-${index}`} className="relative overflow-hidden" style={letterClipStyle}>
+              <motion.span className={letterClassName} style={letterLineStyle} variants={topLetterVariants}>
+                {character === ' ' ? '\u00A0' : character}
+              </motion.span>
+            </span>
+          ))}
+        </motion.div>
+        <motion.div className={rowClassName} variants={rowVariants}>
+          {characters.map((character, index) => (
+            <span key={`bottom-wrap-${index}`} className="relative overflow-hidden" style={letterClipStyle}>
+              <motion.span className={letterClassName} style={letterLineStyle} variants={bottomLetterVariants}>
+                {character === ' ' ? '\u00A0' : character}
+              </motion.span>
+            </span>
+          ))}
+        </motion.div>
+      </span>
+    </>
+  );
+}
+
+function RollingArrowIcon() {
+  return (
+    <div aria-hidden="true" className="relative overflow-hidden" style={{ width: 20.035, height: 20.035 }}>
+      <div className="opacity-0">
+        <Frame />
+      </div>
+      <motion.div
+        className="absolute inset-0 flex flex-col"
+        variants={{
+          hidden: { y: '0%' },
+          visible: { y: '0%', transition: { duration: ROLLING_TEXT_DURATION, ease: ROLLING_TEXT_EASE } },
+          hover: { y: '-50%', transition: { duration: ROLLING_TEXT_DURATION, ease: ROLLING_TEXT_EASE } },
+        }}
+      >
+        <div className="flex h-[20.035px] items-center justify-center">
+          <Frame />
+        </div>
+        <div className="flex h-[20.035px] items-center justify-center">
+          <Frame />
+        </div>
+      </motion.div>
     </div>
   );
 }
 
 function Cta2() {
   const reduced = useReducedMotion();
-  const [hovered, setHovered] = useState(false);
 
   const scrollToOffres = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -2449,27 +2565,23 @@ function Cta2() {
   return (
     <motion.button
       onClick={scrollToOffres}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      className="bg-white content-stretch flex gap-[8.014px] items-center justify-center overflow-clip px-[30px] py-[15px] relative rounded-[10016.271px] shadow-[0px_4.007px_3.005px_-4.007px_rgba(0,0,0,0.5)] shrink-0 cursor-pointer border-0"
+      className="bg-white content-stretch flex gap-[8.014px] items-center justify-center overflow-hidden px-[30px] py-[15px] relative rounded-[10016.271px] shadow-[0px_4.007px_3.005px_-4.007px_rgba(0,0,0,0.5)] shrink-0 cursor-pointer border-0"
       data-name="CTA"
-      initial={{ opacity: 0, y: reduced ? 0 : 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: HERO_INTRO_DURATION, ease: SECTION_EASE, delay: 0.4 }}
+      variants={{
+        hidden: { opacity: 0, y: reduced ? 0 : 20 },
+        visible: { opacity: 1, y: 0, transition: { duration: HERO_INTRO_DURATION, ease: SECTION_EASE, delay: 0.4 } },
+        hover: {},
+      }}
+      initial="hidden"
+      animate="visible"
+      whileHover={reduced ? undefined : 'hover'}
     >
-      <motion.div
-        className="flex flex-col font-['Neue_Montreal:Bold',sans-serif] font-[500] justify-center leading-[0] not-italic relative shrink-0 text-[16.028px] text-black text-center tracking-[-0.3206px] whitespace-nowrap"
-        animate={hovered && !reduced ? { x: 4, scale: 1.04 } : { x: 0, scale: 1 }}
-        transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-      >
-        <p className="leading-[1.2]">Voir nos offres</p>
-      </motion.div>
-      <motion.div
-        animate={hovered && !reduced ? { x: 4, scale: 1.18 } : { x: 0, scale: 1 }}
-        transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-      >
-        <Frame />
-      </motion.div>
+      <div className="flex flex-col font-['Neue_Montreal:Bold',sans-serif] font-[500] justify-center leading-[0] not-italic relative shrink-0 text-[16.028px] text-black text-center tracking-[-0.3206px] whitespace-nowrap">
+        {reduced ? <p className="leading-[1.2]">Voir nos offres</p> : <RollingTextLabel text="Voir nos offres" />}
+      </div>
+      <div>
+        {reduced ? <Frame /> : <RollingArrowIcon />}
+      </div>
       <div className="absolute inset-0 pointer-events-none rounded-[inherit] shadow-[inset_0px_0px_3.005px_2.003px_rgba(255,255,255,0.2),inset_0px_0px_12.021px_4.007px_rgba(255,255,255,0.13)]" />
     </motion.button>
   );
@@ -2477,7 +2589,6 @@ function Cta2() {
 
 function CtaRealisations() {
   const reduced = useReducedMotion();
-  const [hovered, setHovered] = useState(false);
 
   const scrollToRealisations = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -2487,8 +2598,6 @@ function CtaRealisations() {
   return (
     <motion.button
       onClick={scrollToRealisations}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
       className="relative flex items-center justify-center gap-[8.014px] cursor-pointer border-0 bg-transparent shrink-0 overflow-hidden"
       style={{ width: 236.05, height: 50.03 }}
       data-name="CTA Réalisations"
@@ -2524,20 +2633,12 @@ function CtaRealisations() {
           </defs>
         </svg>
       </div>
-      <motion.div
-        className="relative flex flex-col font-['Neue_Montreal:Bold',sans-serif] font-[500] justify-center leading-[0] not-italic text-[16.028px] text-white text-center tracking-[-0.3206px] whitespace-nowrap"
-        animate={hovered && !reduced ? { x: 4, scale: 1.04 } : { x: 0, scale: 1 }}
-        transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-      >
+      <div className="relative flex flex-col font-['Neue_Montreal:Bold',sans-serif] font-[500] justify-center leading-[0] not-italic text-[16.028px] text-white text-center tracking-[-0.3206px] whitespace-nowrap">
         <p className="leading-[1.2]">Voir nos réalisations</p>
-      </motion.div>
-      <motion.div
-        className="relative"
-        animate={hovered && !reduced ? { x: 4, scale: 1.18 } : { x: 0, scale: 1 }}
-        transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-      >
+      </div>
+      <div className="relative">
         <Frame1 />
-      </motion.div>
+      </div>
     </motion.button>
   );
 }
@@ -2735,13 +2836,11 @@ function Hero() {
 function Frame5() {
   return (
     <div className="absolute h-[60.104px] left-0 mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[0px_0px] mask-size-[1378.377px_60.104px] top-0 w-[181.313px]" data-name="Frame" style={{ maskImage: `url('${imgFrame}')` }}>
-      <div className="absolute inset-[23.33%_13.33%] flex items-center justify-center">
-        <img
+      <div className="absolute inset-y-[23.33%] left-[9.598%] right-[9.598%] flex items-center justify-center">
+        <MarqueeLogo
           src={imgWiccaLogo}
           alt="Wicca"
-          className="block h-full w-full max-w-none object-contain"
-          loading="lazy"
-          decoding="async"
+          className={MARQUEE_LOGO_CLASS_LARGE}
         />
       </div>
     </div>
@@ -2751,13 +2850,11 @@ function Frame5() {
 function Frame6() {
   return (
     <div className="absolute h-[60.104px] left-[229.4px] mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[-229.396px_0px] mask-size-[1378.377px_60.104px] overflow-clip top-0 w-[180.311px]" data-name="Frame" style={{ maskImage: `url('${imgFrame}')` }}>
-      <div className="absolute inset-[23.33%_13.33%] flex items-center justify-center">
-        <img
+      <div className="absolute inset-y-[23.33%] left-[9.598%] right-[9.598%] flex items-center justify-center">
+        <MarqueeLogo
           src={imgSkapeMarqueeLogo}
           alt="Skape"
-          className="block h-full w-full max-w-none object-contain"
-          loading="lazy"
-          decoding="async"
+          className={MARQUEE_LOGO_CLASS_LARGE}
         />
       </div>
     </div>
@@ -2767,13 +2864,11 @@ function Frame6() {
 function Frame7() {
   return (
     <div className="absolute h-[60.104px] left-[457.79px] mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[-457.79px_0px] mask-size-[1378.377px_60.104px] top-0 w-[181.313px]" data-name="Frame" style={{ maskImage: `url('${imgFrame}')` }}>
-      <div className="absolute inset-[23.33%_13.33%] flex items-center justify-center">
-        <img
+      <div className="absolute inset-y-[23.33%] left-[9.598%] right-[9.598%] flex items-center justify-center">
+        <MarqueeLogo
           src={imgMotionzMarqueeLogo}
           alt="Motionz"
-          className="block h-full w-full max-w-none object-contain"
-          loading="lazy"
-          decoding="async"
+          className={`${MARQUEE_LOGO_CLASS_LARGE} -translate-x-[15%]`}
         />
       </div>
     </div>
@@ -2783,13 +2878,11 @@ function Frame7() {
 function Frame8() {
   return (
     <div className="absolute h-[60.104px] left-[687.19px] mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[-687.185px_0px] mask-size-[1378.377px_60.104px] top-0 w-[181.313px]" data-name="Frame" style={{ maskImage: `url('${imgFrame}')` }}>
-      <div className="absolute inset-[23.33%_13.33%] flex items-center justify-center">
-        <img
+      <div className="absolute inset-y-[23.33%] left-[9.598%] right-[9.598%] flex items-center justify-center">
+        <MarqueeLogo
           src={imgMindscalelLogo}
           alt="Mindscale"
-          className="block h-[125%] w-[125%] max-w-none object-contain"
-          loading="lazy"
-          decoding="async"
+          className={MARQUEE_LOGO_CLASS}
         />
       </div>
     </div>
@@ -2799,13 +2892,13 @@ function Frame8() {
 function Frame9() {
   return (
     <div className="absolute h-[60.104px] left-[916.58px] mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[-916.581px_0px] mask-size-[1378.377px_60.104px] top-0 w-[180.311px]" data-name="Frame" style={{ maskImage: `url('${imgFrame}')` }}>
-      <div className="absolute inset-[23.33%_13.33%] flex items-center justify-center">
-        <img
+      <div className="absolute inset-y-[23.33%] left-[9.598%] right-[9.598%] flex items-center justify-center">
+        <MarqueeLogo
           src={imgArtdelapierreLogo}
           alt="Art de la Pierre"
-          className="block h-[125%] w-[125%] max-w-none object-contain"
-          loading="lazy"
-          decoding="async"
+          className={MARQUEE_LOGO_CLASS_TALL}
+          maskPosition="center"
+          maskSize="auto 100%"
         />
       </div>
     </div>
@@ -2815,13 +2908,11 @@ function Frame9() {
 function Frame10() {
   return (
     <div className="absolute h-[60.104px] left-[1144.97px] mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[-1144.974px_0px] mask-size-[1378.377px_60.104px] top-0 w-[181.313px]" data-name="Frame" style={{ maskImage: `url('${imgFrame}')` }}>
-      <div className="absolute inset-[23.33%_13.33%] flex items-center justify-center">
-        <img
+      <div className="absolute inset-y-[23.33%] left-[9.598%] right-[9.598%] flex items-center justify-center">
+        <MarqueeLogo
           src={imgTanbabeLogo}
           alt="Tanbabe"
-          className="block h-full w-full max-w-none object-contain"
-          loading="lazy"
-          decoding="async"
+          className={`${MARQUEE_LOGO_CLASS_LARGE} -translate-x-[1px]`}
         />
       </div>
     </div>
@@ -2831,13 +2922,13 @@ function Frame10() {
 function Frame11() {
   return (
     <div className="absolute h-[60.104px] mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[-1168.37px_0px] mask-size-[1378.377px_60.104px] right-[-178.08px] top-0 w-[181.313px]" data-name="Frame" style={{ maskImage: `url('${imgFrame}')` }}>
-      <div className="absolute inset-[23.33%_13.33%] flex items-center justify-center">
-        <img
+      <div className="absolute inset-y-[23.33%] left-[9.598%] right-[9.598%] flex items-center justify-center">
+        <MarqueeLogo
           src={imgSinlineLogo}
           alt="Sinline"
-          className="block h-full w-full max-w-none object-contain"
-          loading="lazy"
-          decoding="async"
+          className={MARQUEE_LOGO_CLASS_LARGE}
+          maskPosition="center"
+          maskSize="auto 172%"
         />
       </div>
     </div>
@@ -2860,7 +2951,7 @@ function Group3() {
 
 function Logos1() {
   return (
-    <div className="flex-[1_0_0] h-[60.104px] min-h-px min-w-px overflow-clip relative" data-name="logos">
+    <div className="logo-marquee-fade flex-[1_0_0] h-[60.104px] min-h-px min-w-px overflow-clip relative" data-name="logos">
       <div className="flex flex-row h-full will-change-transform" style={{ animation: 'marquee-right 25s linear infinite' }}>
         <Group3 />
         <Group3 />
