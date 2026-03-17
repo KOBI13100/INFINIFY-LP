@@ -1,0 +1,117 @@
+Modifier le loader existant.
+
+Supprimer complètement le loader actuel et le remplacer par le loader utilisé par Apple macOS au démarrage du système.
+
+Je veux une reproduction visuellement identique au loader de macOS.
+
+Référence visuelle
+
+Le loader doit ressembler exactement à celui que l’on voit :
+
+au démarrage d’un Mac
+
+pendant les mises à jour macOS
+
+ou lors du chargement système
+
+C’est une barre de progression minimaliste Apple.
+
+Design
+
+Fond :
+
+noir très profond
+
+plein écran
+
+Barre de progression :
+
+parfaitement centrée horizontalement
+
+centrée verticalement sur l’écran
+
+très fine
+
+coins totalement arrondis
+
+Track (fond de la barre) :
+
+gris très sombre
+
+discret
+
+Progress bar :
+
+blanc ou gris clair Apple
+
+contraste subtil
+
+rendu propre et premium
+
+Style global :
+
+minimaliste
+
+propre
+
+Apple-like
+
+aucune décoration inutile
+
+Animation
+
+La barre doit :
+
+commencer vide
+
+se remplir progressivement
+
+mouvement ultra fluide
+
+interpolation continue
+
+aucun saut
+
+aucune étape visible
+
+L’animation doit donner la sensation du loader Apple natif.
+
+Durée :
+
+1.5 seconde
+
+Easing :
+
+très naturel
+
+légèrement ease-in-out
+
+La progression doit paraître organique et très smooth.
+
+Contraintes
+
+Ne pas ajouter :
+
+texte
+
+logo
+
+icône
+
+spinner
+
+élément UI supplémentaire
+
+Je veux uniquement la barre de chargement Apple macOS.
+
+Résultat attendu
+
+Un écran minimaliste avec :
+
+fond noir
+
+une barre de progression Apple
+
+animation ultra fluide
+
+rendu premium identique à macOS

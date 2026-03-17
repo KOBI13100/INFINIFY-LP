@@ -8,7 +8,7 @@ import imgMindscaleFrame4 from "../../mindscale img/m4.webp";
 import imgMindscaleFrame5 from "../../mindscale img/m5.webp";
 import imgMindscaleFrame6 from "../../mindscale img/M6.webp";
 import imgSkapeLogo from "../../skapelogo.png";
-import imgSkapeMarqueeLogo from "../../skape/skapelogo.svg";
+import imgSkapeMarqueeLogo from "../../skape/5f02CZYAhlEfxDjo35eEYnglNc 1.svg";
 import imgSkapeFrame1 from "../../skape/S.webp";
 import imgSkapeFrame2 from "../../skape/s2.webp";
 import imgSkapeFrame3 from "../../skape/S3.webp";
@@ -2390,15 +2390,15 @@ function Group6() {
   );
 }
 
-function NavBar() {
+function NavBar({ introActive }: { introActive: boolean }) {
   const reduced = useReducedMotion();
   return (
     <motion.div
       className="fixed left-1/2 -translate-x-1/2 top-[70px] z-[9999]"
       data-name="Nav bar-fixed"
       initial={{ opacity: 0, y: reduced ? 0 : -18 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: HERO_INTRO_DURATION, ease: SECTION_EASE, delay: 0.05 }}
+      animate={introActive ? { opacity: 1, y: 0 } : { opacity: 0, y: reduced ? 0 : -18 }}
+      transition={{ duration: HERO_INTRO_DURATION, ease: SECTION_EASE, delay: 0 }}
     >
       <div className="grid-cols-[max-content] grid-rows-[max-content] inline-grid leading-[0] place-items-start relative shrink-0" data-name="Nav bar">
         <TestimonialName2 />
@@ -2410,7 +2410,7 @@ function NavBar() {
   );
 }
 
-function Frame12() {
+function Frame12({ introActive }: { introActive: boolean }) {
   const reduced = useReducedMotion();
   const heroTitleLines = ['Design stratégique', 'pour marques ambitieuses'];
   const heroWordsByLine = heroTitleLines.map((line) => line.split(' '));
@@ -2420,8 +2420,8 @@ function Frame12() {
     <motion.div
       className="content-stretch flex flex-col gap-[16px] items-start not-italic relative shrink-0"
       initial={{ opacity: 0, y: reduced ? 0 : 26 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: HERO_INTRO_DURATION, ease: SECTION_EASE, delay: 0.22 }}
+      animate={introActive ? { opacity: 1, y: 0 } : { opacity: 0, y: reduced ? 0 : 26 }}
+      transition={{ duration: HERO_INTRO_DURATION, ease: SECTION_EASE, delay: 0 }}
     >
       <div className="flex flex-col font-['Neue_Montreal:Medium',sans-serif] justify-center leading-[1.1] relative shrink-0 text-[#f0f0f0] text-[55px] tracking-[-1.1px] w-[798.124px]">
         {heroWordsByLine.map((words, lineIndex) => (
@@ -2436,14 +2436,14 @@ function Frame12() {
                   filter: reduced ? 'blur(0px)' : 'blur(20px)'
                 }}
                 animate={{
-                  opacity: 1,
-                  y: 0,
+                  opacity: introActive ? 1 : 0,
+                  y: introActive ? 0 : reduced ? 0 : 34,
                   scale: 1,
-                  filter: 'blur(0px)'
+                  filter: introActive ? 'blur(0px)' : reduced ? 'blur(0px)' : 'blur(20px)'
                 }}
                 transition={{
                   duration: reduced ? 0.35 : 1.1,
-                  delay: 0.22 + (heroLineOffsets[lineIndex] + wordIndex) * 0.06,
+                  delay: (heroLineOffsets[lineIndex] + wordIndex) * 0.06,
                   ease: [0.19, 1, 0.22, 1],
                 }}
                 style={{ marginRight: 6, display: 'inline-block', transformOrigin: '50% 100%', willChange: 'transform, filter, opacity' }}
@@ -2554,7 +2554,7 @@ function RollingArrowIcon() {
   );
 }
 
-function Cta2() {
+function Cta2({ introActive }: { introActive: boolean }) {
   const reduced = useReducedMotion();
 
   const scrollToOffres = (e: React.MouseEvent) => {
@@ -2569,11 +2569,11 @@ function Cta2() {
       data-name="CTA"
       variants={{
         hidden: { opacity: 0, y: reduced ? 0 : 20 },
-        visible: { opacity: 1, y: 0, transition: { duration: HERO_INTRO_DURATION, ease: SECTION_EASE, delay: 0.4 } },
+        visible: { opacity: 1, y: 0, transition: { duration: HERO_INTRO_DURATION, ease: SECTION_EASE, delay: 0.18 } },
         hover: {},
       }}
       initial="hidden"
-      animate="visible"
+      animate={introActive ? "visible" : "hidden"}
       whileHover={reduced ? undefined : 'hover'}
     >
       <div className="flex flex-col font-['Neue_Montreal:Bold',sans-serif] font-[500] justify-center leading-[0] not-italic relative shrink-0 text-[16.028px] text-black text-center tracking-[-0.3206px] whitespace-nowrap">
@@ -2587,7 +2587,7 @@ function Cta2() {
   );
 }
 
-function CtaRealisations() {
+function CtaRealisations({ introActive }: { introActive: boolean }) {
   const reduced = useReducedMotion();
 
   const scrollToRealisations = (e: React.MouseEvent) => {
@@ -2602,8 +2602,8 @@ function CtaRealisations() {
       style={{ width: 236.05, height: 50.03 }}
       data-name="CTA Réalisations"
       initial={{ opacity: 0, y: reduced ? 0 : 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: HERO_INTRO_DURATION, ease: SECTION_EASE, delay: 0.5 }}
+      animate={introActive ? { opacity: 1, y: 0 } : { opacity: 0, y: reduced ? 0 : 20 }}
+      transition={{ duration: HERO_INTRO_DURATION, ease: SECTION_EASE, delay: 0.28 }}
     >
       {/* CTA.svg background */}
       <div className="absolute inset-0 pointer-events-none">
@@ -2643,13 +2643,13 @@ function CtaRealisations() {
   );
 }
 
-function Left() {
+function Left({ introActive }: { introActive: boolean }) {
   return (
     <div className="content-stretch flex flex-col gap-[32px] items-start justify-end relative shrink-0" data-name="Left">
-      <Frame12 />
+      <Frame12 introActive={introActive} />
       <div className="flex items-center gap-[32px]">
-        <Cta2 />
-        <CtaRealisations />
+        <Cta2 introActive={introActive} />
+        <CtaRealisations introActive={introActive} />
       </div>
     </div>
   );
@@ -2786,49 +2786,49 @@ function Features() {
   );
 }
 
-function Right() {
+function Right({ introActive }: { introActive: boolean }) {
   const reduced = useReducedMotion();
   return (
     <motion.div
       className="content-stretch flex flex-col items-start relative shrink-0 w-[477.824px]"
       data-name="Right"
       initial={{ opacity: 0, y: reduced ? 0 : 24 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: HERO_INTRO_DURATION, ease: SECTION_EASE, delay: 0.58 }}
+      animate={introActive ? { opacity: 1, y: 0 } : { opacity: 0, y: reduced ? 0 : 24 }}
+      transition={{ duration: HERO_INTRO_DURATION, ease: SECTION_EASE, delay: 0.36 }}
     >
       <Features />
     </motion.div>
   );
 }
 
-function Content() {
+function Content({ introActive }: { introActive: boolean }) {
   return (
     <div className="max-w-[1606.7705078125px] relative shrink-0 w-full" data-name="Content">
       <div className="flex flex-row items-center max-w-[inherit] size-full">
         <div className="content-stretch flex items-center justify-between max-w-[inherit] px-[50px] relative w-full">
-          <Left />
-          <Right />
+          <Left introActive={introActive} />
+          <Right introActive={introActive} />
         </div>
       </div>
     </div>
   );
 }
 
-function Hero() {
+function Hero({ introActive }: { introActive: boolean }) {
   const reduced = useReducedMotion();
   return (
     <motion.div
       className="content-stretch flex flex-col h-[700px] items-center justify-end overflow-clip pb-[64.111px] relative rounded-[32.055px] shrink-0 w-[1400px] border border-black"
       data-name="Hero"
       initial={{ opacity: 0, y: reduced ? 0 : 24 }}
-      animate={{ opacity: 1, y: 0 }}
+      animate={introActive ? { opacity: 1, y: 0 } : { opacity: 0, y: reduced ? 0 : 24 }}
       transition={{ duration: HERO_INTRO_DURATION, ease: SECTION_EASE, delay: 0 }}
     >
       <div aria-hidden="true" className="absolute inset-0 pointer-events-none">
         <img alt="" className="absolute w-full h-auto left-0" src={imgHero} decoding="async" fetchPriority="high" style={{ top: '' }} />
         <div className="absolute bg-gradient-to-b from-[45%] from-[rgba(2,2,2,0)] inset-0 to-black" />
       </div>
-      <Content />
+      <Content introActive={introActive} />
     </motion.div>
   );
 }
@@ -2960,15 +2960,15 @@ function Logos1() {
   );
 }
 
-function Logos() {
+function Logos({ introActive }: { introActive: boolean }) {
   const reduced = useReducedMotion();
   return (
     <motion.div
       className="max-w-[1606.7705078125px] relative shrink-0 w-full"
       data-name="Logos"
       initial={{ opacity: 0, y: reduced ? 0 : 22 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: HERO_INTRO_DURATION, ease: SECTION_EASE, delay: 0.78 }}
+      animate={introActive ? { opacity: 1, y: 0 } : { opacity: 0, y: reduced ? 0 : 22 }}
+      transition={{ duration: HERO_INTRO_DURATION, ease: SECTION_EASE, delay: 0.56 }}
     >
       <div className="flex flex-row items-center max-w-[inherit] size-full">
         <div className="content-stretch flex gap-[32.055px] items-center max-w-[inherit] pb-[10.017px] pt-[32.055px] px-[32.055px] relative w-full">
@@ -2982,16 +2982,16 @@ function Logos() {
   );
 }
 
-function HeroLogos() {
+function HeroLogos({ introActive }: { introActive: boolean }) {
   return (
     <div className="-translate-x-1/2 absolute content-stretch flex flex-col h-[922px] items-center left-1/2 top-[20px] w-[1400px]" data-name="Hero + Logos">
-      <Hero />
-      <Logos />
+      <Hero introActive={introActive} />
+      <Logos introActive={introActive} />
     </div>
   );
 }
 
-export default function Desktop() {
+export default function Desktop({ introActive = true }: { introActive?: boolean }) {
   const scrollDirection = useScrollDirection();
 
   return (
@@ -3000,14 +3000,14 @@ export default function Desktop() {
         <div className="absolute bg-white inset-0" />
 
       </div>
-      <NavBar />
+      <NavBar introActive={introActive} />
       <InfinifyMask scrollDirection={scrollDirection} />
       <Footer scrollDirection={scrollDirection} />
       <Cta scrollDirection={scrollDirection} />
       <Realisations />
       <OffresGroupe scrollDirection={scrollDirection} />
       <TeamGroupe scrollDirection={scrollDirection} />
-      <HeroLogos />
+      <HeroLogos introActive={introActive} />
     </div>
   );
 }
