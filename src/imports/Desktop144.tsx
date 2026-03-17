@@ -771,10 +771,10 @@ function CallToActionContainer() {
 function TestimonialName() {
   return (
     <div className="absolute left-0 top-0" data-name="Testimonial Name">
-      <div className="absolute content-stretch flex gap-[8.093px] h-[36px] items-center justify-center left-0 p-[6.07px] pointer-events-none rounded-[100px] top-0 w-[298px] backdrop-blur-[6px]" data-name="Toolbar - Symbols">
-        <svg aria-hidden="true" className="absolute inset-0 pointer-events-none" width="100%" height="100%" viewBox="0 0 298 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect x="0.354" y="0.354" width="297.292" height="35.292" rx="18" fill="#808080" fillOpacity="0.2" style={{ mixBlendMode: 'luminosity' }} />
-          <rect x="0.354" y="0.354" width="297.292" height="35.292" rx="18" stroke="url(#chipGrad6)" strokeWidth="0.708" />
+      <div className="absolute content-stretch flex gap-[8.093px] h-[36px] items-center justify-center left-0 p-[6.07px] pointer-events-none rounded-[100px] top-0 w-[280.746px] backdrop-blur-[6px]" data-name="Toolbar - Symbols">
+        <svg aria-hidden="true" className="absolute inset-0 pointer-events-none" width="100%" height="100%" viewBox="0 0 280.746 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="0.354" y="0.354" width="280.038" height="35.292" rx="18" fill="#808080" fillOpacity="0.2" style={{ mixBlendMode: 'luminosity' }} />
+          <rect x="0.354" y="0.354" width="280.038" height="35.292" rx="18" stroke="url(#chipGrad6)" strokeWidth="0.708" />
           <defs>
             <linearGradient id="chipGrad6" x1="0.5" y1="0" x2="0.5" y2="1" gradientUnits="objectBoundingBox">
               <stop stopColor="white" stopOpacity="0.4" />
@@ -785,7 +785,7 @@ function TestimonialName() {
           </defs>
         </svg>
       </div>
-      <div className="-translate-x-full -translate-y-1/2 absolute flex flex-col font-['Neue_Montreal:Regular',sans-serif] font-normal justify-center leading-[0] left-[286.33px] text-[14.112px] text-center text-white top-[17.7px] whitespace-nowrap">
+      <div className="-translate-x-full -translate-y-1/2 absolute flex flex-col font-['Neue_Montreal:Regular',sans-serif] font-normal justify-center leading-[0] left-[266.357px] text-[14.112px] text-center text-white top-[17.7px] whitespace-nowrap">
         <p className="leading-[normal]">Prêt à passer à la vitesse supérieure ?</p>
       </div>
     </div>
@@ -796,12 +796,12 @@ function TestimonialInfo() {
   return (
     <div className="absolute left-[295.5px] top-[61.7px]" data-name="Testimonial Info">
       <TestimonialName />
-      <div className="absolute left-[6.92px] size-[25.834px] top-[4.52px]">
+      <div className="absolute left-[8.304px] size-[25.834px] top-[4.52px]">
         <svg className="absolute block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 25.8335 25.8335">
           <circle cx="12.9168" cy="12.9168" fill="var(--fill-0, #0D0D0D)" id="Ellipse 46954" r="12.9168" />
         </svg>
       </div>
-      <div className="absolute h-[9.314px] left-[12.63px] top-[12.78px] w-[14.411px]" data-name="Logo Infinify 1">
+      <div className="absolute h-[9.314px] left-[14.014px] top-[12.78px] w-[14.411px]" data-name="Logo Infinify 1">
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <img alt="" className="absolute h-[138.86%] left-[-6.67%] max-w-none top-[-17.73%] w-[114.53%]" src={imgLogoInfinify1} />
         </div>
@@ -2268,7 +2268,7 @@ const TEAM_ROLE_CHIP_STYLE = {
   paddingInline: 10.5,
 } as const;
 
-const OSCAR_NAME_CHIP_WIDTH = 170.357;
+const OSCAR_NAME_CHIP_WIDTH = 174.996;
 const OSCAR_INFO_LEFT_EDGE = 156.53;
 const BENJAMIN_INFO_RIGHT_EDGE = 156.53;
 const OSCAR_INFO_SHIFT_X = 367.483 * 0.015;
