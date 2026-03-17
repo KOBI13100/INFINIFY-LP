@@ -1,6 +1,5 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import imgLogoInfinify from "../../assets/bf1d602331298fa70e56da6d7bd2fe71a3de2b7a.png";
-import imgNoiseTexture from "../../assets/050199014e18c0cb60e9c252c2ef39002648cc6a.png";
 
 type SplashPhase =
   | "loading"
@@ -11,21 +10,29 @@ type SplashPhase =
   | "screen-exit";
 
 type LoaderSplashProps = {
+  onScreenExitStart?: () => void;
   onComplete: () => void;
 };
 
-const LOADER_DURATION_MS = 1800;
-const LOADER_EXIT_DELAY_MS = 60;
-const LOADER_TO_LOGO_DELAY_MS = 320;
-const LOGO_SETTLE_DELAY_MS = 20;
-const LOGO_VISIBLE_DURATION_MS = 1180;
+const LOADER_DURATION_MS = 2400;
+const LOADER_EXIT_DELAY_MS = 0;
+const LOADER_TO_LOGO_DELAY_MS = 140;
+const LOGO_SETTLE_DELAY_MS = 0;
+const LOGO_VISIBLE_DURATION_MS = 760;
+const SCREEN_EXIT_DURATION_MS = 600;
+const LOGO_SCREEN_EXIT_DURATION_MS = 600;
+const LOADER_EASE = [0.22, 0.61, 0.36, 1] as const;
 const MIN_VISIBLE_PROGRESS = 4 / 260;
 
-export default function LoaderSplash({ onComplete }: LoaderSplashProps) {
+export default function LoaderSplash({
+  onScreenExitStart,
+  onComplete,
+}: LoaderSplashProps) {
   const [phase, setPhase] = useState<SplashPhase>("loading");
   const [progress, setProgress] = useState(0);
   const animationFrameRef = useRef<number | null>(null);
   const timeoutRef = useRef<number | null>(null);
+  const hasStartedScreenExitRef = useRef(false);
   const hasCompletedRef = useRef(false);
 
   useEffect(() => {
@@ -55,7 +62,7 @@ export default function LoaderSplash({ onComplete }: LoaderSplashProps) {
       const elapsed = now - start;
       const progressValue = Math.min(elapsed / LOADER_DURATION_MS, 1);
 
-      setProgress(cubicBezierEase(progressValue));
+      setProgress(cubicBezierEase(progressValue, LOADER_EASE));
 
       if (progressValue < 1) {
         animationFrameRef.current = window.requestAnimationFrame(animate);
@@ -100,7 +107,14 @@ export default function LoaderSplash({ onComplete }: LoaderSplashProps) {
       );
     } else if (phase === "logo-visible") {
       timeoutRef.current = window.setTimeout(
-        () => setPhase("logo-exit"),
+        () => {
+          setPhase("screen-exit");
+
+          if (!hasStartedScreenExitRef.current) {
+            hasStartedScreenExitRef.current = true;
+            onScreenExitStart?.();
+          }
+        },
         LOGO_VISIBLE_DURATION_MS,
       );
     }
@@ -111,19 +125,24 @@ export default function LoaderSplash({ onComplete }: LoaderSplashProps) {
         timeoutRef.current = null;
       }
     };
-  }, [onComplete, phase]);
+  }, [onComplete, onScreenExitStart, phase]);
 
   const loaderScale = progress === 0 ? 0 : Math.max(progress, MIN_VISIBLE_PROGRESS);
+  const splashStyle = {
+    "--splash-screen-exit-duration": `${SCREEN_EXIT_DURATION_MS}ms`,
+    "--splash-logo-exit-duration": `${LOGO_SCREEN_EXIT_DURATION_MS}ms`,
+  } as CSSProperties;
 
   return (
     <div
       className="splash-screen"
       data-phase={phase}
+      style={splashStyle}
       onTransitionEnd={(event) => {
         if (
           phase === "screen-exit" &&
           event.target === event.currentTarget &&
-          event.propertyName === "transform" &&
+          event.propertyName === "opacity" &&
           !hasCompletedRef.current
         ) {
           hasCompletedRef.current = true;
@@ -134,12 +153,6 @@ export default function LoaderSplash({ onComplete }: LoaderSplashProps) {
       <span className="sr-only" aria-live="polite" role="status">
         Chargement du site Infinify
       </span>
-
-      <div
-        aria-hidden="true"
-        className="splash-screen__texture"
-        style={{ backgroundImage: `url("${imgNoiseTexture}")` }}
-      />
 
       <div aria-hidden="true" className="splash-screen__loader">
         <div className="splash-screen__loader-track" />
@@ -152,15 +165,6 @@ export default function LoaderSplash({ onComplete }: LoaderSplashProps) {
       <div
         aria-hidden="true"
         className="splash-screen__logo"
-        onTransitionEnd={(event) => {
-          if (
-            phase === "logo-exit" &&
-            event.target === event.currentTarget &&
-            event.propertyName === "opacity"
-          ) {
-            setPhase("screen-exit");
-          }
-        }}
       >
         <div className="splash-screen__logo-frame">
           <img
@@ -174,11 +178,10 @@ export default function LoaderSplash({ onComplete }: LoaderSplashProps) {
   );
 }
 
-function cubicBezierEase(t: number): number {
-  const x1 = 0.25;
-  const y1 = 0.1;
-  const x2 = 0.25;
-  const y2 = 1;
+function cubicBezierEase(
+  t: number,
+  [x1, y1, x2, y2]: readonly [number, number, number, number],
+): number {
 
   let curvePosition = t;
 

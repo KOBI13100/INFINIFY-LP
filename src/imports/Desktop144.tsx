@@ -56,7 +56,21 @@ const SECTION_Y = 56;
 const SECTION_DURATION = 0.9;
 const SECTION_VIEWPORT = { once: true, amount: 0.35 } as const;
 const TEAM_VIEWPORT = { once: true, amount: 0.5 } as const;
-const HERO_INTRO_DURATION = 0.8;
+const HERO_INTRO_DURATION_MULTIPLIER = 1.3;
+const HERO_NAV_DURATION = 0.6;
+const HERO_CONTENT_DURATION = 0.45 * HERO_INTRO_DURATION_MULTIPLIER;
+const HERO_SHELL_DURATION = 0.68;
+const HERO_SHELL_EASE = [0.22, 1, 0.36, 1] as const;
+const HERO_SHELL_Y = 56;
+const HERO_COPY_Y = 34;
+const HERO_WORD_Y = 48;
+const HERO_CTA_Y = 28;
+const HERO_SIDE_Y = 36;
+const HERO_WORD_DURATION = 0.6 * HERO_INTRO_DURATION_MULTIPLIER;
+const HERO_WORD_BLUR_START = 36;
+const HERO_WORD_BLUR_DURATION = 0.32;
+const HERO_WORD_STAGGER = 0.08;
+const HERO_WORD_EASE = [0.19, 1, 0.22, 1] as const;
 const CTA_IMAGE_EDGE_CROP = 6;
 const MARQUEE_LOGO_COLOR = '#131313';
 const MARQUEE_LOGO_CLASS = 'h-[19px] w-[125%] max-w-none shrink-0';
@@ -2390,15 +2404,11 @@ function Group6() {
   );
 }
 
-function NavBar({ introActive }: { introActive: boolean }) {
-  const reduced = useReducedMotion();
+function NavBar() {
   return (
-    <motion.div
+    <div
       className="fixed left-1/2 -translate-x-1/2 top-[70px] z-[9999]"
       data-name="Nav bar-fixed"
-      initial={{ opacity: 0, y: reduced ? 0 : -18 }}
-      animate={introActive ? { opacity: 1, y: 0 } : { opacity: 0, y: reduced ? 0 : -18 }}
-      transition={{ duration: HERO_INTRO_DURATION, ease: SECTION_EASE, delay: 0 }}
     >
       <div className="grid-cols-[max-content] grid-rows-[max-content] inline-grid leading-[0] place-items-start relative shrink-0" data-name="Nav bar">
         <TestimonialName2 />
@@ -2406,7 +2416,7 @@ function NavBar({ introActive }: { introActive: boolean }) {
         <div className="bg-[#565656] col-1 h-[1.2px] ml-[117.15px] mt-[27.87px] relative row-1 w-[30.126px] z-10" />
         <div className="bg-[#565656] col-1 h-[1.2px] ml-[117.15px] mt-[37.16px] relative row-1 w-[30.126px] z-10" />
       </div>
-    </motion.div>
+    </div>
   );
 }
 
@@ -2414,43 +2424,57 @@ function Frame12({ introActive }: { introActive: boolean }) {
   const reduced = useReducedMotion();
   const heroTitleLines = ['Design stratégique', 'pour marques ambitieuses'];
   const heroWordsByLine = heroTitleLines.map((line) => line.split(' '));
-  const heroLineOffsets = heroWordsByLine.map((_, lineIndex) => heroWordsByLine.slice(0, lineIndex).reduce((total, words) => total + words.length, 0));
+  const heroLineOffsets = heroWordsByLine.map((_, lineIndex) =>
+    heroWordsByLine
+      .slice(0, lineIndex)
+      .reduce((total, words) => total + words.length, 0),
+  );
 
   return (
     <motion.div
       className="content-stretch flex flex-col gap-[16px] items-start not-italic relative shrink-0"
-      initial={{ opacity: 0, y: reduced ? 0 : 26 }}
-      animate={introActive ? { opacity: 1, y: 0 } : { opacity: 0, y: reduced ? 0 : 26 }}
-      transition={{ duration: HERO_INTRO_DURATION, ease: SECTION_EASE, delay: 0 }}
+      initial={{ opacity: 0, y: reduced ? 0 : HERO_COPY_Y }}
+      animate={introActive ? { opacity: 1, y: 0 } : { opacity: 0, y: reduced ? 0 : HERO_COPY_Y }}
+      transition={{ duration: HERO_CONTENT_DURATION, ease: SECTION_EASE, delay: 0 }}
     >
       <div className="flex flex-col font-['Neue_Montreal:Medium',sans-serif] justify-center leading-[1.1] relative shrink-0 text-[#f0f0f0] text-[55px] tracking-[-1.1px] w-[798.124px]">
         {heroWordsByLine.map((words, lineIndex) => (
           <p key={heroTitleLines[lineIndex]} className={lineIndex === 0 ? "mb-0" : undefined}>
-            {words.map((word, wordIndex) => (
-              <motion.span
-                key={`${heroTitleLines[lineIndex]}-${word}-${wordIndex}`}
-                initial={{
-                  opacity: 0,
-                  y: reduced ? 0 : 34,
-                  scale: 1,
-                  filter: reduced ? 'blur(0px)' : 'blur(20px)'
-                }}
-                animate={{
-                  opacity: introActive ? 1 : 0,
-                  y: introActive ? 0 : reduced ? 0 : 34,
-                  scale: 1,
-                  filter: introActive ? 'blur(0px)' : reduced ? 'blur(0px)' : 'blur(20px)'
-                }}
-                transition={{
-                  duration: reduced ? 0.35 : 1.1,
-                  delay: (heroLineOffsets[lineIndex] + wordIndex) * 0.06,
-                  ease: [0.19, 1, 0.22, 1],
-                }}
-                style={{ marginRight: 6, display: 'inline-block', transformOrigin: '50% 100%', willChange: 'transform, filter, opacity' }}
-              >
-                {word}
-              </motion.span>
-            ))}
+            {words.map((word, wordIndex) => {
+              const wordDelay =
+                (heroLineOffsets[lineIndex] + wordIndex) * 0.06;
+
+              return (
+                <motion.span
+                  key={`${heroTitleLines[lineIndex]}-${word}-${wordIndex}`}
+                  initial={{
+                    opacity: 0,
+                    y: reduced ? 0 : 34,
+                    scale: 1,
+                    filter: reduced ? 'blur(0px)' : 'blur(20px)'
+                  }}
+                  animate={{
+                    opacity: introActive ? 1 : 0,
+                    y: introActive ? 0 : reduced ? 0 : 34,
+                    scale: 1,
+                    filter: introActive ? 'blur(0px)' : reduced ? 'blur(0px)' : 'blur(20px)'
+                  }}
+                  transition={{
+                    duration: reduced ? 0.35 : 1.1,
+                    delay: wordDelay,
+                    ease: [0.19, 1, 0.22, 1],
+                  }}
+                  style={{
+                    marginRight: wordIndex === words.length - 1 ? 0 : 6,
+                    display: 'inline-block',
+                    transformOrigin: '50% 100%',
+                    willChange: 'transform, filter, opacity'
+                  }}
+                >
+                  {word}
+                </motion.span>
+              );
+            })}
           </p>
         ))}
       </div>
@@ -2568,8 +2592,8 @@ function Cta2({ introActive }: { introActive: boolean }) {
       className="bg-white content-stretch flex gap-[8.014px] items-center justify-center overflow-hidden px-[30px] py-[15px] relative rounded-[10016.271px] shadow-[0px_4.007px_3.005px_-4.007px_rgba(0,0,0,0.5)] shrink-0 cursor-pointer border-0"
       data-name="CTA"
       variants={{
-        hidden: { opacity: 0, y: reduced ? 0 : 20 },
-        visible: { opacity: 1, y: 0, transition: { duration: HERO_INTRO_DURATION, ease: SECTION_EASE, delay: 0.18 } },
+        hidden: { opacity: 0, y: reduced ? 0 : HERO_CTA_Y },
+        visible: { opacity: 1, y: 0, transition: { duration: HERO_CONTENT_DURATION, ease: SECTION_EASE, delay: 0 } },
         hover: {},
       }}
       initial="hidden"
@@ -2601,9 +2625,9 @@ function CtaRealisations({ introActive }: { introActive: boolean }) {
       className="relative flex items-center justify-center gap-[8.014px] cursor-pointer border-0 bg-transparent shrink-0 overflow-hidden"
       style={{ width: 236.05, height: 50.03 }}
       data-name="CTA Réalisations"
-      initial={{ opacity: 0, y: reduced ? 0 : 20 }}
-      animate={introActive ? { opacity: 1, y: 0 } : { opacity: 0, y: reduced ? 0 : 20 }}
-      transition={{ duration: HERO_INTRO_DURATION, ease: SECTION_EASE, delay: 0.28 }}
+      initial={{ opacity: 0, y: reduced ? 0 : HERO_CTA_Y }}
+      animate={introActive ? { opacity: 1, y: 0 } : { opacity: 0, y: reduced ? 0 : HERO_CTA_Y }}
+      transition={{ duration: HERO_CONTENT_DURATION, ease: SECTION_EASE, delay: 0 }}
     >
       {/* CTA.svg background */}
       <div className="absolute inset-0 pointer-events-none">
@@ -2792,9 +2816,9 @@ function Right({ introActive }: { introActive: boolean }) {
     <motion.div
       className="content-stretch flex flex-col items-start relative shrink-0 w-[477.824px]"
       data-name="Right"
-      initial={{ opacity: 0, y: reduced ? 0 : 24 }}
-      animate={introActive ? { opacity: 1, y: 0 } : { opacity: 0, y: reduced ? 0 : 24 }}
-      transition={{ duration: HERO_INTRO_DURATION, ease: SECTION_EASE, delay: 0.36 }}
+      initial={{ opacity: 0, y: reduced ? 0 : HERO_SIDE_Y }}
+      animate={introActive ? { opacity: 1, y: 0 } : { opacity: 0, y: reduced ? 0 : HERO_SIDE_Y }}
+      transition={{ duration: HERO_CONTENT_DURATION, ease: SECTION_EASE, delay: 0 }}
     >
       <Features />
     </motion.div>
@@ -2815,21 +2839,17 @@ function Content({ introActive }: { introActive: boolean }) {
 }
 
 function Hero({ introActive }: { introActive: boolean }) {
-  const reduced = useReducedMotion();
   return (
-    <motion.div
+    <div
       className="content-stretch flex flex-col h-[700px] items-center justify-end overflow-clip pb-[64.111px] relative rounded-[32.055px] shrink-0 w-[1400px] border border-black"
       data-name="Hero"
-      initial={{ opacity: 0, y: reduced ? 0 : 24 }}
-      animate={introActive ? { opacity: 1, y: 0 } : { opacity: 0, y: reduced ? 0 : 24 }}
-      transition={{ duration: HERO_INTRO_DURATION, ease: SECTION_EASE, delay: 0 }}
     >
       <div aria-hidden="true" className="absolute inset-0 pointer-events-none">
         <img alt="" className="absolute w-full h-auto left-0" src={imgHero} decoding="async" fetchPriority="high" style={{ top: '' }} />
         <div className="absolute bg-gradient-to-b from-[45%] from-[rgba(2,2,2,0)] inset-0 to-black" />
       </div>
       <Content introActive={introActive} />
-    </motion.div>
+    </div>
   );
 }
 
@@ -2960,15 +2980,11 @@ function Logos1() {
   );
 }
 
-function Logos({ introActive }: { introActive: boolean }) {
-  const reduced = useReducedMotion();
+function Logos() {
   return (
-    <motion.div
+    <div
       className="max-w-[1606.7705078125px] relative shrink-0 w-full"
       data-name="Logos"
-      initial={{ opacity: 0, y: reduced ? 0 : 22 }}
-      animate={introActive ? { opacity: 1, y: 0 } : { opacity: 0, y: reduced ? 0 : 22 }}
-      transition={{ duration: HERO_INTRO_DURATION, ease: SECTION_EASE, delay: 0.56 }}
     >
       <div className="flex flex-row items-center max-w-[inherit] size-full">
         <div className="content-stretch flex gap-[32.055px] items-center max-w-[inherit] pb-[10.017px] pt-[32.055px] px-[32.055px] relative w-full">
@@ -2978,7 +2994,7 @@ function Logos({ introActive }: { introActive: boolean }) {
           <Logos1 />
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }
 
@@ -2986,7 +3002,7 @@ function HeroLogos({ introActive }: { introActive: boolean }) {
   return (
     <div className="-translate-x-1/2 absolute content-stretch flex flex-col h-[922px] items-center left-1/2 top-[20px] w-[1400px]" data-name="Hero + Logos">
       <Hero introActive={introActive} />
-      <Logos introActive={introActive} />
+      <Logos />
     </div>
   );
 }
@@ -3000,7 +3016,7 @@ export default function Desktop({ introActive = true }: { introActive?: boolean 
         <div className="absolute bg-white inset-0" />
 
       </div>
-      <NavBar introActive={introActive} />
+      <NavBar />
       <InfinifyMask scrollDirection={scrollDirection} />
       <Footer scrollDirection={scrollDirection} />
       <Cta scrollDirection={scrollDirection} />
