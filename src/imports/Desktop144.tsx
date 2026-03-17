@@ -2,13 +2,54 @@ import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
 import svgPaths from "./svg-6slkny0mf7";
 import imgMindscaleLogo from "../../mindscale.svg";
+import imgMindscaleFrame2 from "../../mindscale img/m2.webp";
+import imgMindscaleFrame3 from "../../mindscale img/m3.webp";
+import imgMindscaleFrame4 from "../../mindscale img/m4.webp";
+import imgMindscaleFrame5 from "../../mindscale img/m5.webp";
+import imgMindscaleFrame6 from "../../mindscale img/M6.webp";
+import imgSkapeLogo from "../../skapelogo.png";
+import imgSkapeMarqueeLogo from "../../skape/skapelogo.svg";
+import imgSkapeFrame1 from "../../skape/S.webp";
+import imgSkapeFrame2 from "../../skape/s2.webp";
+import imgSkapeFrame3 from "../../skape/S3.webp";
+import imgSkapeFrame4 from "../../skape/S4.webp";
+import imgSkapeFrame5 from "../../skape/S5.webp";
+import imgSkapeFrame6 from "../../skape/S6.webp";
+import imgSkapeFrame7 from "../../skape/S7.webp";
+import imgMotionzFrame1 from "../../motionz/MO1.webp";
+import imgMotionzFrame2 from "../../motionz/MO2.webp";
+import imgMotionzFrame3 from "../../motionz/MO3.webp";
+import imgMotionzFrame4 from "../../motionz/MO4.webp";
+import imgMotionzFrame5 from "../../motionz/MO5.webp";
+import imgMotionzMarqueeLogo from "../../motionz.svg";
+import imgMotionzLogo from "../../motionzlogo.png";
+import imgMindscalelLogo from "../../mindscalel.svg";
+import imgArtdelapierreLogo from "../../artdelapierre.svg";
+import imgTanbabeLogo from "../../tanbabe.svg";
+import imgSinlineLogo from "../../sinline.svg";
+import imgWiccaLogo from "../../wicca.svg";
+import imgHanzoLogo from "../../hanzologo.png";
+import imgVertebraLogo from "../../vertebralogo.png";
+import imgHanzoFrame1 from "../../hanzo/H1.webp";
+import imgHanzoFrame2 from "../../hanzo/H2.webp";
+import imgHanzoFrame3 from "../../hanzo/H3.webp";
+import imgHanzoFrame4 from "../../hanzo/H4.webp";
+import imgHanzoFrame5 from "../../hanzo/H5.webp";
+import imgHanzoFrame6 from "../../hanzo/H6.webp";
+import imgVertebraFrame1 from "../../vertebra/V1.webp";
+import imgNeuralFrame1 from "../../neural/N1.png";
+import imgLightIcon from "../../light.svg";
+import imgMultipagesIcon from "../../multipages.svg";
+import imgRestaurantIcon from "../../restaurant.png";
 import imgCtaBackground from "../assets/cta-background.png";
 import imgLogoInfinify1 from "../assets/bf1d602331298fa70e56da6d7bd2fe71a3de2b7a.png";
 import imgCardImage from "../assets/carousel-card.jpg";
 import imgTestimonialImage from "../assets/a77190103db78e6334f030692996578c4825b66d.png";
 import imgTestimonialImage1 from "../assets/dec5cbce46710d057f06833cca1d54055e9a4ed5.png";
 import imgHero from "../assets/bg.png";
-import { imgGroup, imgOffres, imgInfinify, imgTeam, imgFrame, imgGroup1 } from "./svg-ithsc";
+import { imgGroup, imgOffres, imgInfinify, imgTeam, imgFrame } from "./svg-ithsc";
+
+type ScrollDirection = 'up' | 'down';
 
 const SECTION_EASE = [0.16, 1, 0.3, 1] as const;
 const SECTION_Y = 56;
@@ -16,17 +57,47 @@ const SECTION_DURATION = 0.9;
 const SECTION_VIEWPORT = { once: true, amount: 0.35 } as const;
 const TEAM_VIEWPORT = { once: true, amount: 0.5 } as const;
 const HERO_INTRO_DURATION = 0.8;
+const CTA_IMAGE_EDGE_CROP = 6;
 
-function BackgroundContainer() {
+function useScrollDirection(): ScrollDirection {
+  const [scrollDirection, setScrollDirection] = useState<ScrollDirection>('down');
+
+  useEffect(() => {
+    let lastScrollY = window.scrollY;
+
+    const updateScrollDirection = () => {
+      const nextScrollY = window.scrollY;
+      const scrollDelta = nextScrollY - lastScrollY;
+
+      if (Math.abs(scrollDelta) < 4) {
+        return;
+      }
+
+      setScrollDirection(scrollDelta > 0 ? 'down' : 'up');
+      lastScrollY = nextScrollY;
+    };
+
+    window.addEventListener('scroll', updateScrollDirection, { passive: true });
+
+    return () => window.removeEventListener('scroll', updateScrollDirection);
+  }, []);
+
+  return scrollDirection;
+}
+
+function BackgroundContainer({ scrollDirection }: { scrollDirection: ScrollDirection }) {
   const reduced = useReducedMotion();
+  const footerBackgroundRef = useRef<HTMLDivElement | null>(null);
+  const isFooterBackgroundInView = useInView(footerBackgroundRef, { amount: TEAM_VIEWPORT.amount });
+
   return (
     <motion.div
+      ref={footerBackgroundRef}
       className="absolute -translate-x-1/2 bg-black h-[269.561px] left-1/2 top-[4251.44px] w-[100dvw]"
       data-name="Background Shape"
       initial={{ opacity: 0, y: reduced ? 0 : FOOTER_Y }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={TEAM_VIEWPORT}
-      transition={{ duration: FOOTER_DURATION, ease: FOOTER_EASE, delay: 0.18 }}
+      animate={isFooterBackgroundInView ? { opacity: 1, y: 0 } : { opacity: 0, y: reduced ? 0 : FOOTER_Y }}
+      transition={{ duration: FOOTER_DURATION, ease: FOOTER_EASE, delay: scrollDirection === 'up' ? 0.28 : 0.18 }}
     />
   );
 }
@@ -177,16 +248,19 @@ function LegalLinks() {
   );
 }
 
-function ContentGroup() {
+function ContentGroup({ scrollDirection }: { scrollDirection: ScrollDirection }) {
   const reduced = useReducedMotion();
+  const footerContentRef = useRef<HTMLDivElement | null>(null);
+  const isFooterContentInView = useInView(footerContentRef, { amount: TEAM_VIEWPORT.amount });
+
   return (
     <motion.div
+      ref={footerContentRef}
       className="-translate-x-1/2 absolute content-stretch flex gap-[620px] items-start leading-[0] left-1/2 top-[4298.87px] w-[1211px]"
       data-name="Content Group"
       initial={{ opacity: 0, y: reduced ? 0 : FOOTER_Y }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={TEAM_VIEWPORT}
-      transition={{ duration: FOOTER_DURATION, ease: FOOTER_EASE, delay: 0.42 }}
+      animate={isFooterContentInView ? { opacity: 1, y: 0 } : { opacity: 0, y: reduced ? 0 : FOOTER_Y }}
+      transition={{ duration: FOOTER_DURATION, ease: FOOTER_EASE, delay: scrollDirection === 'up' ? 0.12 : 0.42 }}
     >
       <ContentColumn />
       <LegalLinks />
@@ -194,17 +268,17 @@ function ContentGroup() {
   );
 }
 
-function Footer() {
+function Footer({ scrollDirection }: { scrollDirection: ScrollDirection }) {
   return (
     <div className="absolute -translate-x-1/2 left-1/2 top-0 w-[100dvw]" data-name="Footer">
-      <BackgroundContainer />
-      <ContentGroup />
+      <BackgroundContainer scrollDirection={scrollDirection} />
+      <ContentGroup scrollDirection={scrollDirection} />
     </div>
   );
 }
 
 function UpMe() {
-  return <div className="absolute inset-0 bg-black rounded-[25px]" data-name="Up Me" />;
+  return <div className="absolute inset-0 rounded-[25px]" data-name="Up Me" />;
 }
 
 function Group() {
@@ -580,8 +654,15 @@ function EarthBackground() {
     <div className="absolute inset-0 overflow-hidden rounded-[25px]" data-name="EARTH BACKGROUND">
       <img
         src={imgCtaBackground}
-        className="h-full w-full object-cover"
-        style={{ objectPosition: 'center 38%' }}
+        className="absolute max-w-none object-cover"
+        style={{
+          inset: -CTA_IMAGE_EDGE_CROP,
+          width: `calc(100% + ${CTA_IMAGE_EDGE_CROP * 2}px)`,
+          height: `calc(100% + ${CTA_IMAGE_EDGE_CROP * 2}px)`,
+          objectPosition: 'center 38%',
+          backfaceVisibility: 'hidden',
+          transform: 'translateZ(0)',
+        }}
         decoding="async"
         alt=""
       />
@@ -677,17 +758,20 @@ function TestimonialInfo() {
   );
 }
 
-function Cta() {
+function Cta({ scrollDirection }: { scrollDirection: ScrollDirection }) {
   const reduced = useReducedMotion();
+  const ctaRef = useRef<HTMLDivElement | null>(null);
+  const isCtaInView = useInView(ctaRef, { amount: 0.15 });
+
   return (
     <motion.div
+      ref={ctaRef}
       className="absolute overflow-hidden rounded-[25px]"
       data-name="CTA"
       style={{ left: 275.5, top: 3380.17, width: 889, height: 439 }}
       initial={{ opacity: 0, y: reduced ? 0 : CARD_Y }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.15 }}
-      transition={{ duration: CARD_DURATION, ease: CARD_EASE }}
+      animate={isCtaInView ? { opacity: 1, y: 0 } : { opacity: 0, y: reduced ? 0 : CARD_Y }}
+      transition={{ duration: CARD_DURATION, ease: CARD_EASE, delay: scrollDirection === 'up' ? 0.05 : 0 }}
     >
       <UpMe />
       <EarthBackground />
@@ -703,11 +787,56 @@ function Cta() {
 interface CarouselProject {
   id: number;
   image: string;
+  imageSequence?: string[];
   brandContent?: React.ReactNode; // custom logo; falls back to brandLabel text
   brandLabel: string;
-  tags: Array<{ label: string; icon: 'page' | 'building' }>;
+  tags: Array<{ label: string; icon: 'page' | 'building' | 'light' | 'multipages' | 'restaurant' }>;
   description: string;
 }
+
+const MINDSCALE_IMAGE_SEQUENCE = [
+  imgCardImage,
+  imgMindscaleFrame2,
+  imgMindscaleFrame3,
+  imgMindscaleFrame4,
+  imgMindscaleFrame5,
+  imgMindscaleFrame6,
+] as const;
+
+const SKAPE_IMAGE_SEQUENCE = [
+  imgSkapeFrame1,
+  imgSkapeFrame2,
+  imgSkapeFrame3,
+  imgSkapeFrame4,
+  imgSkapeFrame5,
+  imgSkapeFrame6,
+  imgSkapeFrame7,
+] as const;
+
+const MOTIONZ_IMAGE_SEQUENCE = [
+  imgMotionzFrame1,
+  imgMotionzFrame2,
+  imgMotionzFrame3,
+  imgMotionzFrame4,
+  imgMotionzFrame5,
+] as const;
+
+const HANZO_IMAGE_SEQUENCE = [
+  imgHanzoFrame1,
+  imgHanzoFrame2,
+  imgHanzoFrame3,
+  imgHanzoFrame4,
+  imgHanzoFrame5,
+  imgHanzoFrame6,
+] as const;
+
+const CARD_BRAND_LOGO_HEIGHT = 10.669;
+const CARD_BRAND_LOGO_VISUAL_HEIGHT = {
+  skape: 21.024,
+  hanzo: 22.176,
+  motionz: 21.888,
+  vertebra: 21.744,
+} as const;
 
 // Mindscale logo aligned on the same left edge as the supporting copy
 function MindscalePill() {
@@ -715,8 +844,51 @@ function MindscalePill() {
     <img
       src={imgMindscaleLogo}
       alt="Mindscale"
-      className="block shrink-0 max-w-none object-contain"
-      style={{ width: 97.52, height: 10.669 }}
+      className="block h-[10.669px] w-auto shrink-0 max-w-none object-contain object-left"
+    />
+  );
+}
+
+function SkapePill() {
+  return (
+    <img
+      src={imgSkapeLogo}
+      alt="Skape"
+      className="block w-auto shrink-0 max-w-none object-contain object-left"
+      style={{ height: CARD_BRAND_LOGO_VISUAL_HEIGHT.skape }}
+    />
+  );
+}
+
+function HanzoPill() {
+  return (
+    <img
+      src={imgHanzoLogo}
+      alt="Hanzo"
+      className="block w-auto shrink-0 max-w-none object-contain object-left"
+      style={{ height: CARD_BRAND_LOGO_VISUAL_HEIGHT.hanzo }}
+    />
+  );
+}
+
+function MotionzPill() {
+  return (
+    <img
+      src={imgMotionzLogo}
+      alt="Motionz"
+      className="block w-auto shrink-0 max-w-none object-contain object-left"
+      style={{ height: CARD_BRAND_LOGO_VISUAL_HEIGHT.motionz }}
+    />
+  );
+}
+
+function VertebraPill() {
+  return (
+    <img
+      src={imgVertebraLogo}
+      alt="Vertebra"
+      className="block w-auto shrink-0 max-w-none object-contain object-left"
+      style={{ height: CARD_BRAND_LOGO_VISUAL_HEIGHT.vertebra }}
     />
   );
 }
@@ -725,6 +897,7 @@ const CAROUSEL_PROJECTS: CarouselProject[] = [
   {
     id: 0,
     image: imgCardImage,
+    imageSequence: [...MINDSCALE_IMAGE_SEQUENCE],
     brandContent: <MindscalePill />,
     brandLabel: 'MINDSCALE',
     tags: [
@@ -734,26 +907,49 @@ const CAROUSEL_PROJECTS: CarouselProject[] = [
     description: "Mindscale est une entreprise spécialisée dans l’optimisation des\ntunnels de vente grâce à l’intelligence comportementale et à l’IA.",
   },
   {
-    id: 1,
-    image: imgCardImage,
-    brandLabel: 'INFINIFY',
+    id: 2,
+    image: imgSkapeFrame1,
+    imageSequence: [...SKAPE_IMAGE_SEQUENCE],
+    brandContent: <SkapePill />,
+    brandLabel: 'SKAPE',
     tags: [
-      { label: 'Identité visuelle', icon: 'page' },
-      { label: 'Branding',          icon: 'building' },
+      { label: 'Landing page', icon: 'page' },
+      { label: 'Agence',       icon: 'building' },
     ],
-    description: "Version test 1 : même visuel Mindscale pour évaluer\nla lisibilité du texte dans le carrousel.",
+    description: "Skape est une agence de visuels 3D spécialisée dans la mise en\nvaleur des produits e-commerce.",
   },
   {
-    id: 2,
-    image: imgCardImage,
-    brandLabel: 'E-COMMERCE',
+    id: 3,
+    image: imgMotionzFrame1,
+    imageSequence: [...MOTIONZ_IMAGE_SEQUENCE],
+    brandContent: <MotionzPill />,
+    brandLabel: 'MOTIONZ',
     tags: [
-      { label: 'E-commerce', icon: 'page' },
-      { label: 'SaaS',       icon: 'building' },
+      { label: 'Landing page', icon: 'page' },
+      { label: 'Agence',       icon: 'building' },
     ],
-    description: "Version test 2 : même image, texte alternatif pour\ncomparer l’équilibre visuel sur deux lignes.",
+    description: "Motionz est un studio de motion design spécialisé dans la création\nde vidéos animées sur-mesure pour les agences et créateurs.",
+  },
+  {
+    id: 4,
+    image: imgHanzoFrame1,
+    imageSequence: [...HANZO_IMAGE_SEQUENCE],
+    brandContent: <HanzoPill />,
+    brandLabel: 'HANZO',
+    tags: [
+      { label: 'Multi-pages', icon: 'multipages' },
+      { label: 'Restaurant',  icon: 'restaurant' },
+    ],
+    description: "Hanzo est un restaurant japonais traditionnel situé à\nAix-en-Provence, spécialisé dans une cuisine authentique.",
   },
 ];
+
+const ALL_CAROUSEL_IMAGE_SOURCES = Array.from(
+  new Set(CAROUSEL_PROJECTS.flatMap((carouselProject) => [
+    carouselProject.image,
+    ...(carouselProject.imageSequence ?? []),
+  ])),
+);
 
 // ─── Tag helpers ─────────────────────────────────────────────────────────────
 
@@ -781,10 +977,53 @@ function CarouselTagIconBuilding() {
   );
 }
 
-function CarouselTag({ label, icon }: { label: string; icon: 'page' | 'building' }) {
+function CarouselTagIconLight() {
+  return (
+    <img
+      src={imgLightIcon}
+      alt=""
+      className="block shrink-0 size-[12.68px] max-w-none object-contain"
+      loading="lazy"
+      decoding="async"
+    />
+  );
+}
+
+function CarouselTagIconMultipages() {
+  return (
+    <img
+      src={imgMultipagesIcon}
+      alt=""
+      className="block shrink-0 size-[12.68px] max-w-none object-contain"
+      loading="lazy"
+      decoding="async"
+    />
+  );
+}
+
+function CarouselTagIconRestaurant() {
+  return (
+    <img
+      src={imgRestaurantIcon}
+      alt=""
+      className="block shrink-0 size-[12.68px] max-w-none object-contain"
+      loading="lazy"
+      decoding="async"
+    />
+  );
+}
+
+function CarouselTag({ label, icon }: { label: string; icon: 'page' | 'building' | 'light' | 'multipages' | 'restaurant' }) {
+  const iconNode =
+    icon === 'page' ? <CarouselTagIconPage /> :
+    icon === 'building' ? <CarouselTagIconBuilding /> :
+    icon === 'light' ? <CarouselTagIconLight /> :
+    icon === 'multipages' ? <CarouselTagIconMultipages /> :
+    <CarouselTagIconRestaurant />;
+
   return (
     <div className="inline-flex items-center gap-[3px] bg-[rgba(21,99,237,0.1)] rounded-[11.904px] px-[9.83px] py-[5.59px]">
-      {icon === 'page' ? <CarouselTagIconPage /> : <CarouselTagIconBuilding />}
+      {iconNode}
       <span className="font-['Neue_Montreal:Medium',sans-serif] font-medium text-[#005cec] text-[10px] leading-none whitespace-nowrap">
         {label}
       </span>
@@ -796,7 +1035,7 @@ function CarouselTag({ label, icon }: { label: string; icon: 'page' | 'building'
 
 const CARD_TRANSITION = { duration: 1.02, ease: [0.22, 1, 0.36, 1] } as const;
 const CAROUSEL_VIEWPORT_MASK = 'linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.42) 10%, black 20%, black 80%, rgba(0,0,0,0.42) 90%, transparent 100%)';
-
+const CAROUSEL_IMAGE_EDGE_CROP = 6;
 type SlotName = 'above' | 'top' | 'center' | 'bottom' | 'below';
 
 // Chaque slot définit la géométrie exacte de la carte dans cette position
@@ -808,14 +1047,6 @@ const CARD_SLOTS: Record<SlotName, { left: number; top: number; width: number; h
   below:  { left: 38.54, top: 650,    width: 405.781, height: 142.19,  opacity: 0, borderRadius: '0px 0px 15px 15px' },
 };
 
-const CARD_IMAGE_EFFECTS: Record<SlotName, { scale: number; y: number; filter: string }> = {
-  above:  { scale: 1.08, y: -18, filter: 'blur(5px) brightness(0.84) saturate(0.92)' },
-  top:    { scale: 1.04, y: -8,  filter: 'blur(1.5px) brightness(0.92) saturate(0.96)' },
-  center: { scale: 1,    y: 0,   filter: 'blur(0px) brightness(1) saturate(1)' },
-  bottom: { scale: 1.04, y: 8,   filter: 'blur(1.5px) brightness(0.92) saturate(0.96)' },
-  below:  { scale: 1.08, y: 18,  filter: 'blur(5px) brightness(0.84) saturate(0.92)' },
-};
-
 function relToSlot(rel: number): SlotName {
   if (rel === -1) return 'top';
   if (rel ===  0) return 'center';
@@ -823,31 +1054,58 @@ function relToSlot(rel: number): SlotName {
   return rel < 0 ? 'above' : 'below';
 }
 
-function CarouselSlotOverlay({ slotName }: { slotName: SlotName }) {
-  const topOpacity = slotName === 'top' ? 1 : 0;
-  const bottomOpacity = slotName === 'bottom' ? 1 : 0;
+function preloadCarouselImage(src: string) {
+  return new Promise<void>((resolve) => {
+    const image = new Image();
+    let settled = false;
+    const resolveOnce = () => {
+      if (settled) return;
+      settled = true;
+      resolve();
+    };
+    const finish = () => {
+      if (typeof image.decode === 'function') {
+        image.decode().catch(() => undefined).finally(resolveOnce);
+        return;
+      }
 
+      resolveOnce();
+    };
+
+    image.onload = finish;
+    image.onerror = resolveOnce;
+    image.src = src;
+
+    if (image.complete) {
+      finish();
+    }
+  });
+}
+
+function CarouselCardImage({ image }: { image: string }) {
   return (
-    <>
-      <motion.div
-        aria-hidden="true"
-        className="absolute inset-0 pointer-events-none"
-        initial={false}
-        animate={{ opacity: topOpacity }}
-        transition={CARD_TRANSITION}
-      >
-        <div className="absolute inset-0 bg-gradient-to-b from-[rgba(209,209,209,0.72)] to-[rgba(255,255,255,0)]" />
-      </motion.div>
-      <motion.div
-        aria-hidden="true"
-        className="absolute inset-0 pointer-events-none"
-        initial={false}
-        animate={{ opacity: bottomOpacity }}
-        transition={CARD_TRANSITION}
-      >
-        <div className="absolute inset-0 bg-gradient-to-t from-[rgba(209,209,209,0.72)] to-[rgba(255,255,255,0)]" />
-      </motion.div>
-    </>
+    <div
+      className="absolute"
+      style={{
+        inset: 0,
+        backfaceVisibility: 'hidden',
+        transform: 'translateZ(0)',
+      }}
+    >
+      <img
+        src={image}
+        alt=""
+        className="absolute max-w-none object-cover"
+        loading="eager"
+        decoding="sync"
+        fetchPriority="high"
+        style={{
+          inset: -CAROUSEL_IMAGE_EDGE_CROP,
+          width: `calc(100% + ${CAROUSEL_IMAGE_EDGE_CROP * 2}px)`,
+          height: `calc(100% + ${CAROUSEL_IMAGE_EDGE_CROP * 2}px)`,
+        }}
+      />
+    </div>
   );
 }
 
@@ -855,12 +1113,61 @@ function Realisations() {
   const total = CAROUSEL_PROJECTS.length;
   const [pos, setPos]                 = useState(0); // position linéaire cumulative
   const [activeIndex, setActiveIndex] = useState(0);
+  const [areCarouselImagesReady, setAreCarouselImagesReady] = useState(false);
+  const [projectFrameById, setProjectFrameById] = useState<Record<number, number>>(() =>
+    Object.fromEntries(CAROUSEL_PROJECTS.map((carouselProject) => [carouselProject.id, 0])),
+  );
 
   const go = (delta: number) => {
     if (total < 2) return;
+    const nextIndex = (activeIndex + delta + total) % total;
+    const nextProject = CAROUSEL_PROJECTS[nextIndex];
+
+    if (nextProject.imageSequence?.length) {
+      setProjectFrameById((currentFrameById) => ({
+        ...currentFrameById,
+        [nextProject.id]: 0,
+      }));
+    }
+
     setPos(p => p + delta);
-    setActiveIndex(i => (i + delta + total) % total);
+    setActiveIndex(nextIndex);
   };
+
+  useEffect(() => {
+    let cancelled = false;
+
+    Promise.all(ALL_CAROUSEL_IMAGE_SOURCES.map((src) => preloadCarouselImage(src))).then(() => {
+      if (!cancelled) {
+        setAreCarouselImagesReady(true);
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!areCarouselImagesReady) {
+      return undefined;
+    }
+
+    const activeProject = CAROUSEL_PROJECTS[activeIndex];
+
+    if (!activeProject.imageSequence?.length) {
+      return undefined;
+    }
+
+    const intervalId = window.setInterval(() => {
+      setProjectFrameById((currentFrameById) => ({
+        ...currentFrameById,
+        [activeProject.id]: ((currentFrameById[activeProject.id] ?? 0) + 1) % activeProject.imageSequence!.length,
+      }));
+    }, 1000);
+
+    return () => window.clearInterval(intervalId);
+  }, [activeIndex, areCarouselImagesReady]);
 
   const project = CAROUSEL_PROJECTS[activeIndex];
   const cells   = [pos - 2, pos - 1, pos, pos + 1, pos + 2];
@@ -887,12 +1194,18 @@ function Realisations() {
           const slotName = relToSlot(rel);
           const slot     = CARD_SLOTS[slotName];
           const projIdx  = ((p % total) + total) % total;
-          const imageEffect = CARD_IMAGE_EFFECTS[slotName];
+          const projectCard = CAROUSEL_PROJECTS[projIdx];
+          const currentFrameIndex = projectFrameById[projectCard.id] ?? 0;
+          const isCenterCard = slotName === 'center';
+          const visibleImage =
+            isCenterCard && areCarouselImagesReady && projectCard.imageSequence?.length
+              ? projectCard.imageSequence[currentFrameIndex % projectCard.imageSequence.length]
+              : projectCard.image;
 
           return (
             <motion.div
               key={p}
-              className="absolute overflow-hidden bg-[#0e0e0e]"
+              className="absolute overflow-hidden"
               style={{
                 zIndex: slotName === 'center' ? 2 : 1,
                 backfaceVisibility: 'hidden',
@@ -903,26 +1216,9 @@ function Realisations() {
               animate={slot}
               transition={CARD_TRANSITION}
             >
-              <motion.img
-                src={CAROUSEL_PROJECTS[projIdx].image}
-                alt=""
-                className="absolute max-w-none object-cover"
-                style={{
-                  left: -10,
-                  top: -10,
-                  width: 'calc(100% + 20px)',
-                  height: 'calc(100% + 20px)',
-                  backfaceVisibility: 'hidden',
-                  transform: 'translateZ(0)',
-                }}
-                initial={false}
-                animate={imageEffect}
-                transition={CARD_TRANSITION}
-                loading="lazy"
-                decoding="async"
+              <CarouselCardImage
+                image={visibleImage}
               />
-              <CarouselSlotOverlay slotName={slotName} />
-              <div className="absolute inset-0 shadow-[inset_0px_0px_10px_0px_rgba(104,104,104,0.25)]" />
             </motion.div>
           );
         })}
@@ -1281,7 +1577,7 @@ function Group4() {
   );
 }
 
-function MaskGroup({ animateIn }: { animateIn: boolean }) {
+function MaskGroup({ animateIn, scrollDirection }: { animateIn: boolean; scrollDirection: ScrollDirection }) {
   const reduced = useReducedMotion();
   return (
     <motion.div
@@ -1289,7 +1585,7 @@ function MaskGroup({ animateIn }: { animateIn: boolean }) {
       data-name="Mask Group"
       initial={{ opacity: 0, y: reduced ? 0 : CARD_Y }}
       animate={animateIn ? { opacity: 1, y: 0 } : { opacity: 0, y: reduced ? 0 : CARD_Y }}
-      transition={{ duration: SECTION_DURATION + 0.05, ease: SECTION_EASE }}
+      transition={{ duration: SECTION_DURATION + 0.05, ease: SECTION_EASE, delay: scrollDirection === 'up' ? 0.35 : 0 }}
     >
       <div className="-translate-x-1/2 -translate-y-1/2 absolute flex flex-col font-['Geist:SemiBold',sans-serif] font-semibold justify-center leading-[0] left-[448.61px] mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[-0.111px_0px] mask-size-[896.66px_353.049px] text-[#d8d8d8] text-[300px] text-center top-[195px] whitespace-nowrap" style={{ maskImage: `url('${imgOffres}')` }}>
         <p className="leading-[normal]">Offres</p>
@@ -1501,7 +1797,7 @@ function OfferBenefitTick() {
 }
 
 // Stateful offer card — dark card + white benefits, both animated on tab switch
-function OfferCard({ animateIn }: { animateIn: boolean }) {
+function OfferCard({ animateIn, scrollDirection }: { animateIn: boolean; scrollDirection: ScrollDirection }) {
   const [activeId, setActiveId] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const [reserveButtonTop, setReserveButtonTop] = useState(317.35);
@@ -1554,7 +1850,7 @@ function OfferCard({ animateIn }: { animateIn: boolean }) {
       className="absolute left-0 top-0 w-full"
       initial={{ opacity: 0, y: reduced ? 0 : CARD_Y }}
       animate={animateIn ? { opacity: 1, y: 0 } : { opacity: 0, y: reduced ? 0 : CARD_Y }}
-      transition={{ duration: CARD_DURATION, ease: CARD_EASE, delay: 0.4 }}
+      transition={{ duration: CARD_DURATION, ease: CARD_EASE, delay: scrollDirection === 'up' ? 0.05 : 0.4 }}
     >
 
       {/* ── Dark card ─────────────────────────────────────────────── */}
@@ -1704,17 +2000,17 @@ function OfferCard({ animateIn }: { animateIn: boolean }) {
   );
 }
 
-function Offres({ animateIn }: { animateIn: boolean }) {
+function Offres({ animateIn, scrollDirection }: { animateIn: boolean; scrollDirection: ScrollDirection }) {
   return (
     <div className="-translate-x-1/2 absolute contents left-1/2 top-[2406.12px]" data-name="Offres">
-      <OfferCard animateIn={animateIn} />
+      <OfferCard animateIn={animateIn} scrollDirection={scrollDirection} />
     </div>
   );
 }
 
-function OffresGroupe() {
+function OffresGroupe({ scrollDirection }: { scrollDirection: ScrollDirection }) {
   const offersTriggerRef = useRef<HTMLDivElement | null>(null);
-  const isOffersInView = useInView(offersTriggerRef, { once: true, amount: 0.7 });
+  const isOffersInView = useInView(offersTriggerRef, { amount: 0.7 });
 
   return (
     <>
@@ -1725,41 +2021,52 @@ function OffresGroupe() {
         ref={offersTriggerRef}
       />
       <div className="-translate-x-1/2 absolute contents left-1/2 top-[2117.32px]" data-name="Offres Groupe">
-        <MaskGroup animateIn={isOffersInView} />
-        <Offres animateIn={isOffersInView} />
+        <MaskGroup animateIn={isOffersInView} scrollDirection={scrollDirection} />
+        <Offres animateIn={isOffersInView} scrollDirection={scrollDirection} />
       </div>
     </>
   );
 }
 
-function InfinifyMask() {
+function InfinifyMask({ scrollDirection }: { scrollDirection: ScrollDirection }) {
   const reduced = useReducedMotion();
+  const infinifyMaskRef = useRef<HTMLDivElement | null>(null);
+  const isInfinifyMaskInView = useInView(infinifyMaskRef, { amount: TEAM_VIEWPORT.amount });
   return (
     <motion.div
-      className="-translate-x-1/2 absolute h-[353px] left-[calc(50%-3.55px)] top-[3921.3px] w-[1057px]"
+      ref={infinifyMaskRef}
+      className="-translate-x-1/2 absolute h-[353px] left-[calc(50%-3.55px)] top-[3934.38px] w-[1057px]"
       data-name="Infinify Mask"
       initial={{ opacity: 0, y: reduced ? 0 : CARD_Y }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={TEAM_VIEWPORT}
-      transition={{ duration: CARD_DURATION, ease: CARD_EASE, delay: 0.15 }}
+      animate={isInfinifyMaskInView ? { opacity: 1, y: 0 } : { opacity: 0, y: reduced ? 0 : CARD_Y }}
+      transition={{ duration: CARD_DURATION, ease: CARD_EASE, delay: scrollDirection === 'up' ? 0.42 : 0.15 }}
     >
-      <div className="-translate-x-1/2 -translate-y-1/2 absolute flex flex-col font-['Geist:SemiBold',sans-serif] font-semibold justify-center leading-[0] left-[528.5px] mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[-19.5px_0px] mask-size-[1056.66px_353.049px] text-[#d8d8d8] text-[300px] text-center top-[195px] whitespace-nowrap" style={{ maskImage: `url('${imgInfinify}')` }}>
+      <div className="-translate-x-1/2 -translate-y-1/2 absolute flex flex-col font-['Geist:SemiBold',sans-serif] font-semibold justify-center leading-[0] left-[528.5px] mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[-19.5px_0px] mask-size-[1056.66px_353.049px] text-[300px] text-center top-[195px] whitespace-nowrap"
+        style={{
+          maskImage: `url('${imgInfinify}')`,
+          color: 'transparent',
+          background: 'linear-gradient(180deg, rgba(216,216,216,0.78) 0%, rgba(216,216,216,0.18) 72%, rgba(216,216,216,0) 100%)',
+          WebkitBackgroundClip: 'text',
+          backgroundClip: 'text',
+        }}>
         <p className="leading-[normal]">Infinify</p>
       </div>
     </motion.div>
   );
 }
 
-function TeamMask() {
+function TeamMask({ scrollDirection }: { scrollDirection: ScrollDirection }) {
   const reduced = useReducedMotion();
+  const teamMaskRef = useRef<HTMLDivElement | null>(null);
+  const isTeamMaskInView = useInView(teamMaskRef, { amount: TEAM_VIEWPORT.amount });
   return (
     <motion.div
+      ref={teamMaskRef}
       className="absolute h-[353px] left-[335.5px] top-[827.37px] w-[769px]"
       data-name="Team Mask"
       initial={{ opacity: 0, y: reduced ? 0 : SECTION_Y }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={TEAM_VIEWPORT}
-      transition={{ duration: SECTION_DURATION + 0.05, ease: SECTION_EASE }}
+      animate={isTeamMaskInView ? { opacity: 1, y: 0 } : { opacity: 0, y: reduced ? 0 : SECTION_Y }}
+      transition={{ duration: SECTION_DURATION + 0.05, ease: SECTION_EASE, delay: scrollDirection === 'up' ? 0.45 : 0 }}
     >
       <div className="-translate-x-1/2 -translate-y-1/2 absolute flex flex-col font-['Geist:SemiBold',sans-serif] font-semibold justify-center leading-[0] left-[384.77px] mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[-0.273px_0.484px] mask-size-[768.66px_353.049px] text-[#d8d8d8] text-[300px] text-center top-[194.52px] whitespace-nowrap" style={{ maskImage: `url('${imgTeam}')` }}>
         <p className="leading-[normal]">Team</p>
@@ -1798,7 +2105,7 @@ function TestimonialName1() {
           </defs>
         </svg>
       </div>
-      <div className="-translate-x-1/2 -translate-y-1/2 absolute flex flex-col font-['Geist:Regular',sans-serif] font-normal justify-center leading-[0] left-[calc(50%-135.33px)] text-[14.112px] text-center text-white top-[49.21px] whitespace-nowrap">
+      <div className="-translate-x-1/2 -translate-y-1/2 absolute flex flex-col font-['Geist:Regular',sans-serif] font-normal justify-center leading-[0] left-[calc(50%-135.33px)] text-[14px] text-center text-white top-[49.21px] whitespace-nowrap">
         <p className="leading-[normal]">Oscar VORTICE</p>
       </div>
     </div>
@@ -1888,7 +2195,7 @@ function TestimonialInfo2() {
           </defs>
         </svg>
       </div>
-      <div className="-translate-x-1/2 -translate-y-1/2 absolute flex flex-col font-['Geist:Regular',sans-serif] font-normal justify-center leading-[0] left-[calc(50%+152.17px)] text-[15.821px] text-center text-white top-[51.84px] whitespace-nowrap">
+      <div className="-translate-x-1/2 -translate-y-1/2 absolute flex flex-col font-['Geist:Regular',sans-serif] font-normal justify-center leading-[0] left-[calc(50%+152.17px)] text-[14px] text-center text-white top-[51.84px] whitespace-nowrap">
         <p className="leading-[normal]">Benjamin BOTELLA</p>
       </div>
     </div>
@@ -1952,17 +2259,18 @@ const FOOTER_EASE = [0.22, 1, 0.36, 1] as const;
 const FOOTER_DURATION = CARD_DURATION * 1.2;
 const FOOTER_Y = 48;
 
-function Team() {
+function Team({ scrollDirection }: { scrollDirection: ScrollDirection }) {
   const reduced = useReducedMotion();
+  const teamRef = useRef<HTMLDivElement | null>(null);
+  const isTeamInView = useInView(teamRef, { amount: TEAM_VIEWPORT.amount });
   return (
-    <div className="-translate-x-1/2 absolute h-[240.496px] left-1/2 top-[1117.87px] w-[783.209px]" data-name="Team">
+    <div ref={teamRef} className="-translate-x-1/2 absolute h-[240.496px] left-1/2 top-[1117.87px] w-[783.209px]" data-name="Team">
       {/* Card 1 — Oscar VORTICE */}
       <motion.div
         className="absolute left-0 top-0 w-[783.209px] h-full"
         initial={{ opacity: 0, y: reduced ? 0 : CARD_Y }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={TEAM_VIEWPORT}
-        transition={{ duration: CARD_DURATION, ease: CARD_EASE, delay: 0.15 }}
+        animate={isTeamInView ? { opacity: 1, y: 0 } : { opacity: 0, y: reduced ? 0 : CARD_Y }}
+        transition={{ duration: CARD_DURATION, ease: CARD_EASE, delay: scrollDirection === 'up' ? 0.25 : 0.15 }}
       >
         <TestimonialColumn />
       </motion.div>
@@ -1970,9 +2278,8 @@ function Team() {
       <motion.div
         className="absolute left-0 top-0 w-[783.209px] h-full"
         initial={{ opacity: 0, y: reduced ? 0 : CARD_Y }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={TEAM_VIEWPORT}
-        transition={{ duration: CARD_DURATION, ease: CARD_EASE, delay: 0.35 }}
+        animate={isTeamInView ? { opacity: 1, y: 0 } : { opacity: 0, y: reduced ? 0 : CARD_Y }}
+        transition={{ duration: CARD_DURATION, ease: CARD_EASE, delay: scrollDirection === 'up' ? 0.05 : 0.35 }}
       >
         <TestimonialColumn1 />
       </motion.div>
@@ -1980,11 +2287,11 @@ function Team() {
   );
 }
 
-function TeamGroupe() {
+function TeamGroupe({ scrollDirection }: { scrollDirection: ScrollDirection }) {
   return (
     <div className="absolute contents left-[328.4px] top-[827.37px]" data-name="Team Groupe">
-      <TeamMask />
-      <Team />
+      <TeamMask scrollDirection={scrollDirection} />
+      <Team scrollDirection={scrollDirection} />
     </div>
   );
 }
@@ -2428,42 +2735,15 @@ function Hero() {
 function Frame5() {
   return (
     <div className="absolute h-[60.104px] left-0 mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[0px_0px] mask-size-[1378.377px_60.104px] top-0 w-[181.313px]" data-name="Frame" style={{ maskImage: `url('${imgFrame}')` }}>
-      <svg className="absolute block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 181.313 60.1036">
-        <g id="Frame">
-          <path d={svgPaths.p1f3613c0} fill="var(--fill-0, #2C2C2C)" id="Vector" />
-          <path d={svgPaths.p1c91c070} fill="var(--fill-0, #2C2C2C)" id="Vector_2" />
-          <path clipRule="evenodd" d={svgPaths.p333416c0} fill="var(--fill-0, #2C2C2C)" fillRule="evenodd" id="Vector_3" />
-          <path d={svgPaths.pae23380} fill="var(--fill-0, #2C2C2C)" id="Vector_4" />
-          <path d={svgPaths.p3b012900} fill="var(--fill-0, #2C2C2C)" id="Vector_5" />
-          <path clipRule="evenodd" d={svgPaths.p2c8fda00} fill="var(--fill-0, #2C2C2C)" fillRule="evenodd" id="Vector_6" />
-          <path d={svgPaths.p2d162880} fill="var(--fill-0, #2C2C2C)" id="Vector_7" />
-          <path d={svgPaths.p3d7ca480} fill="var(--fill-0, #2C2C2C)" id="Vector_8" />
-          <path d={svgPaths.p1c92de00} fill="var(--fill-0, #2C2C2C)" id="Vector_9" />
-          <path d={svgPaths.p2a0313b0} fill="var(--fill-0, #2C2C2C)" id="Vector_10" />
-          <path d={svgPaths.p46113f0} fill="var(--fill-0, #2C2C2C)" id="Vector_11" />
-        </g>
-      </svg>
-    </div>
-  );
-}
-
-function Group2() {
-  return (
-    <div className="absolute inset-[23.33%_13.33%] mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[0px_0px] mask-size-[132.228px_32.055px]" data-name="Group" style={{ maskImage: `url('${imgGroup1}')` }}>
-      <svg className="absolute block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 132.229 32.0553">
-        <g id="Group">
-          <path d={svgPaths.p3a6e5880} fill="var(--fill-0, #191B18)" id="Vector" />
-          <path d={svgPaths.p14c22900} fill="var(--fill-0, #191B18)" id="Vector_2" />
-        </g>
-      </svg>
-    </div>
-  );
-}
-
-function ClipPathGroup1() {
-  return (
-    <div className="absolute contents inset-[23.33%_13.33%]" data-name="Clip path group">
-      <Group2 />
+      <div className="absolute inset-[23.33%_13.33%] flex items-center justify-center">
+        <img
+          src={imgWiccaLogo}
+          alt="Wicca"
+          className="block h-full w-full max-w-none object-contain"
+          loading="lazy"
+          decoding="async"
+        />
+      </div>
     </div>
   );
 }
@@ -2471,7 +2751,15 @@ function ClipPathGroup1() {
 function Frame6() {
   return (
     <div className="absolute h-[60.104px] left-[229.4px] mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[-229.396px_0px] mask-size-[1378.377px_60.104px] overflow-clip top-0 w-[180.311px]" data-name="Frame" style={{ maskImage: `url('${imgFrame}')` }}>
-      <ClipPathGroup1 />
+      <div className="absolute inset-[23.33%_13.33%] flex items-center justify-center">
+        <img
+          src={imgSkapeMarqueeLogo}
+          alt="Skape"
+          className="block h-full w-full max-w-none object-contain"
+          loading="lazy"
+          decoding="async"
+        />
+      </div>
     </div>
   );
 }
@@ -2479,19 +2767,15 @@ function Frame6() {
 function Frame7() {
   return (
     <div className="absolute h-[60.104px] left-[457.79px] mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[-457.79px_0px] mask-size-[1378.377px_60.104px] top-0 w-[181.313px]" data-name="Frame" style={{ maskImage: `url('${imgFrame}')` }}>
-      <svg className="absolute block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 181.313 60.1036">
-        <g id="Frame">
-          <path d={svgPaths.p153c5b80} fill="var(--fill-0, #191B18)" id="Vector" />
-          <path d={svgPaths.p1e35ab00} fill="var(--fill-0, #191B18)" id="Vector_2" />
-          <path d={svgPaths.p10d78700} fill="var(--fill-0, #191B18)" id="Vector_3" />
-          <path d={svgPaths.p29904400} fill="var(--fill-0, #191B18)" id="Vector_4" />
-          <path d={svgPaths.p16e43800} fill="var(--fill-0, #191B18)" id="Vector_5" />
-          <path d={svgPaths.p35b0e900} fill="var(--fill-0, #191B18)" id="Vector_6" />
-          <path d={svgPaths.pc94bb80} fill="var(--fill-0, #191B18)" id="Vector_7" />
-          <path d={svgPaths.p254a1780} fill="var(--fill-0, #191B18)" id="Vector_8" />
-          <path d={svgPaths.p14edddf0} fill="var(--fill-0, #191B18)" id="Vector_9" />
-        </g>
-      </svg>
+      <div className="absolute inset-[23.33%_13.33%] flex items-center justify-center">
+        <img
+          src={imgMotionzMarqueeLogo}
+          alt="Motionz"
+          className="block h-full w-full max-w-none object-contain"
+          loading="lazy"
+          decoding="async"
+        />
+      </div>
     </div>
   );
 }
@@ -2499,19 +2783,15 @@ function Frame7() {
 function Frame8() {
   return (
     <div className="absolute h-[60.104px] left-[687.19px] mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[-687.185px_0px] mask-size-[1378.377px_60.104px] top-0 w-[181.313px]" data-name="Frame" style={{ maskImage: `url('${imgFrame}')` }}>
-      <svg className="absolute block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 181.313 60.1036">
-        <g id="Frame">
-          <path d={svgPaths.p732de00} fill="var(--fill-0, #191B18)" id="Vector" />
-          <path d={svgPaths.pc44bb00} fill="var(--fill-0, #191B18)" id="Vector_2" />
-          <path d={svgPaths.p1c7ca880} fill="var(--fill-0, #191B18)" id="Vector_3" />
-          <path d={svgPaths.p72d000} fill="var(--fill-0, #191B18)" id="Vector_4" />
-          <path d={svgPaths.p267dc000} fill="var(--fill-0, #191B18)" id="Vector_5" />
-          <path d={svgPaths.p11b92000} fill="var(--fill-0, #191B18)" id="Vector_6" />
-          <path d={svgPaths.p1b4e1210} fill="var(--fill-0, #191B18)" id="Vector_7" />
-          <path d={svgPaths.p1f03400} fill="var(--fill-0, #191B18)" id="Vector_8" />
-          <path d={svgPaths.p36383300} fill="var(--fill-0, #191B18)" id="Vector_9" />
-        </g>
-      </svg>
+      <div className="absolute inset-[23.33%_13.33%] flex items-center justify-center">
+        <img
+          src={imgMindscalelLogo}
+          alt="Mindscale"
+          className="block h-[125%] w-[125%] max-w-none object-contain"
+          loading="lazy"
+          decoding="async"
+        />
+      </div>
     </div>
   );
 }
@@ -2519,17 +2799,15 @@ function Frame8() {
 function Frame9() {
   return (
     <div className="absolute h-[60.104px] left-[916.58px] mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[-916.581px_0px] mask-size-[1378.377px_60.104px] top-0 w-[180.311px]" data-name="Frame" style={{ maskImage: `url('${imgFrame}')` }}>
-      <svg className="absolute block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 180.311 60.1036">
-        <g id="Frame">
-          <path d={svgPaths.p10904b80} fill="var(--fill-0, #191B18)" id="Vector" />
-          <path d={svgPaths.p330f1c00} fill="var(--fill-0, #191B18)" id="Vector_2" />
-          <path d={svgPaths.p1a40c2f0} fill="var(--fill-0, #191B18)" id="Vector_3" />
-          <path d={svgPaths.p40cc700} fill="var(--fill-0, #191B18)" id="Vector_4" />
-          <path d={svgPaths.p2db12320} fill="var(--fill-0, #191B18)" id="Vector_5" />
-          <path d={svgPaths.p3ce60980} fill="var(--fill-0, #191B18)" id="Vector_6" />
-          <path d={svgPaths.p2adab800} fill="var(--fill-0, #191B18)" id="Vector_7" />
-        </g>
-      </svg>
+      <div className="absolute inset-[23.33%_13.33%] flex items-center justify-center">
+        <img
+          src={imgArtdelapierreLogo}
+          alt="Art de la Pierre"
+          className="block h-[125%] w-[125%] max-w-none object-contain"
+          loading="lazy"
+          decoding="async"
+        />
+      </div>
     </div>
   );
 }
@@ -2537,29 +2815,15 @@ function Frame9() {
 function Frame10() {
   return (
     <div className="absolute h-[60.104px] left-[1144.97px] mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[-1144.974px_0px] mask-size-[1378.377px_60.104px] top-0 w-[181.313px]" data-name="Frame" style={{ maskImage: `url('${imgFrame}')` }}>
-      <svg className="absolute block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 181.313 60.1036">
-        <g id="Frame">
-          <path clipRule="evenodd" d={svgPaths.p30e4db40} fill="var(--fill-0, #191B18)" fillRule="evenodd" id="Vector" />
-          <path d={svgPaths.p2037d300} fill="var(--fill-0, #191B18)" id="Vector_2" />
-          <path d={svgPaths.p3b855b00} fill="var(--fill-0, #191B18)" id="Vector_3" />
-          <path clipRule="evenodd" d={svgPaths.p237b6540} fill="var(--fill-0, #191B18)" fillRule="evenodd" id="Vector_4" />
-          <path clipRule="evenodd" d={svgPaths.p7f0dd80} fill="var(--fill-0, #191B18)" fillRule="evenodd" id="Vector_5" />
-          <path d={svgPaths.pb60c000} fill="var(--fill-0, #191B18)" id="Vector_6" />
-          <path d={svgPaths.p36799770} fill="var(--fill-0, #191B18)" id="Vector_7" />
-          <path clipRule="evenodd" d={svgPaths.p39eef200} fill="var(--fill-0, #191B18)" fillRule="evenodd" id="Vector_8" />
-          <path d={svgPaths.p2c44db00} fill="var(--fill-0, #191B18)" id="Vector_9" />
-          <path d={svgPaths.p268b8dc0} fill="var(--fill-0, #191B18)" id="Vector_10" />
-          <path d={svgPaths.p2d02c400} fill="var(--fill-0, #191B18)" id="Vector_11" />
-          <path clipRule="evenodd" d={svgPaths.p2678fa80} fill="var(--fill-0, #191B18)" fillRule="evenodd" id="Vector_12" />
-          <path clipRule="evenodd" d={svgPaths.p16ed3c80} fill="var(--fill-0, #191B18)" fillRule="evenodd" id="Vector_13" />
-          <path d={svgPaths.p1c9e8800} fill="var(--fill-0, #191B18)" id="Vector_14" />
-          <path d={svgPaths.p3f957740} fill="var(--fill-0, #191B18)" id="Vector_15" />
-          <path d={svgPaths.p8ea61f0} fill="var(--fill-0, #191B18)" id="Vector_16" />
-          <path d={svgPaths.p233b3900} fill="var(--fill-0, #191B18)" id="Vector_17" />
-          <path d={svgPaths.p20b22b00} fill="var(--fill-0, #191B18)" id="Vector_18" />
-          <path d={svgPaths.p290cbb00} fill="var(--fill-0, #191B18)" id="Vector_19" />
-        </g>
-      </svg>
+      <div className="absolute inset-[23.33%_13.33%] flex items-center justify-center">
+        <img
+          src={imgTanbabeLogo}
+          alt="Tanbabe"
+          className="block h-full w-full max-w-none object-contain"
+          loading="lazy"
+          decoding="async"
+        />
+      </div>
     </div>
   );
 }
@@ -2567,20 +2831,15 @@ function Frame10() {
 function Frame11() {
   return (
     <div className="absolute h-[60.104px] mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[-1168.37px_0px] mask-size-[1378.377px_60.104px] right-[-178.08px] top-0 w-[181.313px]" data-name="Frame" style={{ maskImage: `url('${imgFrame}')` }}>
-      <svg className="absolute block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 181.313 60.1036">
-        <g id="Frame">
-          <path d={svgPaths.p14398200} fill="var(--fill-0, #191B18)" id="Vector" />
-          <path d={svgPaths.p18421380} fill="var(--fill-0, #191B18)" id="Vector_2" />
-          <path d={svgPaths.p108d3400} fill="var(--fill-0, #191B18)" id="Vector_3" />
-          <path d={svgPaths.p1d7b8680} fill="var(--fill-0, #191B18)" id="Vector_4" />
-          <path clipRule="evenodd" d={svgPaths.p148bef00} fill="var(--fill-0, #191B18)" fillRule="evenodd" id="Vector_5" />
-          <path d={svgPaths.p20049b00} fill="var(--fill-0, #191B18)" id="Vector_6" />
-          <path clipRule="evenodd" d={svgPaths.p2d0db900} fill="var(--fill-0, #191B18)" fillRule="evenodd" id="Vector_7" />
-          <path d={svgPaths.pad52b00} fill="var(--fill-0, #191B18)" id="Vector_8" />
-          <path d={svgPaths.p21cb1600} fill="var(--fill-0, #191B18)" id="Vector_9" />
-          <path d={svgPaths.p31edda00} fill="var(--fill-0, #191B18)" id="Vector_10" />
-        </g>
-      </svg>
+      <div className="absolute inset-[23.33%_13.33%] flex items-center justify-center">
+        <img
+          src={imgSinlineLogo}
+          alt="Sinline"
+          className="block h-full w-full max-w-none object-contain"
+          loading="lazy"
+          decoding="async"
+        />
+      </div>
     </div>
   );
 }
@@ -2642,6 +2901,8 @@ function HeroLogos() {
 }
 
 export default function Desktop() {
+  const scrollDirection = useScrollDirection();
+
   return (
     <div className="relative size-full" data-name="Desktop - 144">
       <div aria-hidden="true" className="absolute inset-0 pointer-events-none">
@@ -2649,12 +2910,12 @@ export default function Desktop() {
 
       </div>
       <NavBar />
-      <Footer />
-      <Cta />
+      <InfinifyMask scrollDirection={scrollDirection} />
+      <Footer scrollDirection={scrollDirection} />
+      <Cta scrollDirection={scrollDirection} />
       <Realisations />
-      <OffresGroupe />
-      <InfinifyMask />
-      <TeamGroupe />
+      <OffresGroupe scrollDirection={scrollDirection} />
+      <TeamGroupe scrollDirection={scrollDirection} />
       <HeroLogos />
     </div>
   );
