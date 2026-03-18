@@ -230,7 +230,7 @@ body {
 }
 
 @keyframes marquee-right {
-  from { transform: translateX(-1378.377px); }
+  from { transform: translateX(-1519.313px); }
   to   { transform: translateX(0); }
 }
 

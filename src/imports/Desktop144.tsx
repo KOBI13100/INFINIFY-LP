@@ -28,6 +28,7 @@ import imgArtdelapierreLogo from "../../artdelapierre.svg";
 import imgTanbabeLogo from "../../tanbabe.svg";
 import imgSinlineLogo from "../../sinline.svg";
 import imgWiccaLogo from "../../wicca.svg";
+import imgAeeLogo from "../../a&e/aee-marquee.svg";
 import imgHanzoLogo from "../../hanzologo.png";
 import imgVertebraLogo from "../../vertebralogo.png";
 import imgHanzoFrame1 from "../../hanzo/H1.webp";
@@ -74,9 +75,30 @@ const HERO_WORD_STAGGER = 0.08;
 const HERO_WORD_EASE = [0.19, 1, 0.22, 1] as const;
 const CTA_IMAGE_EDGE_CROP = 6;
 const MARQUEE_LOGO_COLOR = '#131313';
-const MARQUEE_LOGO_CLASS = 'h-[19px] w-[125%] max-w-none shrink-0';
-const MARQUEE_LOGO_CLASS_LARGE = 'h-[26.57px] w-[125%] max-w-none shrink-0';
-const MARQUEE_LOGO_CLASS_TALL = 'h-[36.38px] w-[125%] max-w-none shrink-0';
+const MARQUEE_WICCA_CLASS = 'h-[24.472px] w-[125%] max-w-none shrink-0';
+const MARQUEE_SKAPE_CLASS = 'h-[25.346px] w-[125%] max-w-none shrink-0';
+const MARQUEE_MOTIONZ_CLASS = 'h-[26.22px] w-[125%] max-w-none shrink-0';
+const MARQUEE_MINDSCALE_CLASS = 'h-[13.11px] w-[125%] max-w-none shrink-0';
+const MARQUEE_ARTDELAPIERRE_CLASS = 'h-[40.204px] w-[125%] max-w-none shrink-0';
+const MARQUEE_TANBABE_CLASS = 'h-[22.724px] w-[125%] max-w-none shrink-0';
+const MARQUEE_SINLINE_CLASS = 'h-[18.501px] w-[125%] max-w-none shrink-0';
+const MARQUEE_AEE_CLASS = 'h-[35.716px] w-[125%] max-w-none shrink-0';
+const MARQUEE_WICCA_SHIFT_X = 0.18354;
+const MARQUEE_SKAPE_SHIFT_X = 0.64676;
+const MARQUEE_MOTIONZ_SHIFT_X = 0.71668;
+const MARQUEE_MINDSCALE_SHIFT_X = 0.5681;
+const MARQUEE_ARTDELAPIERRE_SHIFT_X = 0.10488;
+const MARQUEE_TANBABE_SHIFT_X = 0.0874;
+const MARQUEE_SINLINE_SHIFT_X = 0.32338;
+const MARQUEE_AEE_SHIFT_X = 0;
+const MARQUEE_WICCA_SHIFT_Y = -1.474875;
+const MARQUEE_SKAPE_SHIFT_Y = 0.6555;
+const MARQUEE_MOTIONZ_SHIFT_Y = -0.10925;
+const MARQUEE_MINDSCALE_SHIFT_Y = 0;
+const MARQUEE_ARTDELAPIERRE_SHIFT_Y = -1.9665;
+const MARQUEE_TANBABE_SHIFT_Y = -1.365625;
+const MARQUEE_SINLINE_SHIFT_Y = 0.32775;
+const MARQUEE_AEE_SHIFT_Y = 0;
 
 function MarqueeLogo({
   src,
@@ -84,13 +106,27 @@ function MarqueeLogo({
   className,
   maskPosition = 'center',
   maskSize = 'auto 100%',
+  translateX = 0,
+  translateY = 0,
+  renderAsImage = false,
+  imageFilter,
 }: {
   src: string;
   alt: string;
   className: string;
   maskPosition?: string;
   maskSize?: string;
+  translateX?: number;
+  translateY?: number;
+  renderAsImage?: boolean;
+  imageFilter?: string;
 }) {
+  const transform = translateX === 0 && translateY === 0 ? undefined : `translate(${translateX}px, ${translateY}px)`;
+
+  if (renderAsImage) {
+    return <img alt={alt} className={`${className} object-contain`} src={src} style={{ filter: imageFilter, transform }} />;
+  }
+
   return (
     <div
       role="img"
@@ -106,6 +142,7 @@ function MarqueeLogo({
         maskPosition,
         WebkitMaskSize: maskSize,
         maskSize,
+        transform,
       }}
     />
   );
@@ -2865,7 +2902,9 @@ function Frame5() {
         <MarqueeLogo
           src={imgWiccaLogo}
           alt="Wicca"
-          className={MARQUEE_LOGO_CLASS_LARGE}
+          className={MARQUEE_WICCA_CLASS}
+          translateX={MARQUEE_WICCA_SHIFT_X}
+          translateY={MARQUEE_WICCA_SHIFT_Y}
         />
       </div>
     </div>
@@ -2874,12 +2913,14 @@ function Frame5() {
 
 function Frame6() {
   return (
-    <div className="absolute h-[60.104px] left-[229.4px] mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[-229.396px_0px] mask-size-[1378.377px_60.104px] overflow-clip top-0 w-[180.311px]" data-name="Frame" style={{ maskImage: `url('${imgFrame}')` }}>
+    <div className="absolute h-[60.104px] left-[193.094px] mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[-229.396px_0px] mask-size-[1378.377px_60.104px] overflow-clip top-0 w-[180.311px]" data-name="Frame" style={{ maskImage: `url('${imgFrame}')` }}>
       <div className="absolute inset-y-[23.33%] left-[9.598%] right-[9.598%] flex items-center justify-center">
         <MarqueeLogo
           src={imgSkapeMarqueeLogo}
           alt="Skape"
-          className={MARQUEE_LOGO_CLASS_LARGE}
+          className={MARQUEE_SKAPE_CLASS}
+          translateX={MARQUEE_SKAPE_SHIFT_X}
+          translateY={MARQUEE_SKAPE_SHIFT_Y}
         />
       </div>
     </div>
@@ -2888,12 +2929,14 @@ function Frame6() {
 
 function Frame7() {
   return (
-    <div className="absolute h-[60.104px] left-[457.79px] mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[-457.79px_0px] mask-size-[1378.377px_60.104px] top-0 w-[181.313px]" data-name="Frame" style={{ maskImage: `url('${imgFrame}')` }}>
+    <div className="absolute h-[60.104px] left-[385.184px] mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[-457.79px_0px] mask-size-[1378.377px_60.104px] top-0 w-[181.313px]" data-name="Frame" style={{ maskImage: `url('${imgFrame}')` }}>
       <div className="absolute inset-y-[23.33%] left-[9.598%] right-[9.598%] flex items-center justify-center">
         <MarqueeLogo
           src={imgMotionzMarqueeLogo}
           alt="Motionz"
-          className={`${MARQUEE_LOGO_CLASS_LARGE} -translate-x-[15%]`}
+          className={MARQUEE_MOTIONZ_CLASS}
+          translateX={MARQUEE_MOTIONZ_SHIFT_X}
+          translateY={MARQUEE_MOTIONZ_SHIFT_Y}
         />
       </div>
     </div>
@@ -2902,12 +2945,14 @@ function Frame7() {
 
 function Frame8() {
   return (
-    <div className="absolute h-[60.104px] left-[687.19px] mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[-687.185px_0px] mask-size-[1378.377px_60.104px] top-0 w-[181.313px]" data-name="Frame" style={{ maskImage: `url('${imgFrame}')` }}>
+    <div className="absolute h-[60.104px] left-[578.279px] mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[-687.185px_0px] mask-size-[1378.377px_60.104px] top-0 w-[181.313px]" data-name="Frame" style={{ maskImage: `url('${imgFrame}')` }}>
       <div className="absolute inset-y-[23.33%] left-[9.598%] right-[9.598%] flex items-center justify-center">
         <MarqueeLogo
           src={imgMindscalelLogo}
           alt="Mindscale"
-          className={MARQUEE_LOGO_CLASS}
+          className={MARQUEE_MINDSCALE_CLASS}
+          translateX={MARQUEE_MINDSCALE_SHIFT_X}
+          translateY={MARQUEE_MINDSCALE_SHIFT_Y}
         />
       </div>
     </div>
@@ -2916,14 +2961,16 @@ function Frame8() {
 
 function Frame9() {
   return (
-    <div className="absolute h-[60.104px] left-[916.58px] mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[-916.581px_0px] mask-size-[1378.377px_60.104px] top-0 w-[180.311px]" data-name="Frame" style={{ maskImage: `url('${imgFrame}')` }}>
+    <div className="absolute h-[60.104px] left-[771.371px] mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[-916.581px_0px] mask-size-[1378.377px_60.104px] top-0 w-[180.311px]" data-name="Frame" style={{ maskImage: `url('${imgFrame}')` }}>
       <div className="absolute inset-y-[23.33%] left-[9.598%] right-[9.598%] flex items-center justify-center">
         <MarqueeLogo
           src={imgArtdelapierreLogo}
           alt="Art de la Pierre"
-          className={MARQUEE_LOGO_CLASS_TALL}
+          className={MARQUEE_ARTDELAPIERRE_CLASS}
           maskPosition="center"
           maskSize="auto 100%"
+          translateX={MARQUEE_ARTDELAPIERRE_SHIFT_X}
+          translateY={MARQUEE_ARTDELAPIERRE_SHIFT_Y}
         />
       </div>
     </div>
@@ -2932,12 +2979,14 @@ function Frame9() {
 
 function Frame10() {
   return (
-    <div className="absolute h-[60.104px] left-[1144.97px] mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[-1144.974px_0px] mask-size-[1378.377px_60.104px] top-0 w-[181.313px]" data-name="Frame" style={{ maskImage: `url('${imgFrame}')` }}>
+    <div className="absolute h-[60.104px] left-[963.461px] mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[-1144.974px_0px] mask-size-[1378.377px_60.104px] top-0 w-[181.313px]" data-name="Frame" style={{ maskImage: `url('${imgFrame}')` }}>
       <div className="absolute inset-y-[23.33%] left-[9.598%] right-[9.598%] flex items-center justify-center">
         <MarqueeLogo
           src={imgTanbabeLogo}
           alt="Tanbabe"
-          className={`${MARQUEE_LOGO_CLASS_LARGE} -translate-x-[1px]`}
+          className={MARQUEE_TANBABE_CLASS}
+          translateX={MARQUEE_TANBABE_SHIFT_X}
+          translateY={MARQUEE_TANBABE_SHIFT_Y}
         />
       </div>
     </div>
@@ -2946,14 +2995,34 @@ function Frame10() {
 
 function Frame11() {
   return (
-    <div className="absolute h-[60.104px] mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[-1168.37px_0px] mask-size-[1378.377px_60.104px] right-[-178.08px] top-0 w-[181.313px]" data-name="Frame" style={{ maskImage: `url('${imgFrame}')` }}>
+    <div className="absolute h-[60.104px] left-[1156.745px] mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[-1168.37px_0px] mask-size-[1378.377px_60.104px] top-0 w-[181.313px]" data-name="Frame" style={{ maskImage: `url('${imgFrame}')` }}>
       <div className="absolute inset-y-[23.33%] left-[9.598%] right-[9.598%] flex items-center justify-center">
         <MarqueeLogo
           src={imgSinlineLogo}
           alt="Sinline"
-          className={MARQUEE_LOGO_CLASS_LARGE}
+          className={MARQUEE_SINLINE_CLASS}
           maskPosition="center"
-          maskSize="auto 172%"
+          maskSize="auto 130%"
+          translateX={MARQUEE_SINLINE_SHIFT_X}
+          translateY={MARQUEE_SINLINE_SHIFT_Y}
+        />
+      </div>
+    </div>
+  );
+}
+
+function MarqueeFrame12() {
+  return (
+    <div className="absolute h-[60.104px] left-[1326.029px] overflow-clip top-0 w-[181.313px]" data-name="Frame">
+      <div className="absolute inset-y-[23.33%] left-[9.598%] right-[9.598%] flex items-center justify-center">
+        <MarqueeLogo
+          src={imgAeeLogo}
+          alt="A&E"
+          className={MARQUEE_AEE_CLASS}
+          renderAsImage
+          imageFilter="brightness(0) saturate(100%)"
+          translateX={MARQUEE_AEE_SHIFT_X}
+          translateY={MARQUEE_AEE_SHIFT_Y}
         />
       </div>
     </div>
@@ -2962,7 +3031,7 @@ function Frame11() {
 
 function Group3() {
   return (
-    <div className="relative h-[60.104px] w-[1378.377px] shrink-0 overflow-clip" aria-hidden="true">
+    <div className="relative h-[60.104px] w-[1519.313px] shrink-0 overflow-clip" aria-hidden="true">
       <Frame5 />
       <Frame6 />
       <Frame7 />
@@ -2970,6 +3039,7 @@ function Group3() {
       <Frame9 />
       <Frame10 />
       <Frame11 />
+      <MarqueeFrame12 />
     </div>
   );
 }
