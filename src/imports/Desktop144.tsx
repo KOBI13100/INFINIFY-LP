@@ -24,11 +24,11 @@ import imgMotionzFrame5 from "../../motionz/MO5.webp";
 import imgMotionzMarqueeLogo from "../../motionz.svg";
 import imgMotionzLogo from "../../motionzlogo.png";
 import imgMindscalelLogo from "../../mindscalel.svg";
-import imgArtdelapierreLogo from "../../artdelapierre.svg";
+import imgAdlpLogo from "../../ADLP.svg";
 import imgTanbabeLogo from "../../tanbabe.svg";
 import imgSinlineLogo from "../../sinline.svg";
 import imgWiccaLogo from "../../wicca.svg";
-import imgAeeLogo from "../../a&e/aee-marquee.svg";
+import imgHeLogo from "../../a&e/H&E.svg";
 import imgHanzoLogo from "../../hanzologo.png";
 import imgVertebraLogo from "../../vertebralogo.png";
 import imgHanzoFrame1 from "../../hanzo/H1.webp";
@@ -42,6 +42,9 @@ import imgNeuralFrame1 from "../../neural/N1.png";
 import imgLightIcon from "../../light.svg";
 import imgMultipagesIcon from "../../multipages.svg";
 import imgRestaurantIcon from "../../restaurant.png";
+import imgCtaRealisationsBackground from "../../CTA (1).png";
+import imgOfferTitleBackground from "../../Offer Title Background.svg";
+import imgOfferBenefitChip from "../../contour chips offer.png";
 import imgCtaBackground from "../assets/cta-background.png";
 import imgLogoInfinify1 from "../assets/bf1d602331298fa70e56da6d7bd2fe71a3de2b7a.png";
 import imgCardImage from "../assets/carousel-card.jpg";
@@ -79,10 +82,12 @@ const MARQUEE_WICCA_CLASS = 'h-[24.472px] w-[125%] max-w-none shrink-0';
 const MARQUEE_SKAPE_CLASS = 'h-[25.346px] w-[125%] max-w-none shrink-0';
 const MARQUEE_MOTIONZ_CLASS = 'h-[26.22px] w-[125%] max-w-none shrink-0';
 const MARQUEE_MINDSCALE_CLASS = 'h-[13.11px] w-[125%] max-w-none shrink-0';
-const MARQUEE_ARTDELAPIERRE_CLASS = 'h-[40.204px] w-[125%] max-w-none shrink-0';
+const MARQUEE_ARTDELAPIERRE_CLASS = 'h-[36.987px] w-[125%] max-w-none shrink-0';
 const MARQUEE_TANBABE_CLASS = 'h-[22.724px] w-[125%] max-w-none shrink-0';
 const MARQUEE_SINLINE_CLASS = 'h-[18.501px] w-[125%] max-w-none shrink-0';
-const MARQUEE_AEE_CLASS = 'h-[35.716px] w-[125%] max-w-none shrink-0';
+const MARQUEE_AEE_CLASS = 'h-[32.859px] w-[125%] max-w-none shrink-0';
+const MARQUEE_ARTDELAPIERRE_MASK_SIZE = 'auto 72%';
+const MARQUEE_AEE_MASK_SIZE = 'auto 63%';
 const MARQUEE_WICCA_SHIFT_X = 0.18354;
 const MARQUEE_SKAPE_SHIFT_X = 0.64676;
 const MARQUEE_MOTIONZ_SHIFT_X = 0.71668;
@@ -174,10 +179,72 @@ function useScrollDirection(): ScrollDirection {
   return scrollDirection;
 }
 
+function getScrollRevealTransition({
+  duration,
+  ease,
+  scrollDirection,
+  animateIn,
+  downDelay = 0,
+}: {
+  duration: number;
+  ease: ReadonlyArray<number>;
+  scrollDirection: ScrollDirection;
+  animateIn: boolean;
+  downDelay?: number;
+}) {
+  if (scrollDirection === 'up' || !animateIn) {
+    return { duration: 0, ease, delay: 0 };
+  }
+
+  return { duration, ease, delay: downDelay };
+}
+
+function useScrollReveal({
+  ref,
+  isInView,
+  scrollDirection,
+}: {
+  ref: React.RefObject<HTMLDivElement | null>;
+  isInView: boolean;
+  scrollDirection: ScrollDirection;
+}) {
+  const [shouldShow, setShouldShow] = useState(isInView);
+
+  useEffect(() => {
+    if (isInView) {
+      setShouldShow(true);
+    }
+  }, [isInView]);
+
+  useEffect(() => {
+    if (!shouldShow || isInView || scrollDirection !== 'up' || typeof window === 'undefined') {
+      return;
+    }
+
+    const checkReset = () => {
+      const node = ref.current;
+      if (!node) return;
+
+      const rect = node.getBoundingClientRect();
+      if (rect.top >= window.innerHeight) {
+        setShouldShow(false);
+      }
+    };
+
+    checkReset();
+    window.addEventListener('scroll', checkReset, { passive: true });
+
+    return () => window.removeEventListener('scroll', checkReset);
+  }, [shouldShow, isInView, scrollDirection, ref]);
+
+  return shouldShow;
+}
+
 function BackgroundContainer({ scrollDirection }: { scrollDirection: ScrollDirection }) {
   const reduced = useReducedMotion();
   const footerBackgroundRef = useRef<HTMLDivElement | null>(null);
   const isFooterBackgroundInView = useInView(footerBackgroundRef, { amount: TEAM_VIEWPORT.amount });
+  const shouldShowFooterBackground = useScrollReveal({ ref: footerBackgroundRef, isInView: isFooterBackgroundInView, scrollDirection });
 
   return (
     <motion.div
@@ -185,8 +252,8 @@ function BackgroundContainer({ scrollDirection }: { scrollDirection: ScrollDirec
       className="absolute -translate-x-1/2 bg-black h-[269.561px] left-1/2 top-[4251.44px] w-[100dvw]"
       data-name="Background Shape"
       initial={{ opacity: 0, y: reduced ? 0 : FOOTER_Y }}
-      animate={isFooterBackgroundInView ? { opacity: 1, y: 0 } : { opacity: 0, y: reduced ? 0 : FOOTER_Y }}
-      transition={{ duration: FOOTER_DURATION, ease: FOOTER_EASE, delay: scrollDirection === 'up' ? 0.28 : 0.18 }}
+      animate={shouldShowFooterBackground ? { opacity: 1, y: 0 } : { opacity: 0, y: reduced ? 0 : FOOTER_Y }}
+      transition={getScrollRevealTransition({ duration: FOOTER_DURATION, ease: FOOTER_EASE, scrollDirection, animateIn: shouldShowFooterBackground, downDelay: 0.18 })}
     />
   );
 }
@@ -341,6 +408,7 @@ function ContentGroup({ scrollDirection }: { scrollDirection: ScrollDirection })
   const reduced = useReducedMotion();
   const footerContentRef = useRef<HTMLDivElement | null>(null);
   const isFooterContentInView = useInView(footerContentRef, { amount: TEAM_VIEWPORT.amount });
+  const shouldShowFooterContent = useScrollReveal({ ref: footerContentRef, isInView: isFooterContentInView, scrollDirection });
 
   return (
     <motion.div
@@ -348,8 +416,8 @@ function ContentGroup({ scrollDirection }: { scrollDirection: ScrollDirection })
       className="-translate-x-1/2 absolute content-stretch flex gap-[620px] items-start leading-[0] left-1/2 top-[4298.87px] w-[1211px]"
       data-name="Content Group"
       initial={{ opacity: 0, y: reduced ? 0 : FOOTER_Y }}
-      animate={isFooterContentInView ? { opacity: 1, y: 0 } : { opacity: 0, y: reduced ? 0 : FOOTER_Y }}
-      transition={{ duration: FOOTER_DURATION, ease: FOOTER_EASE, delay: scrollDirection === 'up' ? 0.12 : 0.42 }}
+      animate={shouldShowFooterContent ? { opacity: 1, y: 0 } : { opacity: 0, y: reduced ? 0 : FOOTER_Y }}
+      transition={getScrollRevealTransition({ duration: FOOTER_DURATION, ease: FOOTER_EASE, scrollDirection, animateIn: shouldShowFooterContent, downDelay: 0.42 })}
     >
       <ContentColumn />
       <LegalLinks />
@@ -772,11 +840,11 @@ function CtaBottomGradient() {
 function CallToActionTexts() {
   return (
     <div className="absolute inset-x-0 text-center top-[116.85px]" data-name="Call to Action Texts">
-      <div className="mx-auto flex max-w-[720px] flex-col font-['Neue_Montreal:Regular',sans-serif] font-bold justify-center leading-[normal] text-[40px] text-white tracking-[0.6px]">
-        <p className="mb-0">{`Donnez à votre marque la `}</p>
+      <div className="relative left-1/2 flex w-fit max-w-[720px] -translate-x-1/2 flex-col items-center font-['Neue_Montreal:Regular',sans-serif] font-bold justify-center leading-[normal] text-[40px] text-white tracking-[0.6px]">
+        <p className="mb-0">Donnez à votre marque la</p>
         <p>présence qu’elle mérite</p>
       </div>
-      <div className="mx-auto mt-[38.39px] flex max-w-[770px] flex-col font-['Neue_Montreal:Regular',sans-serif] font-normal justify-center leading-[22px] text-[#BFBFBF] text-[16px]">
+      <div className="mx-auto mt-[38.39px] flex max-w-[770px] flex-col items-center font-['Neue_Montreal:Regular',sans-serif] font-normal justify-center leading-[22px] text-[#BFBFBF] text-[16px]">
         <p className="mb-0">{`Construisons une identité et une expérience digitale capables de `}</p>
         <p>renforcer votre perception, votre crédibilité et votre ambition.</p>
       </div>
@@ -851,6 +919,7 @@ function Cta({ scrollDirection }: { scrollDirection: ScrollDirection }) {
   const reduced = useReducedMotion();
   const ctaRef = useRef<HTMLDivElement | null>(null);
   const isCtaInView = useInView(ctaRef, { amount: 0.15 });
+  const shouldShowCta = useScrollReveal({ ref: ctaRef, isInView: isCtaInView, scrollDirection });
 
   return (
     <motion.div
@@ -859,8 +928,8 @@ function Cta({ scrollDirection }: { scrollDirection: ScrollDirection }) {
       data-name="CTA"
       style={{ left: 275.5, top: 3380.17, width: 889, height: 439 }}
       initial={{ opacity: 0, y: reduced ? 0 : CARD_Y }}
-      animate={isCtaInView ? { opacity: 1, y: 0 } : { opacity: 0, y: reduced ? 0 : CARD_Y }}
-      transition={{ duration: CARD_DURATION, ease: CARD_EASE, delay: scrollDirection === 'up' ? 0.05 : 0 }}
+      animate={shouldShowCta ? { opacity: 1, y: 0 } : { opacity: 0, y: reduced ? 0 : CARD_Y }}
+      transition={getScrollRevealTransition({ duration: CARD_DURATION, ease: CARD_EASE, scrollDirection, animateIn: shouldShowCta })}
     >
       <UpMe />
       <EarthBackground />
@@ -1709,7 +1778,7 @@ function MaskGroup({
       data-name="Mask Group"
       initial={{ opacity: 0, y: reduced ? 0 : CARD_Y }}
       animate={animateIn ? { opacity: 1, y: 0 } : { opacity: 0, y: reduced ? 0 : CARD_Y }}
-      transition={{ duration: SECTION_DURATION + 0.05, ease: SECTION_EASE, delay: scrollDirection === 'up' ? 0.35 : 0 }}
+      transition={getScrollRevealTransition({ duration: SECTION_DURATION + 0.05, ease: SECTION_EASE, scrollDirection, animateIn })}
     >
       <div className="-translate-x-1/2 -translate-y-1/2 absolute flex flex-col font-['Geist:SemiBold',sans-serif] font-semibold justify-center leading-[0] left-[448.61px] mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[-0.111px_0px] mask-size-[896.66px_353.049px] text-[#d8d8d8] text-[300px] text-center top-[195px] whitespace-nowrap" style={{ maskImage: `url('${imgOffres}')` }}>
         <p className="leading-[normal]">Offres</p>
@@ -1729,21 +1798,10 @@ function ReserveCallGroup() {
   );
 }
 
-function CallToActionTitleBackground() {
-  return (
-    <div className="col-1 grid-cols-[max-content] grid-rows-[max-content] inline-grid ml-0 mt-0 place-items-start relative row-1" data-name="Call to Action Title Background">
-      <div className="col-1 content-stretch flex gap-[9.151px] h-[56.188px] items-center justify-center ml-0 mt-0 p-[6.863px] pointer-events-none relative rounded-[100px] row-1 w-[467.72px]" data-name="Toolbar - Symbols">
-        <div aria-hidden="true" className="absolute backdrop-blur-[28.598px] bg-[rgba(128,128,128,0.2)] inset-0 mix-blend-luminosity rounded-[100px]" />
-        <div aria-hidden="true" className="absolute inset-0 rounded-[100px]" style={{ boxShadow: 'inset 0 0.801px 0 rgba(255,255,255,0.4), inset 0 -0.801px 0 rgba(255,255,255,0.1), inset 0.801px 0 0 rgba(255,255,255,0.15), inset -0.801px 0 0 rgba(255,255,255,0.15)' }} />
-      </div>
-    </div>
-  );
-}
-
 function OfferTitleBackground1() {
   return (
     <div className="col-1 grid-cols-[max-content] grid-rows-[max-content] inline-grid ml-0 mt-0 place-items-start relative row-1" data-name="Offer Title Background">
-      <CallToActionTitleBackground />
+      <img alt="" className="col-1 h-[56.188px] ml-0 mt-0 pointer-events-none row-1 w-[467.72px]" src={imgOfferTitleBackground} />
     </div>
   );
 }
@@ -1880,7 +1938,7 @@ function OfferTab({ offer, active, onClick }: { offer: OfferData; active: boolea
       className="grid-cols-[max-content] grid-rows-[max-content] inline-grid place-items-center relative shrink-0 cursor-pointer"
     >
       <div
-        className="col-1 content-stretch flex h-[34.437px] items-center justify-center p-[5.871px] relative rounded-[100px] row-1"
+        className="col-1 content-stretch flex h-[34.44px] items-center justify-center overflow-hidden p-[5.871px] relative rounded-[100px] row-1"
         style={{ width: offer.tabWidth }}
       >
         <div
@@ -1892,30 +1950,43 @@ function OfferTab({ offer, active, onClick }: { offer: OfferData; active: boolea
           }}
         />
         <div aria-hidden="true" className="absolute inset-0 rounded-[100px]" style={{ boxShadow: 'inset 0 0.685px 0 rgba(255,255,255,0.4), inset 0 -0.685px 0 rgba(255,255,255,0.1), inset 0.685px 0 0 rgba(255,255,255,0.15), inset -0.685px 0 0 rgba(255,255,255,0.15)' }} />
-      </div>
-      <div
-        className="col-1 flex flex-col justify-center relative row-1 text-[12.078px] text-center whitespace-nowrap transition-colors duration-300"
-        style={{
-          fontFamily: active ? "'Neue_Montreal:Medium', sans-serif" : "'Neue_Montreal:Regular', sans-serif",
-          fontWeight: active ? 500 : 400,
-          color: active ? '#0e0e0e' : 'rgba(255,255,255,0.65)',
-        }}
-      >
-        <p className="leading-[normal]">{offer.label}</p>
+        <div
+          className="absolute inset-0 z-[1] flex items-center justify-center text-[12.078px] text-center whitespace-nowrap transition-colors duration-300"
+          style={{
+            fontFamily: active ? "'Neue_Montreal:Medium', sans-serif" : "'Neue_Montreal:Regular', sans-serif",
+            fontWeight: active ? 500 : 400,
+            color: active ? '#0e0e0e' : 'rgba(255,255,255,0.65)',
+          }}
+        >
+          <p className="leading-[normal]">{offer.label}</p>
+        </div>
       </div>
     </button>
   );
 }
 
-// Tick icon for benefits
-function OfferBenefitTick() {
+const OFFER_BENEFIT_CHIP_PADDING_Y = 10;
+const OFFER_BENEFIT_CHIP_PADDING_X = 20;
+
+function OfferBenefitChip({ text }: { text: string }) {
   return (
-    <div className="col-1 h-[20px] ml-0 mt-0 relative row-1 w-[21px]">
-      <div className="absolute inset-[17.38%_16.47%_15.57%_0.19%]">
-        <svg className="absolute block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 17.5 13.41">
+    <div
+      className="relative flex items-center gap-[10px]"
+      style={{
+        width: 'fit-content',
+        padding: `${OFFER_BENEFIT_CHIP_PADDING_Y}px ${OFFER_BENEFIT_CHIP_PADDING_X}px`,
+        background: 'rgba(14, 14, 14, 0.025)',
+        borderRadius: '999px',
+      }}
+    >
+      <div className="shrink-0" style={{ width: '17.5px', height: '13.41px' }}>
+        <svg className="block h-full w-full" fill="none" preserveAspectRatio="none" viewBox="0 0 17.5 13.41">
           <path d={svgPaths.p26b70600} fill="black" />
         </svg>
       </div>
+      <p className="font-['Neue_Montreal:Regular',sans-serif] text-[#0e0e0e] text-[15px] leading-[20px] text-left whitespace-nowrap">
+        {text}
+      </p>
     </div>
   );
 }
@@ -1982,7 +2053,7 @@ function OfferCard({
       className="absolute left-0 top-0 w-full"
       initial={{ opacity: 0, y: reduced ? 0 : CARD_Y }}
       animate={animateIn ? { opacity: 1, y: 0 } : { opacity: 0, y: reduced ? 0 : CARD_Y }}
-      transition={{ duration: CARD_DURATION, ease: CARD_EASE, delay: scrollDirection === 'up' ? 0.05 : 0.4 }}
+      transition={getScrollRevealTransition({ duration: CARD_DURATION, ease: CARD_EASE, scrollDirection, animateIn, downDelay: 0.4 })}
     >
 
       {/* ── Dark card ─────────────────────────────────────────────── */}
@@ -2010,12 +2081,7 @@ function OfferCard({
               style={{ marginTop: 39.08 }}
             >
               {/* Pill backdrop */}
-              <div className="col-1 grid-cols-[max-content] grid-rows-[max-content] inline-grid ml-0 mt-0 place-items-start relative row-1">
-                <div className="col-1 content-stretch flex gap-[9.151px] h-[56.188px] items-center justify-center ml-0 mt-0 p-[6.863px] pointer-events-none relative rounded-[100px] row-1 w-[467.72px]">
-                  <div aria-hidden="true" className="absolute backdrop-blur-[28.598px] bg-[rgba(128,128,128,0.2)] inset-0 mix-blend-luminosity rounded-[100px]" />
-                  <div aria-hidden="true" className="absolute inset-0 rounded-[100px]" style={{ boxShadow: 'inset 0 0.801px 0 rgba(255,255,255,0.4), inset 0 -0.801px 0 rgba(255,255,255,0.1), inset 0.801px 0 0 rgba(255,255,255,0.15), inset -0.801px 0 0 rgba(255,255,255,0.15)' }} />
-                </div>
-              </div>
+              <OfferTitleBackground1 />
               {/* Tab pills */}
               <div className="col-1 grid-cols-[max-content] grid-rows-[max-content] inline-grid ml-[calc(50%-222.46px)] mt-[7.21px] place-items-start relative row-1">
                 <div className="col-1 content-stretch flex gap-[6px] h-[42px] items-center ml-0 mt-0 relative row-1 w-[444.919px]">
@@ -2110,21 +2176,16 @@ function OfferCard({
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={`benefits-${activeId}`}
-            className="absolute inset-0 flex flex-col items-start pb-[35px] pl-[40px] pr-[150px] pt-[40px]"
+            className="absolute inset-0 flex flex-col items-start px-[40px] pb-[35px] pt-[40px]"
             variants={reduced ? undefined : offerContentVariants}
             initial="enter"
             animate="center"
             exit="exit"
             transition={reduced ? { duration: 0 } : undefined}
           >
-            <div className="content-stretch flex flex-[1_0_0] flex-col gap-[20px] items-start leading-[0] min-h-px min-w-px relative w-full">
+            <div className="content-stretch flex flex-[1_0_0] flex-col gap-[12px] items-start leading-[0] min-h-px min-w-px relative w-full">
               {offer.benefits.map((text, i) => (
-                <div key={i} className="grid-cols-[max-content] grid-rows-[max-content] inline-grid place-items-start relative shrink-0">
-                  <OfferBenefitTick />
-                  <div className="col-1 flex flex-col font-['Neue_Montreal:Regular',sans-serif] font-normal justify-center ml-[41.5px] mt-[2px] relative row-1 text-[#0e0e0e] text-[16px] whitespace-nowrap">
-                    <p className="leading-[normal]">{text}</p>
-                  </div>
-                </div>
+                <OfferBenefitChip key={i} text={text} />
               ))}
             </div>
           </motion.div>
@@ -2156,27 +2217,17 @@ function Offres({
 }
 
 function OffresGroupe({ scrollDirection }: { scrollDirection: ScrollDirection }) {
+  const offersRevealRef = useRef<HTMLDivElement | null>(null);
   const offersMaskRef = useRef<HTMLDivElement | null>(null);
   const offersCardRef = useRef<HTMLDivElement | null>(null);
   const isOffersMaskInView = useInView(offersMaskRef, { amount: 0.35 });
   const isOffersCardInView = useInView(offersCardRef, { amount: 0.35 });
   const isOffersInView = isOffersMaskInView || isOffersCardInView;
-  const [shouldShowOffers, setShouldShowOffers] = useState(false);
-
-  useEffect(() => {
-    if (isOffersInView) {
-      setShouldShowOffers(true);
-      return;
-    }
-
-    if (scrollDirection === 'up') {
-      setShouldShowOffers(false);
-    }
-  }, [isOffersInView, scrollDirection]);
+  const shouldShowOffers = useScrollReveal({ ref: offersRevealRef, isInView: isOffersInView, scrollDirection });
 
   return (
     <>
-      <div id="offres" className="-translate-x-1/2 absolute left-1/2 top-[2406.12px]" />
+      <div id="offres" ref={offersRevealRef} className="-translate-x-1/2 absolute left-1/2 top-[2406.12px]" />
       <div className="-translate-x-1/2 absolute contents left-1/2 top-[2117.32px]" data-name="Offres Groupe">
         <MaskGroup
           animateIn={shouldShowOffers}
@@ -2197,14 +2248,15 @@ function InfinifyMask({ scrollDirection }: { scrollDirection: ScrollDirection })
   const reduced = useReducedMotion();
   const infinifyMaskRef = useRef<HTMLDivElement | null>(null);
   const isInfinifyMaskInView = useInView(infinifyMaskRef, { amount: TEAM_VIEWPORT.amount });
+  const shouldShowInfinifyMask = useScrollReveal({ ref: infinifyMaskRef, isInView: isInfinifyMaskInView, scrollDirection });
   return (
     <motion.div
       ref={infinifyMaskRef}
       className="-translate-x-1/2 absolute h-[353px] left-[calc(50%-3.55px)] top-[3934.38px] w-[1057px]"
       data-name="Infinify Mask"
       initial={{ opacity: 0, y: reduced ? 0 : CARD_Y }}
-      animate={isInfinifyMaskInView ? { opacity: 1, y: 0 } : { opacity: 0, y: reduced ? 0 : CARD_Y }}
-      transition={{ duration: CARD_DURATION, ease: CARD_EASE, delay: scrollDirection === 'up' ? 0.42 : 0.15 }}
+      animate={shouldShowInfinifyMask ? { opacity: 1, y: 0 } : { opacity: 0, y: reduced ? 0 : CARD_Y }}
+      transition={getScrollRevealTransition({ duration: CARD_DURATION, ease: CARD_EASE, scrollDirection, animateIn: shouldShowInfinifyMask, downDelay: 0.15 })}
     >
       <div className="-translate-x-1/2 -translate-y-1/2 absolute flex flex-col font-['Geist:SemiBold',sans-serif] font-semibold justify-center leading-[0] left-[528.5px] mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[-19.5px_0px] mask-size-[1056.66px_353.049px] text-[300px] text-center top-[195px] whitespace-nowrap"
         style={{
@@ -2224,14 +2276,15 @@ function TeamMask({ scrollDirection }: { scrollDirection: ScrollDirection }) {
   const reduced = useReducedMotion();
   const teamMaskRef = useRef<HTMLDivElement | null>(null);
   const isTeamMaskInView = useInView(teamMaskRef, { amount: TEAM_VIEWPORT.amount });
+  const shouldShowTeamMask = useScrollReveal({ ref: teamMaskRef, isInView: isTeamMaskInView, scrollDirection });
   return (
     <motion.div
       ref={teamMaskRef}
       className="absolute h-[353px] left-[335.5px] top-[827.37px] w-[769px]"
       data-name="Team Mask"
       initial={{ opacity: 0, y: reduced ? 0 : SECTION_Y }}
-      animate={isTeamMaskInView ? { opacity: 1, y: 0 } : { opacity: 0, y: reduced ? 0 : SECTION_Y }}
-      transition={{ duration: SECTION_DURATION + 0.05, ease: SECTION_EASE, delay: scrollDirection === 'up' ? 0.45 : 0 }}
+      animate={shouldShowTeamMask ? { opacity: 1, y: 0 } : { opacity: 0, y: reduced ? 0 : SECTION_Y }}
+      transition={getScrollRevealTransition({ duration: SECTION_DURATION + 0.05, ease: SECTION_EASE, scrollDirection, animateIn: shouldShowTeamMask })}
     >
       <div className="-translate-x-1/2 -translate-y-1/2 absolute flex flex-col font-['Geist:SemiBold',sans-serif] font-semibold justify-center leading-[0] left-[384.77px] mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[-0.273px_0.484px] mask-size-[768.66px_353.049px] text-[#d8d8d8] text-[300px] text-center top-[194.52px] whitespace-nowrap" style={{ maskImage: `url('${imgTeam}')` }}>
         <p className="leading-[normal]">Team</p>
@@ -2456,14 +2509,15 @@ function Team({ scrollDirection }: { scrollDirection: ScrollDirection }) {
   const reduced = useReducedMotion();
   const teamRef = useRef<HTMLDivElement | null>(null);
   const isTeamInView = useInView(teamRef, { amount: TEAM_VIEWPORT.amount });
+  const shouldShowTeam = useScrollReveal({ ref: teamRef, isInView: isTeamInView, scrollDirection });
   return (
     <div ref={teamRef} className="-translate-x-1/2 absolute h-[240.496px] left-1/2 top-[1117.87px] w-[783.209px]" data-name="Team">
       {/* Card 1 — Oscar VORTICE */}
       <motion.div
         className="absolute left-0 top-0 w-[783.209px] h-full"
         initial={{ opacity: 0, y: reduced ? 0 : CARD_Y }}
-        animate={isTeamInView ? { opacity: 1, y: 0 } : { opacity: 0, y: reduced ? 0 : CARD_Y }}
-        transition={{ duration: CARD_DURATION, ease: CARD_EASE, delay: scrollDirection === 'up' ? 0.25 : 0.15 }}
+        animate={shouldShowTeam ? { opacity: 1, y: 0 } : { opacity: 0, y: reduced ? 0 : CARD_Y }}
+        transition={getScrollRevealTransition({ duration: CARD_DURATION, ease: CARD_EASE, scrollDirection, animateIn: shouldShowTeam, downDelay: 0.15 })}
       >
         <TestimonialColumn />
       </motion.div>
@@ -2471,8 +2525,8 @@ function Team({ scrollDirection }: { scrollDirection: ScrollDirection }) {
       <motion.div
         className="absolute left-0 top-0 w-[783.209px] h-full"
         initial={{ opacity: 0, y: reduced ? 0 : CARD_Y }}
-        animate={isTeamInView ? { opacity: 1, y: 0 } : { opacity: 0, y: reduced ? 0 : CARD_Y }}
-        transition={{ duration: CARD_DURATION, ease: CARD_EASE, delay: scrollDirection === 'up' ? 0.05 : 0.35 }}
+        animate={shouldShowTeam ? { opacity: 1, y: 0 } : { opacity: 0, y: reduced ? 0 : CARD_Y }}
+        transition={getScrollRevealTransition({ duration: CARD_DURATION, ease: CARD_EASE, scrollDirection, animateIn: shouldShowTeam, downDelay: 0.35 })}
       >
         <TestimonialColumn1 />
       </motion.div>
@@ -2644,7 +2698,7 @@ function Cta2({ introActive }: { introActive: boolean }) {
       transition={{ duration: HERO_CONTENT_DURATION, ease: SECTION_EASE, delay: 0 }}
     >
       <OfferButton
-        className="content-stretch"
+        className="content-stretch h-[50.03px]"
         label="Voir nos offres"
         onClick={scrollToOffres}
         theme="light"
@@ -2664,45 +2718,22 @@ function CtaRealisations({ introActive }: { introActive: boolean }) {
   return (
     <motion.button
       onClick={scrollToRealisations}
-      className="relative flex items-center justify-center gap-[8.014px] cursor-pointer border-0 bg-transparent shrink-0 overflow-hidden"
-      style={{ width: 236.05, height: 50.03 }}
+      className="relative inline-flex cursor-pointer items-center justify-center gap-[8.014px] overflow-hidden rounded-[10016.271px] border-0 bg-transparent px-[30px] shrink-0"
+      style={{ height: '50.03px' }}
       data-name="CTA Réalisations"
       initial={{ opacity: 0, y: reduced ? 0 : HERO_CTA_Y }}
       animate={introActive ? { opacity: 1, y: 0 } : { opacity: 0, y: reduced ? 0 : HERO_CTA_Y }}
       transition={{ duration: HERO_CONTENT_DURATION, ease: SECTION_EASE, delay: 0 }}
+      type="button"
     >
-      {/* CTA.svg background */}
+      {/* CTA (1).svg background */}
       <div className="absolute inset-0 pointer-events-none">
-        <svg className="size-full" viewBox="0 0 236.048 50.0345" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
-          <g filter="url(#ctaBgFilter)">
-            <path d="M0 25.0173C0 11.2006 11.2006 0 25.0173 0H211.031C224.848 0 236.048 11.2006 236.048 25.0173V25.0173C236.048 38.8339 224.848 50.0345 211.031 50.0345H25.0173C11.2006 50.0345 0 38.8339 0 25.0173V25.0173Z" fill="white" fillOpacity="0.08"/>
-          </g>
-          <defs>
-            <filter id="ctaBgFilter" x="0" y="0" width="236.048" height="50.0345" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
-              <feFlood floodOpacity="0" result="BackgroundImageFix"/>
-              <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
-              <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
-              <feMorphology radius="4.00691" operator="erode" in="SourceAlpha" result="effect1_innerShadow"/>
-              <feOffset/>
-              <feGaussianBlur stdDeviation="6.01036"/>
-              <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1"/>
-              <feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.1 0"/>
-              <feBlend mode="normal" in2="shape" result="effect1_innerShadow"/>
-              <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
-              <feMorphology radius="2.00345" operator="erode" in="SourceAlpha" result="effect2_innerShadow"/>
-              <feOffset/>
-              <feGaussianBlur stdDeviation="1.50259"/>
-              <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1"/>
-              <feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.1 0"/>
-              <feBlend mode="normal" in2="effect1_innerShadow" result="effect2_innerShadow"/>
-            </filter>
-          </defs>
-        </svg>
+        <img alt="" className="h-full w-full object-fill" src={imgCtaRealisationsBackground} />
       </div>
       <div className="relative flex flex-col font-['Neue_Montreal:Bold',sans-serif] font-[500] justify-center leading-[0] not-italic text-[16.028px] text-white text-center tracking-[-0.3206px] whitespace-nowrap">
         <p className="leading-[1.2]">Voir nos réalisations</p>
       </div>
-      <div className="relative">
+      <div className="relative shrink-0">
         <Frame1 />
       </div>
     </motion.button>
@@ -2964,11 +2995,11 @@ function Frame9() {
     <div className="absolute h-[60.104px] left-[771.371px] mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[-916.581px_0px] mask-size-[1378.377px_60.104px] top-0 w-[180.311px]" data-name="Frame" style={{ maskImage: `url('${imgFrame}')` }}>
       <div className="absolute inset-y-[23.33%] left-[9.598%] right-[9.598%] flex items-center justify-center">
         <MarqueeLogo
-          src={imgArtdelapierreLogo}
-          alt="Art de la Pierre"
+          src={imgAdlpLogo}
+          alt="ADLP"
           className={MARQUEE_ARTDELAPIERRE_CLASS}
           maskPosition="center"
-          maskSize="auto 100%"
+          maskSize={MARQUEE_ARTDELAPIERRE_MASK_SIZE}
           translateX={MARQUEE_ARTDELAPIERRE_SHIFT_X}
           translateY={MARQUEE_ARTDELAPIERRE_SHIFT_Y}
         />
@@ -3016,11 +3047,10 @@ function MarqueeFrame12() {
     <div className="absolute h-[60.104px] left-[1326.029px] overflow-clip top-0 w-[181.313px]" data-name="Frame">
       <div className="absolute inset-y-[23.33%] left-[9.598%] right-[9.598%] flex items-center justify-center">
         <MarqueeLogo
-          src={imgAeeLogo}
-          alt="A&E"
+          src={imgHeLogo}
+          alt="H&E"
           className={MARQUEE_AEE_CLASS}
-          renderAsImage
-          imageFilter="brightness(0) saturate(100%)"
+          maskSize={MARQUEE_AEE_MASK_SIZE}
           translateX={MARQUEE_AEE_SHIFT_X}
           translateY={MARQUEE_AEE_SHIFT_Y}
         />
