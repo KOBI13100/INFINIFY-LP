@@ -41,14 +41,14 @@ import imgNeuralFrame1 from "../../neural/N1.png";
 import imgLightIcon from "../../light.svg";
 import imgMultipagesIcon from "../../multipages.svg";
 import imgRestaurantIcon from "../../restaurant.webp";
-import imgCtaRealisationsBackground from "../../CTA (1).png";
+import imgCtaRealisationsBackground from "../../CTA (1).webp";
 import imgOfferTitleBackground from "../../Offer Title Background.svg";
 import imgOfferBenefitChip from "../../contour chips offer.png";
 import imgCtaBackground from "../assets/cta-background.webp";
 import imgLogoInfinify1 from "../assets/logoinfinifywhite.svg";
-import imgCardImage from "../assets/carousel-card.jpg";
-import imgTestimonialImage from "../assets/a77190103db78e6334f030692996578c4825b66d.png";
-import imgTestimonialImage1 from "../assets/dec5cbce46710d057f06833cca1d54055e9a4ed5.png";
+import imgCardImage from "../assets/carousel-card.webp";
+import imgTestimonialImage from "../assets/a77190103db78e6334f030692996578c4825b66d.webp";
+import imgTestimonialImage1 from "../assets/dec5cbce46710d057f06833cca1d54055e9a4ed5.webp";
 import imgHero from "../../Imagebg.webp";
 import { imgGroup, imgOffres, imgInfinify, imgTeam, imgFrame } from "./svg-ithsc";
 import OfferButton from "../app/components/OfferButton";
@@ -292,7 +292,7 @@ function LogoAndName() {
       </div>
       <div className="col-1 h-[11.874px] ml-[16.36px] mt-[16.04px] relative row-1 w-[18.372px]" data-name="Logo Infinify 1">
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <img alt="" className="absolute h-[138.86%] left-[-6.67%] max-w-none top-[-17.73%] w-[114.53%]" src={imgLogoInfinify1} />
+          <img alt="" className="absolute h-[138.86%] left-[-6.67%] max-w-none top-[-17.73%] w-[114.53%] object-cover" src={imgLogoInfinify1} />
         </div>
       </div>
     </div>
@@ -820,6 +820,7 @@ function EarthBackground() {
           transform: 'translateZ(0)',
         }}
         decoding="async"
+        loading="lazy"
         alt=""
       />
     </div>
@@ -907,7 +908,7 @@ function TestimonialInfo() {
       </div>
       <div className="absolute h-[9.314px] left-[14.014px] top-[12.78px] w-[14.411px]" data-name="Logo Infinify 1">
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <img alt="" className="absolute h-[138.86%] left-[-6.67%] max-w-none top-[-17.73%] w-[114.53%]" src={imgLogoInfinify1} />
+          <img alt="" className="absolute h-[138.86%] left-[-6.67%] max-w-none top-[-17.73%] w-[114.53%] object-cover" src={imgLogoInfinify1} />
         </div>
       </div>
     </div>
@@ -1790,7 +1791,7 @@ function ReserveCallGroup() {
 function OfferTitleBackground1() {
   return (
     <div className="col-1 grid-cols-[max-content] grid-rows-[max-content] inline-grid ml-0 mt-0 place-items-start relative row-1" data-name="Offer Title Background">
-      <img alt="" className="col-1 h-[56.188px] ml-0 mt-0 pointer-events-none row-1 w-[467.72px]" src={imgOfferTitleBackground} />
+      <img alt="" className="col-1 h-[56.188px] ml-0 mt-0 pointer-events-none row-1 w-[467.72px]" src={imgOfferTitleBackground} loading="lazy" decoding="async" />
     </div>
   );
 }
@@ -2334,7 +2335,7 @@ function TestimonialInfo1() {
       </div>
       <div className="absolute h-[10.442px] left-[170.79px] top-[46.62px] w-[16.156px]" data-name="Logo Infinify 1">
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <img alt="" className="absolute h-[138.86%] left-[-6.67%] max-w-none top-[-17.73%] w-[114.53%]" src={imgLogoInfinify1} />
+          <img alt="" className="absolute h-[138.86%] left-[-6.67%] max-w-none top-[-17.73%] w-[114.53%] object-cover" src={imgLogoInfinify1} />
         </div>
       </div>
     </div>
@@ -2363,7 +2364,7 @@ function TestimonialColumn() {
       </div>
       <div className="absolute h-[114.876px] left-[20.25px] rounded-[8.353px] top-[20.77px] w-[114.52px]" data-name="Testimonial Image">
         <div className="absolute inset-0 overflow-hidden pointer-events-none rounded-[8.353px]">
-          <img alt="" className="absolute h-[149.54%] left-0 max-w-none top-[-25.3%] w-full" src={imgTestimonialImage} loading="lazy" decoding="async" />
+          <img alt="" className="absolute h-[149.54%] left-0 max-w-none top-[-25.3%] w-full object-cover" src={imgTestimonialImage} loading="lazy" decoding="async" />
         </div>
       </div>
       <TestimonialInfo1 />
@@ -2442,7 +2443,7 @@ function LogoAndIcon() {
       </div>
       <div className="absolute h-[10.442px] left-[442.94px] top-[46.62px] w-[16.156px]" data-name="Logo Infinify 1">
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <img alt="" className="absolute h-[138.86%] left-[-6.67%] max-w-none top-[-17.73%] w-[114.53%]" src={imgLogoInfinify1} />
+          <img alt="" className="absolute h-[138.86%] left-[-6.67%] max-w-none top-[-17.73%] w-[114.53%] object-cover" src={imgLogoInfinify1} />
         </div>
       </div>
     </div>
@@ -2467,7 +2468,7 @@ function TestimonialColumn1() {
         <div className="-scale-y-100 flex-none rotate-180">
           <div className="h-[114.876px] relative rounded-[8.353px] w-[114.52px]" data-name="Testimonial Image">
             <div className="absolute inset-0 overflow-hidden pointer-events-none rounded-[8.353px]">
-              <img alt="" className="absolute h-[131.82%] left-[-35.39%] max-w-none top-[-31.82%] w-[164.12%]" src={imgTestimonialImage1} loading="lazy" decoding="async" />
+              <img alt="" className="absolute h-[131.82%] left-[-35.39%] max-w-none top-[-31.82%] w-[164.12%] object-cover" src={imgTestimonialImage1} loading="lazy" decoding="async" />
             </div>
           </div>
         </div>
@@ -2582,7 +2583,7 @@ function Group6() {
       </div>
       <div className="col-1 h-[15.201px] ml-[9.32px] mt-[13.48px] relative row-1 w-[23.52px]" data-name="Logo Infinify 1">
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <img alt="" className="absolute h-[138.86%] left-[-6.67%] max-w-none top-[-17.73%] w-[114.53%]" src={imgLogoInfinify1} />
+          <img alt="" className="absolute h-[138.86%] left-[-6.67%] max-w-none top-[-17.73%] w-[114.53%] object-cover" src={imgLogoInfinify1} />
         </div>
       </div>
     </div>

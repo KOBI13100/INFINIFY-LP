@@ -3,6 +3,7 @@ import path from 'path'
 const __dirname = new URL('.', import.meta.url).pathname
 import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
+import { compression } from 'vite-plugin-compression2'
 
 // Resolves Figma Make's "figma:asset/<hash>.ext" imports to local assets
 const figmaAssetPlugin = {
@@ -22,6 +23,8 @@ export default defineConfig({
     // Tailwind is not being actively used – do not remove them
     react(),
     tailwindcss(),
+    compression({ algorithm: 'gzip', threshold: 1024 }),
+    compression({ algorithm: 'brotliCompress', threshold: 1024 }),
   ],
   resolve: {
     alias: {
@@ -32,4 +35,17 @@ export default defineConfig({
 
   // File types to support raw imports. Never add .css, .tsx, or .ts files to this.
   assetsInclude: ['**/*.svg', '**/*.csv'],
+
+  build: {
+    target: 'es2020',
+    cssMinify: 'lightningcss',
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor-react': ['react', 'react-dom'],
+          'vendor-motion': ['motion'],
+        },
+      },
+    },
+  },
 })
