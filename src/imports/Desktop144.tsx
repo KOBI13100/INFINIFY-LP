@@ -7,7 +7,7 @@ import imgMindscaleFrame3 from "../../mindscale img/m3.webp";
 import imgMindscaleFrame4 from "../../mindscale img/m4.webp";
 import imgMindscaleFrame5 from "../../mindscale img/m5.webp";
 import imgMindscaleFrame6 from "../../mindscale img/M6.webp";
-import imgSkapeLogo from "../../skapelogo.png";
+import imgSkapeLogo from "../../skapelogo.webp";
 import imgSkapeMarqueeLogo from "../../skape/5f02CZYAhlEfxDjo35eEYnglNc 1.svg";
 import imgSkapeFrame1 from "../../skape/S.webp";
 import imgSkapeFrame2 from "../../skape/s2.webp";
@@ -22,15 +22,14 @@ import imgMotionzFrame3 from "../../motionz/MO3.webp";
 import imgMotionzFrame4 from "../../motionz/MO4.webp";
 import imgMotionzFrame5 from "../../motionz/MO5.webp";
 import imgMotionzMarqueeLogo from "../../motionz.svg";
-import imgMotionzLogo from "../../motionzlogo.png";
+import imgMotionzLogo from "../../motionzlogo.webp";
 import imgMindscalelLogo from "../../mindscalel.svg";
 import imgAdlpLogo from "../../ADLP.svg";
 import imgTanbabeLogo from "../../tanbabe.svg";
 import imgSinlineLogo from "../../sinline.svg";
 import imgWiccaLogo from "../../wicca.svg";
 import imgHeLogo from "../../a&e/H&E.svg";
-import imgHanzoLogo from "../../hanzologo.png";
-import imgVertebraLogo from "../../vertebralogo.png";
+import imgHanzoLogo from "../../hanzologo.webp";
 import imgHanzoFrame1 from "../../hanzo/H1.webp";
 import imgHanzoFrame2 from "../../hanzo/H2.webp";
 import imgHanzoFrame3 from "../../hanzo/H3.webp";
@@ -41,22 +40,22 @@ import imgVertebraFrame1 from "../../vertebra/V1.webp";
 import imgNeuralFrame1 from "../../neural/N1.png";
 import imgLightIcon from "../../light.svg";
 import imgMultipagesIcon from "../../multipages.svg";
-import imgRestaurantIcon from "../../restaurant.png";
+import imgRestaurantIcon from "../../restaurant.webp";
 import imgCtaRealisationsBackground from "../../CTA (1).png";
 import imgOfferTitleBackground from "../../Offer Title Background.svg";
 import imgOfferBenefitChip from "../../contour chips offer.png";
-import imgCtaBackground from "../assets/cta-background.png";
-import imgLogoInfinify1 from "../assets/bf1d602331298fa70e56da6d7bd2fe71a3de2b7a.png";
+import imgCtaBackground from "../assets/cta-background.webp";
+import imgLogoInfinify1 from "../assets/logoinfinifywhite.svg";
 import imgCardImage from "../assets/carousel-card.jpg";
 import imgTestimonialImage from "../assets/a77190103db78e6334f030692996578c4825b66d.png";
 import imgTestimonialImage1 from "../assets/dec5cbce46710d057f06833cca1d54055e9a4ed5.png";
-import imgHero from "../assets/bg.png";
+import imgHero from "../../Imagebg.webp";
 import { imgGroup, imgOffres, imgInfinify, imgTeam, imgFrame } from "./svg-ithsc";
 import OfferButton from "../app/components/OfferButton";
 
 type ScrollDirection = 'up' | 'down';
 
-const SECTION_EASE = [0.16, 1, 0.3, 1] as const;
+const SECTION_EASE = [0.16, 1, 0.3, 1] as [number, number, number, number];
 const SECTION_Y = 56;
 const SECTION_DURATION = 0.9;
 const SECTION_VIEWPORT = { once: true, amount: 0.35 } as const;
@@ -65,7 +64,7 @@ const HERO_INTRO_DURATION_MULTIPLIER = 1.3;
 const HERO_NAV_DURATION = 0.6;
 const HERO_CONTENT_DURATION = 0.45 * HERO_INTRO_DURATION_MULTIPLIER;
 const HERO_SHELL_DURATION = 0.68;
-const HERO_SHELL_EASE = [0.22, 1, 0.36, 1] as const;
+const HERO_SHELL_EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
 const HERO_SHELL_Y = 56;
 const HERO_COPY_Y = 34;
 const HERO_WORD_Y = 48;
@@ -75,7 +74,7 @@ const HERO_WORD_DURATION = 0.6 * HERO_INTRO_DURATION_MULTIPLIER;
 const HERO_WORD_BLUR_START = 36;
 const HERO_WORD_BLUR_DURATION = 0.32;
 const HERO_WORD_STAGGER = 0.08;
-const HERO_WORD_EASE = [0.19, 1, 0.22, 1] as const;
+const HERO_WORD_EASE = [0.19, 1, 0.22, 1] as [number, number, number, number];
 const CTA_IMAGE_EDGE_CROP = 6;
 const MARQUEE_LOGO_COLOR = '#131313';
 const MARQUEE_WICCA_CLASS = 'h-[24.472px] w-[125%] max-w-none shrink-0';
@@ -187,7 +186,7 @@ function getScrollRevealTransition({
   downDelay = 0,
 }: {
   duration: number;
-  ease: ReadonlyArray<number>;
+  ease: [number, number, number, number];
   scrollDirection: ScrollDirection;
   animateIn: boolean;
   downDelay?: number;
@@ -1040,16 +1039,6 @@ function MotionzPill() {
   );
 }
 
-function VertebraPill() {
-  return (
-    <img
-      src={imgVertebraLogo}
-      alt="Vertebra"
-      className="block w-auto shrink-0 max-w-none object-contain object-left"
-      style={{ height: CARD_BRAND_LOGO_VISUAL_HEIGHT.vertebra }}
-    />
-  );
-}
 
 const CAROUSEL_PROJECTS: CarouselProject[] = [
   {
@@ -1191,8 +1180,8 @@ function CarouselTag({ label, icon }: { label: string; icon: 'page' | 'building'
 
 // ─── Realisations carousel ────────────────────────────────────────────────────
 
-const CARD_TRANSITION = { duration: 1.02, ease: [0.22, 1, 0.36, 1] } as const;
-const CARD_IMAGE_DEZOOM_TRANSITION = { duration: 0.92, ease: [0.22, 1, 0.36, 1] } as const;
+const CARD_TRANSITION = { duration: 1.02, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] };
+const CARD_IMAGE_DEZOOM_TRANSITION = { duration: 0.92, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] };
 const CAROUSEL_VIEWPORT_MASK = 'linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.42) 10%, black 20%, black 80%, rgba(0,0,0,0.42) 90%, transparent 100%)';
 const CAROUSEL_IMAGE_EDGE_CROP = 6;
 type SlotName = 'above' | 'top' | 'center' | 'bottom' | 'below';
@@ -1920,7 +1909,7 @@ const OFFERS: OfferData[] = [
   },
 ];
 
-const OFFER_EASE = [0.22, 1, 0.36, 1] as const;
+const OFFER_EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
 
 const offerContentVariants = {
   enter:  { x: 40,  opacity: 0, filter: 'blur(6px)' },
@@ -2498,10 +2487,10 @@ function TestimonialColumn1() {
 }
 
 // Timing constants — adjust here to tune the feel
-const CARD_EASE = [0.16, 1, 0.3, 1] as const;
+const CARD_EASE = [0.16, 1, 0.3, 1] as [number, number, number, number];
 const CARD_DURATION = 0.95;
 const CARD_Y = 60;
-const FOOTER_EASE = [0.22, 1, 0.36, 1] as const;
+const FOOTER_EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
 const FOOTER_DURATION = CARD_DURATION * 1.2;
 const FOOTER_Y = 48;
 

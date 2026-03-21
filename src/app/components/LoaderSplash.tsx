@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type CSSProperties } from "react";
-import imgLogoInfinify from "../../assets/bf1d602331298fa70e56da6d7bd2fe71a3de2b7a.png";
+import imgLogoInfinify from "../../assets/logoinfinifywhite.svg";
 import ScrambledText from "./ScrambledText";
 
 type SplashPhase =
