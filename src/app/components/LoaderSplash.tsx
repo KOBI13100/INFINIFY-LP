@@ -37,6 +37,12 @@ export default function LoaderSplash({
   const hasCompletedRef = useRef(false);
 
   useEffect(() => {
+    // Remove the static HTML splash screen now that React has mounted
+    const staticSplash = document.getElementById("static-splash");
+    if (staticSplash) {
+      staticSplash.remove();
+    }
+
     const { body, documentElement } = document;
     const previousBodyOverflow = body.style.overflow;
     const previousHtmlOverflow = documentElement.style.overflow;

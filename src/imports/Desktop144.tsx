@@ -1,7 +1,5 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
-import { useScrollReveal, REVEAL_Y, REVEAL_BLUR, REVEAL_DURATION, REVEAL_EASE } from '../hooks/useScrollReveal';
-import { useRevealRegistry } from '../hooks/useRevealRegistry';
 import svgPaths from "./svg-6slkny0mf7";
 import imgMindscaleLogo from "../../mindscale.svg";
 import imgMindscaleFrame2 from "../../mindscale img/m2.webp";
@@ -99,6 +97,14 @@ const MARQUEE_ARTDELAPIERRE_SHIFT_Y = -1.9665;
 const MARQUEE_TANBABE_SHIFT_Y = -1.365625;
 const MARQUEE_SINLINE_SHIFT_Y = 0.32775;
 const MARQUEE_AEE_SHIFT_Y = 0;
+const ANCHOR_SCROLL_OFFSET_RATIO = 0.15;
+
+function jumpToElement(target: Element) {
+  const scrollingElement = document.scrollingElement ?? document.documentElement;
+  const rawTop = target.getBoundingClientRect().top + window.scrollY - window.innerHeight * ANCHOR_SCROLL_OFFSET_RATIO;
+  const destination = Math.max(0, Math.min(rawTop, scrollingElement.scrollHeight - window.innerHeight));
+  window.scrollTo({ top: destination, behavior: 'auto' });
+}
 
 function MarqueeLogo({
   src,
@@ -148,22 +154,14 @@ function MarqueeLogo({
   );
 }
 
-function BackgroundContainer() {
-  const reduced = useReducedMotion();
-  const { ref, isRevealed, delay } = useScrollReveal({ sectionId: 'footer', staggerIndex: 0 });
-
+function BackgroundContainer({ top }: { top: number }) {
   return (
     <div
-      ref={ref}
-      className="absolute -translate-x-1/2 h-[269.561px] left-1/2 top-[4251.44px] w-[100dvw]"
+      className="absolute -translate-x-1/2 h-[269.561px] left-1/2 w-[100dvw]"
+      style={{ top }}
       data-name="Background Shape"
     >
-      <motion.div
-        className="absolute inset-0 bg-black"
-        initial={{ opacity: 0, y: reduced ? 0 : REVEAL_Y, filter: reduced ? 'blur(0px)' : `blur(${REVEAL_BLUR}px)` }}
-        animate={isRevealed ? { opacity: 1, y: 0, filter: 'blur(0px)' } : undefined}
-        transition={{ duration: reduced ? 0 : REVEAL_DURATION, ease: REVEAL_EASE, delay }}
-      />
+      <div className="absolute inset-0 bg-black" />
     </div>
   );
 }
@@ -314,34 +312,26 @@ function LegalLinks() {
   );
 }
 
-function ContentGroup() {
-  const reduced = useReducedMotion();
-  const { ref, isRevealed, delay } = useScrollReveal({ sectionId: 'footer', staggerIndex: 1 });
-
+function ContentGroup({ top }: { top: number }) {
   return (
     <div
-      ref={ref}
-      className="-translate-x-1/2 absolute content-stretch flex gap-[620px] items-start leading-[0] left-1/2 top-[4298.87px] w-[1211px]"
+      className="-translate-x-1/2 absolute content-stretch flex gap-[620px] items-start leading-[0] left-1/2 w-[1211px]"
+      style={{ top }}
       data-name="Content Group"
     >
-      <motion.div
-        className="content-stretch flex gap-[620px] items-start leading-[0] w-full"
-        initial={{ opacity: 0, y: reduced ? 0 : REVEAL_Y, filter: reduced ? 'blur(0px)' : `blur(${REVEAL_BLUR}px)` }}
-        animate={isRevealed ? { opacity: 1, y: 0, filter: 'blur(0px)' } : undefined}
-        transition={{ duration: reduced ? 0 : REVEAL_DURATION, ease: REVEAL_EASE, delay }}
-      >
+      <div className="content-stretch flex gap-[620px] items-start leading-[0] w-full">
         <ContentColumn />
         <LegalLinks />
-      </motion.div>
+      </div>
     </div>
   );
 }
 
-function Footer() {
+function Footer({ backgroundTop, contentTop }: { backgroundTop: number; contentTop: number }) {
   return (
     <div className="absolute -translate-x-1/2 left-1/2 top-0 w-[100dvw]" data-name="Footer">
-      <BackgroundContainer />
-      <ContentGroup />
+      <BackgroundContainer top={backgroundTop} />
+      <ContentGroup top={contentTop} />
     </div>
   );
 }
@@ -828,29 +818,20 @@ function TestimonialInfo() {
   );
 }
 
-function Cta() {
-  const reduced = useReducedMotion();
-  const { ref, isRevealed } = useScrollReveal({ sectionId: 'cta' });
-
+function Cta({ top }: { top: number }) {
   return (
     <div
-      ref={ref}
       className="absolute overflow-hidden rounded-[25px] -translate-x-1/2 left-1/2"
       data-name="CTA"
-      style={{ top: 3405.7, width: 889, height: 439 }}
+      style={{ top, width: CTA_CARD_WIDTH, height: CTA_CARD_HEIGHT }}
     >
-      <motion.div
-        className="absolute inset-0 overflow-hidden rounded-[25px]"
-        initial={{ opacity: 0, y: reduced ? 0 : REVEAL_Y, filter: reduced ? 'blur(0px)' : `blur(${REVEAL_BLUR}px)` }}
-        animate={isRevealed ? { opacity: 1, y: 0, filter: 'blur(0px)' } : undefined}
-        transition={{ duration: reduced ? 0 : REVEAL_DURATION, ease: REVEAL_EASE, delay: 0 }}
-      >
+      <div className="absolute inset-0 overflow-hidden rounded-[25px]">
         <UpMe />
         <EarthBackground />
         <CtaBottomGradient />
         <CallToActionContainer />
         <TestimonialInfo />
-      </motion.div>
+      </div>
     </div>
   );
 }
@@ -1007,13 +988,6 @@ const CAROUSEL_PROJECTS: CarouselProject[] = [
   },
 ];
 
-const ALL_CAROUSEL_IMAGE_SOURCES = Array.from(
-  new Set(CAROUSEL_PROJECTS.flatMap((carouselProject) => [
-    carouselProject.image,
-    ...(carouselProject.imageSequence ?? []),
-  ])),
-);
-
 // ─── Tag helpers ─────────────────────────────────────────────────────────────
 
 function CarouselTagIconPage() {
@@ -1146,12 +1120,19 @@ function preloadCarouselImage(src: string) {
   });
 }
 
+function preloadCarouselProject(project: CarouselProject) {
+  const sources = project.imageSequence?.length ? project.imageSequence : [project.image];
+  return Promise.all(sources.map((src) => preloadCarouselImage(src))).then(() => undefined);
+}
+
 function CarouselCardImage({
   image,
   landingZoomKey,
+  priority,
 }: {
   image: string;
   landingZoomKey: number | null;
+  priority: boolean;
 }) {
   const shouldAnimateDezoom = landingZoomKey !== null;
 
@@ -1161,7 +1142,6 @@ function CarouselCardImage({
       style={{
         inset: 0,
         backfaceVisibility: 'hidden',
-        transform: 'translateZ(0)',
       }}
     >
       <motion.div
@@ -1180,9 +1160,9 @@ function CarouselCardImage({
           src={image}
           alt=""
           className="absolute max-w-none object-cover"
-          loading="eager"
-          decoding="sync"
-          fetchPriority="high"
+          loading={priority ? 'eager' : 'lazy'}
+          decoding="async"
+          fetchPriority={priority ? 'high' : 'auto'}
           style={{
             inset: 0,
             width: '100%',
@@ -1195,14 +1175,13 @@ function CarouselCardImage({
 }
 
 function Realisations() {
-  const reduced = useReducedMotion();
-  const { ref: revealRef, isRevealed } = useScrollReveal({ sectionId: 'realisations' });
-
   const total = CAROUSEL_PROJECTS.length;
   const [pos, setPos]                 = useState(0); // position linéaire cumulative
   const [activeIndex, setActiveIndex] = useState(0);
   const [hasNavigatedCarousel, setHasNavigatedCarousel] = useState(false);
-  const [areCarouselImagesReady, setAreCarouselImagesReady] = useState(false);
+  const [readyProjectIds, setReadyProjectIds] = useState<Record<number, boolean>>(() =>
+    Object.fromEntries(CAROUSEL_PROJECTS.map((carouselProject) => [carouselProject.id, !carouselProject.imageSequence?.length])),
+  );
   const [projectFrameById, setProjectFrameById] = useState<Record<number, number>>(() =>
     Object.fromEntries(CAROUSEL_PROJECTS.map((carouselProject) => [carouselProject.id, 0])),
   );
@@ -1227,24 +1206,104 @@ function Realisations() {
 
   useEffect(() => {
     let cancelled = false;
+    let backgroundPreloadTimeoutId: number | null = null;
+    const initialProject = CAROUSEL_PROJECTS[0];
 
-    Promise.all(ALL_CAROUSEL_IMAGE_SOURCES.map((src) => preloadCarouselImage(src))).then(() => {
-      if (!cancelled) {
-        setAreCarouselImagesReady(true);
+    const markProjectReady = (projectId: number) => {
+      setReadyProjectIds((currentReadyProjectIds) => {
+        if (currentReadyProjectIds[projectId]) {
+          return currentReadyProjectIds;
+        }
+
+        return {
+          ...currentReadyProjectIds,
+          [projectId]: true,
+        };
+      });
+    };
+
+    const preloadBackgroundProjects = () => {
+      backgroundPreloadTimeoutId = window.setTimeout(() => {
+        CAROUSEL_PROJECTS.forEach((carouselProject) => {
+          if (carouselProject.id === initialProject.id || !carouselProject.imageSequence?.length) {
+            return;
+          }
+
+          preloadCarouselProject(carouselProject).then(() => {
+            if (cancelled) {
+              return;
+            }
+
+            markProjectReady(carouselProject.id);
+          });
+        });
+      }, 250);
+    };
+
+    if (!initialProject.imageSequence?.length) {
+      preloadBackgroundProjects();
+      return () => {
+        cancelled = true;
+        if (backgroundPreloadTimeoutId !== null) {
+          window.clearTimeout(backgroundPreloadTimeoutId);
+        }
+      };
+    }
+
+    preloadCarouselProject(initialProject).then(() => {
+      if (cancelled) {
+        return;
       }
+
+      markProjectReady(initialProject.id);
+      preloadBackgroundProjects();
+    });
+
+    return () => {
+      cancelled = true;
+      if (backgroundPreloadTimeoutId !== null) {
+        window.clearTimeout(backgroundPreloadTimeoutId);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    const activeProject = CAROUSEL_PROJECTS[activeIndex];
+
+    if (readyProjectIds[activeProject.id] || !activeProject.imageSequence?.length) {
+      return;
+    }
+
+    let cancelled = false;
+
+    preloadCarouselProject(activeProject).then(() => {
+      if (cancelled) {
+        return;
+      }
+
+      setReadyProjectIds((currentReadyProjectIds) => {
+        if (currentReadyProjectIds[activeProject.id]) {
+          return currentReadyProjectIds;
+        }
+
+        return {
+          ...currentReadyProjectIds,
+          [activeProject.id]: true,
+        };
+      });
     });
 
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [activeIndex, readyProjectIds]);
 
   useEffect(() => {
-    if (!areCarouselImagesReady) {
+    const activeProject = CAROUSEL_PROJECTS[activeIndex];
+
+    if (!readyProjectIds[activeProject.id]) {
       return undefined;
     }
-
-    const activeProject = CAROUSEL_PROJECTS[activeIndex];
 
     if (!activeProject.imageSequence?.length) {
       return undefined;
@@ -1258,20 +1317,16 @@ function Realisations() {
     }, 1000);
 
     return () => window.clearInterval(intervalId);
-  }, [activeIndex, areCarouselImagesReady]);
+  }, [activeIndex, readyProjectIds]);
 
   const project = CAROUSEL_PROJECTS[activeIndex];
   const cells   = [pos - 2, pos - 1, pos, pos + 1, pos + 2];
 
   return (
-    <motion.div
-      ref={revealRef}
+    <div
       className="absolute"
       style={{ left: 166.28, top: 1472.03, width: 957, height: 606 }}
       data-name="Réalisations"
-      initial={{ opacity: 0, y: reduced ? 0 : REVEAL_Y, filter: reduced ? 'blur(0px)' : `blur(${REVEAL_BLUR}px)` }}
-      animate={isRevealed ? { opacity: 1, y: 0, filter: 'blur(0px)' } : undefined}
-      transition={{ duration: reduced ? 0 : REVEAL_DURATION, ease: REVEAL_EASE, delay: 0 }}
     >
 
       {/* ── Card stack ── overflow:hidden clip les cartes hors-zone ──────── */}
@@ -1296,8 +1351,9 @@ function Realisations() {
           const projectCard = CAROUSEL_PROJECTS[projIdx];
           const currentFrameIndex = projectFrameById[projectCard.id] ?? 0;
           const isCenterCard = slotName === 'center';
+          const isProjectSequenceReady = Boolean(readyProjectIds[projectCard.id]);
           const visibleImage =
-            isCenterCard && areCarouselImagesReady && projectCard.imageSequence?.length
+            isCenterCard && isProjectSequenceReady && projectCard.imageSequence?.length
               ? projectCard.imageSequence[currentFrameIndex % projectCard.imageSequence.length]
               : projectCard.image;
 
@@ -1308,7 +1364,6 @@ function Realisations() {
               style={{
                 zIndex: slotName === 'center' ? 2 : 1,
                 backfaceVisibility: 'hidden',
-                transform: 'translateZ(0)',
                 willChange: 'transform, opacity, border-radius, width, height',
               }}
               initial={false}
@@ -1318,6 +1373,7 @@ function Realisations() {
               <CarouselCardImage
                 image={visibleImage}
                 landingZoomKey={hasNavigatedCarousel && isCenterCard ? pos : null}
+                priority={isCenterCard}
               />
             </motion.div>
           );
@@ -1428,7 +1484,7 @@ function Realisations() {
         </div>
       </div>
 
-    </motion.div>
+    </div>
   );
 }
 
@@ -1677,19 +1733,11 @@ function Group4() {
   );
 }
 
-function MaskGroup({
-  isRevealed,
-}: {
-  isRevealed: boolean;
-}) {
-  const reduced = useReducedMotion();
+function MaskGroup() {
   return (
-    <motion.div
+    <div
       className="-translate-x-1/2 absolute h-[353px] left-1/2 top-[2117.32px] w-[897px]"
       data-name="Mask Group"
-      initial={{ opacity: 0, y: reduced ? 0 : REVEAL_Y, filter: reduced ? 'blur(0px)' : `blur(${REVEAL_BLUR}px)` }}
-      animate={isRevealed ? { opacity: 1, y: 0, filter: 'blur(0px)' } : undefined}
-      transition={{ duration: reduced ? 0 : REVEAL_DURATION, ease: REVEAL_EASE, delay: 0 }}
     >
       <div className="-translate-x-1/2 -translate-y-1/2 absolute flex flex-col font-['Geist:SemiBold',sans-serif] font-semibold justify-center leading-[0] left-[448.61px] mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[-0.111px_0px] mask-size-[896.66px_353.049px] text-[300px] text-center top-[195px] whitespace-nowrap"
         style={{
@@ -1701,7 +1749,7 @@ function MaskGroup({
         }}>
         <p className="leading-[normal]">Offres</p>
       </div>
-    </motion.div>
+    </div>
   );
 }
 
@@ -1730,7 +1778,6 @@ interface OfferData {
   id: number;
   label: string;
   tabWidth: number;
-  cardHeight: number;
   descriptionLines: string[];
   pricePrefix?: string;
   price: string;
@@ -1742,7 +1789,6 @@ const OFFERS: OfferData[] = [
     id: 0,
     label: 'Landing Page',
     tabWidth: 112.704,
-    cardHeight: 814.29,
     descriptionLines: [
       'Une page unique sur mesure, conçue pour capter',
       "l'attention, renforcer ta crédibilité et convertir davantage.",
@@ -1763,7 +1809,6 @@ const OFFERS: OfferData[] = [
     id: 1,
     label: 'Site E-commerce',
     tabWidth: 130.915,
-    cardHeight: 940.04,
     descriptionLines: [
       'Un site e-commerce premium, pensé pour sublimer tes',
       "produits, fluidifier l’achat et maximiser tes conversions.",
@@ -1788,7 +1833,6 @@ const OFFERS: OfferData[] = [
     id: 2,
     label: 'Identité visuelle',
     tabWidth: 118.965,
-    cardHeight: 980.08,
     descriptionLines: [
       'Une identité de marque complète, conçue pour donner',
       'à ton projet une image forte, cohérente et',
@@ -1814,7 +1858,6 @@ const OFFERS: OfferData[] = [
     id: 3,
     label: 'SaaS',
     tabWidth: 62.613,
-    cardHeight: 977.56,
     descriptionLines: [
       'Un SaaS sur mesure, conçu et développé pour',
       'transformer ton idée en un vrai produit',
@@ -1838,16 +1881,6 @@ const OFFERS: OfferData[] = [
   },
 ];
 
-const OFFER_EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
-
-const offerContentVariants = {
-  enter:  { x: 40,  opacity: 0, filter: 'blur(6px)' },
-  center: { x: 0,   opacity: 1, filter: 'blur(0px)',
-    transition: { duration: 0.45, ease: OFFER_EASE } },
-  exit:   { x: -40, opacity: 0, filter: 'blur(6px)',
-    transition: { duration: 0.25, ease: OFFER_EASE } },
-};
-
 // Generic tab pill (active = white bg + dark text, inactive = frosted + faded white)
 function OfferTab({ offer, active, onClick }: { offer: OfferData; active: boolean; onClick: () => void }) {
   return (
@@ -1861,7 +1894,7 @@ function OfferTab({ offer, active, onClick }: { offer: OfferData; active: boolea
       >
         <div
           aria-hidden="true"
-          className="absolute inset-0 mix-blend-luminosity rounded-[100px] transition-colors duration-300"
+          className="absolute inset-0 mix-blend-luminosity rounded-[100px]"
           style={{
             backdropFilter: 'blur(24.461px)',
             backgroundColor: active ? 'white' : 'rgba(128,128,128,0.2)',
@@ -1869,7 +1902,7 @@ function OfferTab({ offer, active, onClick }: { offer: OfferData; active: boolea
         />
         <div aria-hidden="true" className="absolute inset-0 rounded-[100px]" style={{ boxShadow: 'inset 0 0.685px 0 rgba(255,255,255,0.4), inset 0 -0.685px 0 rgba(255,255,255,0.1), inset 0.685px 0 0 rgba(255,255,255,0.15), inset -0.685px 0 0 rgba(255,255,255,0.15)' }} />
         <div
-          className="absolute inset-0 z-[1] flex items-center justify-center text-[12.078px] text-center whitespace-nowrap transition-colors duration-300"
+          className="absolute inset-0 z-[1] flex items-center justify-center text-[12.078px] text-center whitespace-nowrap"
           style={{
             fontFamily: active ? "'Neue_Montreal:Medium', sans-serif" : "'Neue_Montreal:Regular', sans-serif",
             fontWeight: active ? 500 : 400,
@@ -1885,6 +1918,33 @@ function OfferTab({ offer, active, onClick }: { offer: OfferData; active: boolea
 
 const OFFER_BENEFIT_CHIP_PADDING_Y = 10;
 const OFFER_BENEFIT_CHIP_PADDING_X = 20;
+const OFFER_BENEFIT_CHIP_LINE_HEIGHT = 20;
+const OFFER_BENEFIT_CHIP_GAP = 10;
+const OFFER_BENEFITS_PADDING_X = 40;
+const OFFER_BENEFITS_PADDING_TOP = 32;
+const OFFER_BENEFITS_PADDING_BOTTOM = 32;
+const OFFER_BENEFIT_CHIP_HEIGHT = OFFER_BENEFIT_CHIP_PADDING_Y * 2 + OFFER_BENEFIT_CHIP_LINE_HEIGHT;
+const OFFER_TABS_MARGIN_TOP = 41.4;
+const OFFER_TOGGLE_GROUP_HEIGHT = 56.188;
+const OFFER_TOGGLE_TO_LABEL_GAP = 19.61;
+const OFFER_DESCRIPTION_MARGIN_TOP = OFFER_TABS_MARGIN_TOP + OFFER_TOGGLE_GROUP_HEIGHT + OFFER_TOGGLE_TO_LABEL_GAP;
+const OFFER_WHITE_CARD_TOP = 2814.41;
+const OFFER_TO_CTA_GAP = 167.25;
+const CTA_CARD_TOP_INITIAL = 3405.7;
+const CTA_CARD_WIDTH = 889;
+const CTA_CARD_HEIGHT = 439;
+const INFINIFY_MASK_TOP_INITIAL = 3934.38;
+const FOOTER_BACKGROUND_TOP_INITIAL = 4251.44;
+const FOOTER_BACKGROUND_HEIGHT = 269.561;
+const FOOTER_CONTENT_TOP_INITIAL = 4298.87;
+const CTA_TO_INFINIFY_MASK_OFFSET = INFINIFY_MASK_TOP_INITIAL - CTA_CARD_TOP_INITIAL;
+const INFINIFY_TO_FOOTER_BACKGROUND_OFFSET = FOOTER_BACKGROUND_TOP_INITIAL - INFINIFY_MASK_TOP_INITIAL;
+const INFINIFY_TO_FOOTER_CONTENT_OFFSET = FOOTER_CONTENT_TOP_INITIAL - INFINIFY_MASK_TOP_INITIAL;
+
+function getOfferBenefitsCardHeight(benefitCount: number) {
+  const totalGapHeight = Math.max(benefitCount - 1, 0) * OFFER_BENEFIT_CHIP_GAP;
+  return OFFER_BENEFITS_PADDING_TOP + benefitCount * OFFER_BENEFIT_CHIP_HEIGHT + totalGapHeight + OFFER_BENEFITS_PADDING_BOTTOM;
+}
 
 function OfferBenefitChip({ text }: { text: string }) {
   return (
@@ -1909,41 +1969,25 @@ function OfferBenefitChip({ text }: { text: string }) {
   );
 }
 
-// Stateful offer card — dark card + white benefits, both animated on tab switch
-function OfferCard({
-  isRevealed,
-}: {
-  isRevealed: boolean;
-}) {
-  const [activeId, setActiveId] = useState(0);
-  const [isAnimating, setIsAnimating] = useState(false);
-  const reduced = useReducedMotion();
-
+function OfferCard({ activeId, onChangeActiveId }: { activeId: number; onChangeActiveId: (id: number) => void }) {
   const offer = OFFERS[activeId];
-  const whiteCardHeight = offer.cardHeight - (2814.41 - 2406.12);
+  const whiteCardHeight = getOfferBenefitsCardHeight(offer.benefits.length);
   const isQuotePrice = offer.price.toLowerCase().includes('devis');
   const isEcommerceOffer = offer.id === 1;
   const hasPricePrefix = Boolean(offer.pricePrefix);
   const priceChipWidth = hasPricePrefix ? 172 : 97.335;
   const priceChipHeight = hasPricePrefix ? 37 : 36.73;
-  const labelToTitleGap = offer.descriptionLines.length === 2 ? 63 : 47;
   const descriptionFrameStyle = isEcommerceOffer
-    ? { height: 177, width: 350, marginLeft: 92.29, marginTop: 114.288 }
-    : { height: 177, width: 276, marginLeft: 129.29, marginTop: 114.288 };
+    ? { height: 177, width: 350, marginLeft: 92.29, marginTop: OFFER_DESCRIPTION_MARGIN_TOP }
+    : { height: 177, width: 276, marginLeft: 129.29, marginTop: OFFER_DESCRIPTION_MARGIN_TOP };
 
   const switchTo = (id: number) => {
-    if (isAnimating || id === activeId) return;
-    setIsAnimating(true);
-    setActiveId(id);
+    if (id === activeId) return;
+    onChangeActiveId(id);
   };
 
   return (
-    <motion.div
-      className="absolute left-0 top-0 w-full"
-      initial={{ opacity: 0, y: reduced ? 0 : REVEAL_Y, filter: reduced ? 'blur(0px)' : `blur(${REVEAL_BLUR}px)` }}
-      animate={isRevealed ? { opacity: 1, y: 0, filter: 'blur(0px)' } : undefined}
-      transition={{ duration: reduced ? 0 : REVEAL_DURATION, ease: REVEAL_EASE, delay: 0 }}
-    >
+    <div className="absolute left-0 top-0 w-full">
 
       {/* ── Dark card ─────────────────────────────────────────────── */}
       <div
@@ -1966,7 +2010,7 @@ function OfferCard({
             {/* Tab bar */}
             <div
               className="col-1 grid-cols-[max-content] grid-rows-[max-content] inline-grid ml-[33.43px] place-items-start relative row-1"
-              style={{ marginTop: 39.08 }}
+              style={{ marginTop: OFFER_TABS_MARGIN_TOP }}
             >
               {/* Pill backdrop */}
               <OfferTitleBackground1 />
@@ -1982,24 +2026,18 @@ function OfferCard({
           </div>
 
           {/* Animated description + price */}
-          <div className="col-1 row-1 relative" style={descriptionFrameStyle}>
+          <div className="col-1 row-1 flex flex-col items-center relative" style={descriptionFrameStyle}>
             {/* Fixed label — never animates */}
             <div className="flex justify-center w-full">
               <div className="flex flex-col font-['Geist:Regular',sans-serif] font-normal justify-center leading-[0] relative shrink-0 text-[#f8f8f8] text-[10px] text-center whitespace-nowrap">
                 <p className="leading-[normal]">Cliquez sur l'offre de votre choix pour voir les détails</p>
               </div>
             </div>
-            <AnimatePresence mode="wait" initial={false} onExitComplete={() => setIsAnimating(false)}>
-              <motion.div
-                key={`desc-${activeId}`}
-                className="absolute inset-x-0 bottom-0 flex flex-col items-center"
-                style={{ top: labelToTitleGap, rowGap: 30 }}
-                variants={reduced ? undefined : offerContentVariants}
-                initial="enter"
-                animate="center"
-                exit="exit"
-                transition={reduced ? { duration: 0 } : undefined}
-              >
+            <div
+              key={`desc-${activeId}`}
+              className="mt-[30px] flex flex-col items-center"
+              style={{ rowGap: 30 }}
+            >
                 {/* Description */}
                 <div className="content-stretch flex flex-col items-center relative shrink-0">
                   <div className="content-stretch flex flex-col items-center relative shrink-0 w-fit">
@@ -2013,7 +2051,7 @@ function OfferCard({
                   </div>
                 </div>
                 {/* Price */}
-                <div className="content-stretch flex gap-[11px] items-center leading-[0] relative shrink-0 w-full">
+                <div className="content-stretch flex gap-[11px] items-center leading-[0] relative shrink-0 w-fit">
                   <div className="col-1 grid-cols-[max-content] grid-rows-[max-content] inline-grid ml-0 mt-0 place-items-start relative row-1">
                     <div
                       aria-hidden="true"
@@ -2051,87 +2089,73 @@ function OfferCard({
                     <p className="leading-[normal]">Payable en plusieurs fois</p>
                   </div>
                 </div>
-              </motion.div>
-            </AnimatePresence>
+            </div>
           </div>
 
         </div>
       </div>
 
       {/* ── White benefits card ────────────────────────────────────── */}
-      <div className="-translate-x-1/2 absolute bg-white left-1/2 overflow-hidden rounded-bl-[20px] rounded-br-[20px]" style={{ top: 2814.41, width: 534.58, height: whiteCardHeight }}>
+      <div className="-translate-x-1/2 absolute bg-white left-1/2 overflow-hidden rounded-bl-[20px] rounded-br-[20px]" style={{ top: OFFER_WHITE_CARD_TOP, width: 534.58, height: whiteCardHeight }}>
         <div className="absolute inset-0 pointer-events-none rounded-[inherit] shadow-[inset_0px_0px_10px_0px_rgba(104,104,104,0.25)]" />
-        <AnimatePresence mode="wait" initial={false}>
-          <motion.div
-            key={`benefits-${activeId}`}
-            className="absolute inset-0 flex flex-col items-start px-[40px] pb-[35px] pt-[40px]"
-            variants={reduced ? undefined : offerContentVariants}
-            initial="enter"
-            animate="center"
-            exit="exit"
-            transition={reduced ? { duration: 0 } : undefined}
-          >
-            <div className="content-stretch flex flex-[1_0_0] flex-col gap-[12px] items-start leading-[0] min-h-px min-w-px relative w-full">
+        <div
+          key={`benefits-${activeId}`}
+          className="absolute inset-0 flex flex-col items-start"
+          style={{
+            paddingTop: OFFER_BENEFITS_PADDING_TOP,
+            paddingRight: OFFER_BENEFITS_PADDING_X,
+            paddingBottom: OFFER_BENEFITS_PADDING_BOTTOM,
+            paddingLeft: OFFER_BENEFITS_PADDING_X,
+          }}
+        >
+            <div
+              className="content-stretch flex flex-col items-start leading-[0] relative w-full"
+              style={{ gap: OFFER_BENEFIT_CHIP_GAP }}
+            >
               {offer.benefits.map((text, i) => (
                 <OfferBenefitChip key={i} text={text} />
               ))}
             </div>
-          </motion.div>
-        </AnimatePresence>
+        </div>
       </div>
 
-    </motion.div>
-  );
-}
-
-function Offres({
-  isRevealed,
-}: {
-  isRevealed: boolean;
-}) {
-  return (
-    <div className="-translate-x-1/2 absolute contents left-1/2 top-[2406.12px]" data-name="Offres">
-      <OfferCard isRevealed={isRevealed} />
     </div>
   );
 }
 
-function OffresGroupe() {
-  const { ref, isRevealed } = useScrollReveal({ sectionId: 'offres' });
+function Offres({ activeId, onChangeActiveId }: { activeId: number; onChangeActiveId: (id: number) => void }) {
+  return (
+    <div className="-translate-x-1/2 absolute contents left-1/2 top-[2406.12px]" data-name="Offres">
+      <OfferCard activeId={activeId} onChangeActiveId={onChangeActiveId} />
+    </div>
+  );
+}
 
+function OffresGroupe({ activeId, onChangeActiveId }: { activeId: number; onChangeActiveId: (id: number) => void }) {
   return (
     <>
       <div
-        ref={ref}
         id="offres"
         aria-hidden="true"
         className="-translate-x-1/2 absolute left-1/2 pointer-events-none"
         style={{ top: 2117.32, width: 897, height: 700 }}
       />
       <div className="-translate-x-1/2 absolute contents left-1/2 top-[2117.32px]" data-name="Offres Groupe">
-        <MaskGroup isRevealed={isRevealed} />
-        <Offres isRevealed={isRevealed} />
+        <MaskGroup />
+        <Offres activeId={activeId} onChangeActiveId={onChangeActiveId} />
       </div>
     </>
   );
 }
 
-function InfinifyMask() {
-  const reduced = useReducedMotion();
-  const { ref, isRevealed } = useScrollReveal({ sectionId: 'infinify' });
-
+function InfinifyMask({ top }: { top: number }) {
   return (
     <div
-      ref={ref}
-      className="-translate-x-1/2 absolute h-[353px] left-[calc(50%-3.55px)] top-[3934.38px] w-[1057px]"
+      className="-translate-x-1/2 absolute h-[353px] left-[calc(50%-3.55px)] w-[1057px]"
+      style={{ top }}
       data-name="Infinify Mask"
     >
-      <motion.div
-        className="absolute inset-0"
-        initial={{ opacity: 0, y: reduced ? 0 : REVEAL_Y, filter: reduced ? 'blur(0px)' : `blur(${REVEAL_BLUR}px)` }}
-        animate={isRevealed ? { opacity: 1, y: 0, filter: 'blur(0px)' } : undefined}
-        transition={{ duration: reduced ? 0 : REVEAL_DURATION, ease: REVEAL_EASE, delay: 0 }}
-      >
+      <div className="absolute inset-0">
         <div className="-translate-x-1/2 -translate-y-1/2 absolute flex flex-col font-['Geist:SemiBold',sans-serif] font-semibold justify-center leading-[0] left-[528.5px] mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[-19.5px_0px] mask-size-[1056.66px_353.049px] text-[300px] text-center top-[195px] whitespace-nowrap"
           style={{
             maskImage: `url('${imgInfinify}')`,
@@ -2142,27 +2166,18 @@ function InfinifyMask() {
           }}>
           <p className="leading-[normal]">Infinify</p>
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 }
 
 function TeamMask() {
-  const reduced = useReducedMotion();
-  const { ref, isRevealed } = useScrollReveal({ sectionId: 'team' });
-
   return (
     <div
-      ref={ref}
       className="absolute h-[353px] left-[335.5px] top-[827.37px] w-[769px]"
       data-name="Team Mask"
     >
-      <motion.div
-        className="absolute inset-0"
-        initial={{ opacity: 0, y: reduced ? 0 : REVEAL_Y, filter: reduced ? 'blur(0px)' : `blur(${REVEAL_BLUR}px)` }}
-        animate={isRevealed ? { opacity: 1, y: 0, filter: 'blur(0px)' } : undefined}
-        transition={{ duration: reduced ? 0 : REVEAL_DURATION, ease: REVEAL_EASE, delay: 0 }}
-      >
+      <div className="absolute inset-0">
         <div className="-translate-x-1/2 -translate-y-1/2 absolute flex flex-col font-['Geist:SemiBold',sans-serif] font-semibold justify-center leading-[0] left-[384.77px] mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[-0.273px_0.484px] mask-size-[768.66px_353.049px] text-[300px] text-center top-[194.52px] whitespace-nowrap"
           style={{
             maskImage: `url('${imgTeam}')`,
@@ -2173,7 +2188,7 @@ function TeamMask() {
           }}>
           <p className="leading-[normal]">Team</p>
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 }
@@ -2383,32 +2398,16 @@ function TestimonialColumn1() {
 }
 
 function Team() {
-  const reduced = useReducedMotion();
-  const oscar = useScrollReveal({ sectionId: 'team', staggerIndex: 0 });
-  const benjamin = useScrollReveal({ sectionId: 'team', staggerIndex: 1 });
-
   return (
     <div className="-translate-x-1/2 absolute h-[240.496px] left-1/2 top-[1117.87px] w-[783.209px]" data-name="Team">
       {/* Card 1 — Oscar VORTICE */}
-      <motion.div
-        ref={oscar.ref}
-        className="absolute left-0 top-0 w-[783.209px] h-full"
-        initial={{ opacity: 0, y: reduced ? 0 : REVEAL_Y, filter: reduced ? 'blur(0px)' : `blur(${REVEAL_BLUR}px)` }}
-        animate={oscar.isRevealed ? { opacity: 1, y: 0, filter: 'blur(0px)' } : undefined}
-        transition={{ duration: reduced ? 0 : REVEAL_DURATION, ease: REVEAL_EASE, delay: oscar.delay }}
-      >
+      <div className="absolute left-0 top-0 w-[783.209px] h-full">
         <TestimonialColumn />
-      </motion.div>
+      </div>
       {/* Card 2 — Benjamin BOTELLA */}
-      <motion.div
-        ref={benjamin.ref}
-        className="absolute left-0 top-0 w-[783.209px] h-full"
-        initial={{ opacity: 0, y: reduced ? 0 : REVEAL_Y, filter: reduced ? 'blur(0px)' : `blur(${REVEAL_BLUR}px)` }}
-        animate={benjamin.isRevealed ? { opacity: 1, y: 0, filter: 'blur(0px)' } : undefined}
-        transition={{ duration: reduced ? 0 : REVEAL_DURATION, ease: REVEAL_EASE, delay: benjamin.delay }}
-      >
+      <div className="absolute left-0 top-0 w-[783.209px] h-full">
         <TestimonialColumn1 />
-      </motion.div>
+      </div>
     </div>
   );
 }
@@ -2566,15 +2565,12 @@ function Cta2({
   introActive: boolean;
 }) {
   const reduced = useReducedMotion();
-  const { forceRevealSection } = useRevealRegistry();
 
   const scrollToOffres = (e: React.MouseEvent) => {
     e.preventDefault();
-    forceRevealSection('offres');
     const target = document.getElementById('offres');
     if (!target) return;
-    const y = target.getBoundingClientRect().top + window.scrollY - window.innerHeight * 0.15;
-    window.scrollTo({ top: y, behavior: reduced ? 'auto' : 'smooth' });
+    jumpToElement(target);
   };
 
   return (
@@ -2597,15 +2593,12 @@ function Cta2({
 
 function CtaRealisations({ introActive }: { introActive: boolean }) {
   const reduced = useReducedMotion();
-  const { forceRevealSection } = useRevealRegistry();
 
   const scrollToRealisations = (e: React.MouseEvent) => {
     e.preventDefault();
-    forceRevealSection('realisations');
     const target = document.querySelector('[data-name="Réalisations"]');
     if (!target) return;
-    const y = target.getBoundingClientRect().top + window.scrollY - window.innerHeight * 0.15;
-    window.scrollTo({ top: y, behavior: reduced ? 'auto' : 'smooth' });
+    jumpToElement(target);
   };
 
   return (
@@ -3022,18 +3015,27 @@ function HeroLogos({
 }
 
 export default function Desktop({ introActive = true }: { introActive?: boolean }) {
+  const [activeOfferId, setActiveOfferId] = useState(0);
+  const activeOffer = OFFERS[activeOfferId];
+  const offerBottom = OFFER_WHITE_CARD_TOP + getOfferBenefitsCardHeight(activeOffer.benefits.length);
+  const ctaTop = offerBottom + OFFER_TO_CTA_GAP;
+  const infinifyTop = ctaTop + CTA_TO_INFINIFY_MASK_OFFSET;
+  const footerBackgroundTop = infinifyTop + INFINIFY_TO_FOOTER_BACKGROUND_OFFSET;
+  const footerContentTop = infinifyTop + INFINIFY_TO_FOOTER_CONTENT_OFFSET;
+  const pageHeight = footerBackgroundTop + FOOTER_BACKGROUND_HEIGHT;
+
   return (
-    <div className="relative size-full" data-name="Desktop - 144">
+    <div className="relative w-full" style={{ height: pageHeight }} data-name="Desktop - 144">
       <div aria-hidden="true" className="absolute inset-0 pointer-events-none">
         <div className="absolute bg-white inset-0" />
 
       </div>
       <NavBar />
-      <InfinifyMask />
-      <Footer />
-      <Cta />
+      <InfinifyMask top={infinifyTop} />
+      <Footer backgroundTop={footerBackgroundTop} contentTop={footerContentTop} />
+      <Cta top={ctaTop} />
       <Realisations />
-      <OffresGroupe />
+      <OffresGroupe activeId={activeOfferId} onChangeActiveId={setActiveOfferId} />
       <TeamGroupe />
       <HeroLogos introActive={introActive} />
     </div>

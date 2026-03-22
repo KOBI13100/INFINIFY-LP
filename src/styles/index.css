@@ -32,7 +32,7 @@ body {
   justify-content: center;
   overflow: hidden;
   isolation: isolate;
-  background: #080808;
+  background: #000000;
   transition: opacity var(--splash-screen-exit-duration, 900ms) cubic-bezier(0.22, 1, 0.36, 1);
   will-change: opacity;
 }
@@ -87,12 +87,12 @@ body {
 
 .scrambled-text__char-slot--scrambling {
   background: #f5f5f5;
-  border-radius: 1px;
+  border-radius: 0;
 }
 
 .scrambled-text__char-slot--active {
   background: #f5f5f5;
-  border-radius: 1px;
+  border-radius: 0;
 }
 
 .scrambled-text__char-clip {
@@ -125,11 +125,11 @@ body {
 }
 
 .scrambled-text__char-slot--scrambling .scrambled-text__char {
-  color: #080808;
+  color: #010101;
 }
 
 .scrambled-text__char-slot--active .scrambled-text__char {
-  color: #080808;
+  color: #010101;
 }
 
 .scrambled-text__final-char {

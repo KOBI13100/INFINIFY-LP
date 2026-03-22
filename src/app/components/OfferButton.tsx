@@ -43,7 +43,7 @@ export default function OfferButton({
   const copyClassName = cx(
     "relative flex flex-col justify-center leading-[0] not-italic text-[16.028px] text-center tracking-[-0.3206px] whitespace-nowrap",
     isLight
-      ? "font-['Neue_Montreal:Bold',sans-serif] font-[500] text-black"
+      ? "font-['Neue_Montreal:Bold',sans-serif] font-[600] text-black"
       : "font-['Neue_Montreal:Bold',sans-serif] font-[500] text-white",
     labelClassName,
   );
@@ -123,7 +123,7 @@ function SlidingArrow({ state }: { state: HoverState }) {
   return (
     <span
       aria-hidden="true"
-      className="relative inline-block overflow-hidden align-top"
+      className="relative inline-block overflow-hidden align-middle"
       style={{ ...CLIP_MASK_STYLE, width: ICON_SIZE, height: ICON_SIZE }}
     >
       <span className="block select-none opacity-0">
@@ -161,18 +161,18 @@ function ArrowIcon() {
         viewBox="0 0 20.0345 20.0345"
       >
         <path
-          d="M5.31055 14.724L14.7239 5.31067"
-          stroke="currentColor"
+          d="M4.17403 10.0167H15.8609"
+          stroke="black"
           strokeLinecap="round"
           strokeLinejoin="round"
-          strokeWidth="1.75"
+          strokeWidth="1.66955"
         />
         <path
-          d="M8.31445 5.31067H14.7239V11.7201"
-          stroke="currentColor"
+          d="M10.0173 4.17367L15.8607 10.0171L10.0173 15.8605"
+          stroke="black"
           strokeLinecap="round"
           strokeLinejoin="round"
-          strokeWidth="1.75"
+          strokeWidth="1.66955"
         />
       </svg>
     </span>
