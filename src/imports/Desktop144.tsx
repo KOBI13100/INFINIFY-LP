@@ -1071,7 +1071,6 @@ function CarouselTag({ label, icon }: { label: string; icon: 'page' | 'building'
 // ─── Realisations carousel ────────────────────────────────────────────────────
 
 const CARD_TRANSITION = { duration: 1.02, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] };
-const CARD_IMAGE_DEZOOM_TRANSITION = { duration: 0.92, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] };
 const CAROUSEL_VIEWPORT_MASK = 'linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.42) 10%, black 20%, black 80%, rgba(0,0,0,0.42) 90%, transparent 100%)';
 const CAROUSEL_IMAGE_EDGE_CROP = 6;
 type SlotName = 'above' | 'top' | 'center' | 'bottom' | 'below';
@@ -1127,15 +1126,11 @@ function preloadCarouselProject(project: CarouselProject) {
 
 function CarouselCardImage({
   image,
-  landingZoomKey,
   priority,
 }: {
   image: string;
-  landingZoomKey: number | null;
   priority: boolean;
 }) {
-  const shouldAnimateDezoom = landingZoomKey !== null;
-
   return (
     <div
       className="absolute"
@@ -1144,16 +1139,11 @@ function CarouselCardImage({
         backfaceVisibility: 'hidden',
       }}
     >
-      <motion.div
-        key={shouldAnimateDezoom ? `landing-${landingZoomKey}` : 'resting'}
+      <div
         className="absolute"
-        initial={shouldAnimateDezoom ? { scale: 1.045 } : false}
-        animate={{ scale: 1 }}
-        transition={shouldAnimateDezoom ? CARD_IMAGE_DEZOOM_TRANSITION : { duration: 0 }}
         style={{
           inset: -CAROUSEL_IMAGE_EDGE_CROP,
           transformOrigin: 'center center',
-          willChange: shouldAnimateDezoom ? 'transform' : undefined,
         }}
       >
         <img
@@ -1169,7 +1159,7 @@ function CarouselCardImage({
             height: '100%',
           }}
         />
-      </motion.div>
+      </div>
     </div>
   );
 }
@@ -1178,7 +1168,6 @@ function Realisations() {
   const total = CAROUSEL_PROJECTS.length;
   const [pos, setPos]                 = useState(0); // position linéaire cumulative
   const [activeIndex, setActiveIndex] = useState(0);
-  const [hasNavigatedCarousel, setHasNavigatedCarousel] = useState(false);
   const [readyProjectIds, setReadyProjectIds] = useState<Record<number, boolean>>(() =>
     Object.fromEntries(CAROUSEL_PROJECTS.map((carouselProject) => [carouselProject.id, !carouselProject.imageSequence?.length])),
   );
@@ -1188,7 +1177,6 @@ function Realisations() {
 
   const go = (delta: number) => {
     if (total < 2) return;
-    setHasNavigatedCarousel(true);
 
     const nextIndex = (activeIndex + delta + total) % total;
     const nextProject = CAROUSEL_PROJECTS[nextIndex];
@@ -1372,7 +1360,6 @@ function Realisations() {
             >
               <CarouselCardImage
                 image={visibleImage}
-                landingZoomKey={hasNavigatedCarousel && isCenterCard ? pos : null}
                 priority={isCenterCard}
               />
             </motion.div>
@@ -1928,6 +1915,12 @@ const OFFER_TABS_MARGIN_TOP = 41.4;
 const OFFER_TOGGLE_GROUP_HEIGHT = 56.188;
 const OFFER_TOGGLE_TO_LABEL_GAP = 19.61;
 const OFFER_DESCRIPTION_MARGIN_TOP = OFFER_TABS_MARGIN_TOP + OFFER_TOGGLE_GROUP_HEIGHT + OFFER_TOGGLE_TO_LABEL_GAP;
+const OFFER_CONTENT_SWIPE_X = 28;
+const OFFER_CONTENT_DURATION = 0.22;
+const OFFER_CONTENT_EASE = [0.16, 1, 0.3, 1] as [number, number, number, number];
+const OFFER_CONTENT_BLUR_ENTER = 3;
+const OFFER_CONTENT_BLUR_EXIT = 2;
+const OFFER_DESCRIPTION_CONTENT_MIN_HEIGHT = 128;
 const OFFER_WHITE_CARD_TOP = 2814.41;
 const OFFER_TO_CTA_GAP = 167.25;
 const CTA_CARD_TOP_INITIAL = 3405.7;
@@ -1970,6 +1963,7 @@ function OfferBenefitChip({ text }: { text: string }) {
 }
 
 function OfferCard({ activeId, onChangeActiveId }: { activeId: number; onChangeActiveId: (id: number) => void }) {
+  const reduced = useReducedMotion();
   const offer = OFFERS[activeId];
   const whiteCardHeight = getOfferBenefitsCardHeight(offer.benefits.length);
   const isQuotePrice = offer.price.toLowerCase().includes('devis');
@@ -1977,9 +1971,16 @@ function OfferCard({ activeId, onChangeActiveId }: { activeId: number; onChangeA
   const hasPricePrefix = Boolean(offer.pricePrefix);
   const priceChipWidth = hasPricePrefix ? 172 : 97.335;
   const priceChipHeight = hasPricePrefix ? 37 : 36.73;
+  const offerContentTransition = reduced
+    ? { duration: 0 }
+    : {
+        x: { type: 'spring', stiffness: 360, damping: 32, mass: 0.7 },
+        opacity: { duration: OFFER_CONTENT_DURATION, ease: OFFER_CONTENT_EASE },
+        filter: { duration: OFFER_CONTENT_DURATION, ease: OFFER_CONTENT_EASE },
+      };
   const descriptionFrameStyle = isEcommerceOffer
-    ? { height: 177, width: 350, marginLeft: 92.29, marginTop: OFFER_DESCRIPTION_MARGIN_TOP }
-    : { height: 177, width: 276, marginLeft: 129.29, marginTop: OFFER_DESCRIPTION_MARGIN_TOP };
+    ? { minHeight: 177, width: 350, marginLeft: 92.29, marginTop: OFFER_DESCRIPTION_MARGIN_TOP }
+    : { minHeight: 177, width: 276, marginLeft: 129.29, marginTop: OFFER_DESCRIPTION_MARGIN_TOP };
 
   const switchTo = (id: number) => {
     if (id === activeId) return;
@@ -2033,62 +2034,78 @@ function OfferCard({ activeId, onChangeActiveId }: { activeId: number; onChangeA
                 <p className="leading-[normal]">Cliquez sur l'offre de votre choix pour voir les détails</p>
               </div>
             </div>
-            <div
-              key={`desc-${activeId}`}
-              className="mt-[30px] flex flex-col items-center"
-              style={{ rowGap: 30 }}
-            >
-                {/* Description */}
-                <div className="content-stretch flex flex-col items-center relative shrink-0">
-                  <div className="content-stretch flex flex-col items-center relative shrink-0 w-fit">
-                    <div className="flex flex-col font-['Geist:Regular',sans-serif] font-normal justify-center leading-[normal] relative shrink-0 text-[#888] text-[16px] text-center whitespace-nowrap w-fit">
-                      {offer.descriptionLines.map((line, index) => (
-                        <p key={`${offer.id}-line-${index}`} className={index < offer.descriptionLines.length - 1 ? "mb-0 text-center w-fit mx-auto" : "text-center w-fit mx-auto"}>
-                          {line}
+            <div className="relative mt-[30px] w-full" style={{ minHeight: OFFER_DESCRIPTION_CONTENT_MIN_HEIGHT }}>
+              <AnimatePresence initial={false}>
+                <motion.div
+                  key={`desc-${activeId}`}
+                  initial={{
+                    opacity: reduced ? 1 : 0,
+                    x: reduced ? 0 : OFFER_CONTENT_SWIPE_X,
+                    filter: reduced ? 'blur(0px)' : `blur(${OFFER_CONTENT_BLUR_ENTER}px)`,
+                  }}
+                  animate={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
+                  exit={{
+                    opacity: reduced ? 1 : 0,
+                    x: reduced ? 0 : -OFFER_CONTENT_SWIPE_X,
+                    filter: reduced ? 'blur(0px)' : `blur(${OFFER_CONTENT_BLUR_EXIT}px)`,
+                  }}
+                  transition={offerContentTransition}
+                  className="absolute left-0 top-0 flex w-full flex-col items-center"
+                  style={{ rowGap: 30, willChange: reduced ? 'auto' : 'transform, opacity, filter' }}
+                >
+                  {/* Description */}
+                  <div className="content-stretch flex flex-col items-center relative shrink-0">
+                    <div className="content-stretch flex flex-col items-center relative shrink-0 w-fit">
+                      <div className="flex flex-col font-['Geist:Regular',sans-serif] font-normal justify-center leading-[normal] relative shrink-0 text-[#888] text-[16px] text-center whitespace-nowrap w-fit">
+                        {offer.descriptionLines.map((line, index) => (
+                          <p key={`${offer.id}-line-${index}`} className={index < offer.descriptionLines.length - 1 ? "mb-0 text-center w-fit mx-auto" : "text-center w-fit mx-auto"}>
+                            {line}
+                          </p>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                  {/* Price */}
+                  <div className="content-stretch flex gap-[11px] items-center leading-[0] relative shrink-0 w-fit">
+                    <div className="col-1 grid-cols-[max-content] grid-rows-[max-content] inline-grid ml-0 mt-0 place-items-start relative row-1">
+                      <div
+                        aria-hidden="true"
+                        className="col-1 pointer-events-none row-1"
+                        style={{ width: priceChipWidth, height: priceChipHeight }}
+                      >
+                        <svg width={priceChipWidth} height={priceChipHeight} viewBox="0 0 98 37" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+                          <rect x="0.364499" y="0.364499" width="96.606" height="36.0012" rx="6.98154" fill="#808080" fillOpacity="0.2" style={{ mixBlendMode: 'luminosity' }}/>
+                          <rect x="0.364499" y="0.364499" width="96.606" height="36.0012" rx="6.98154" stroke={`url(#priceGrad_${offer.id})`} strokeWidth="0.728998"/>
+                          <defs>
+                            <linearGradient id={`priceGrad_${offer.id}`} x1="8.04583" y1="0" x2="16.0777" y2="46.4258" gradientUnits="userSpaceOnUse">
+                              <stop stopColor="white" stopOpacity="0.4"/>
+                              <stop offset="0.405687" stopColor="white" stopOpacity="0.01"/>
+                              <stop offset="0.574372" stopColor="white" stopOpacity="0.01"/>
+                              <stop offset="1" stopColor="white" stopOpacity="0.1"/>
+                            </linearGradient>
+                          </defs>
+                        </svg>
+                      </div>
+                      <div className="col-1 flex flex-col font-['SF_Pro:Regular',sans-serif] font-normal h-[36.73px] items-center justify-center ml-0 mt-0 relative row-1 text-[14.528px] text-center text-white whitespace-nowrap" style={{ fontVariationSettings: "'wdth' 100", width: priceChipWidth, height: priceChipHeight }}>
+                        <p>
+                          {offer.pricePrefix && <span className="leading-[normal] text-[rgba(255,255,255,0.6)]">{offer.pricePrefix} </span>}
+                          <span className="leading-[normal]">{offer.price}</span>
+                          {!isQuotePrice && <span className="leading-[normal] text-[rgba(255,255,255,0.6)]"> HT</span>}
                         </p>
-                      ))}
+                      </div>
                     </div>
-                  </div>
-                </div>
-                {/* Price */}
-                <div className="content-stretch flex gap-[11px] items-center leading-[0] relative shrink-0 w-fit">
-                  <div className="col-1 grid-cols-[max-content] grid-rows-[max-content] inline-grid ml-0 mt-0 place-items-start relative row-1">
+                    <div className="flex flex-col font-['SF_Pro:Ultralight',sans-serif] justify-center relative shrink-0 text-[#7c7c7c] text-[18px] text-center whitespace-nowrap" style={{ fontVariationSettings: "'wdth' 100" }}>
+                      <p className="leading-[normal]">︱</p>
+                    </div>
                     <div
-                      aria-hidden="true"
-                      className="col-1 pointer-events-none row-1"
-                      style={{ width: priceChipWidth, height: priceChipHeight }}
+                      className="flex flex-col font-['SF_Pro:Regular',sans-serif] font-normal justify-center relative shrink-0 text-[#dbdbdb] text-[12px] text-center tracking-[-0.06px] whitespace-nowrap"
+                      style={{ fontVariationSettings: "'wdth' 100" }}
                     >
-                      <svg width={priceChipWidth} height={priceChipHeight} viewBox="0 0 98 37" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
-                        <rect x="0.364499" y="0.364499" width="96.606" height="36.0012" rx="6.98154" fill="#808080" fillOpacity="0.2" style={{ mixBlendMode: 'luminosity' }}/>
-                        <rect x="0.364499" y="0.364499" width="96.606" height="36.0012" rx="6.98154" stroke={`url(#priceGrad_${offer.id})`} strokeWidth="0.728998"/>
-                        <defs>
-                          <linearGradient id={`priceGrad_${offer.id}`} x1="8.04583" y1="0" x2="16.0777" y2="46.4258" gradientUnits="userSpaceOnUse">
-                            <stop stopColor="white" stopOpacity="0.4"/>
-                            <stop offset="0.405687" stopColor="white" stopOpacity="0.01"/>
-                            <stop offset="0.574372" stopColor="white" stopOpacity="0.01"/>
-                            <stop offset="1" stopColor="white" stopOpacity="0.1"/>
-                          </linearGradient>
-                        </defs>
-                      </svg>
-                    </div>
-                    <div className="col-1 flex flex-col font-['SF_Pro:Regular',sans-serif] font-normal h-[36.73px] items-center justify-center ml-0 mt-0 relative row-1 text-[14.528px] text-center text-white whitespace-nowrap" style={{ fontVariationSettings: "'wdth' 100", width: priceChipWidth, height: priceChipHeight }}>
-                      <p>
-                        {offer.pricePrefix && <span className="leading-[normal] text-[rgba(255,255,255,0.6)]">{offer.pricePrefix} </span>}
-                        <span className="leading-[normal]">{offer.price}</span>
-                        {!isQuotePrice && <span className="leading-[normal] text-[rgba(255,255,255,0.6)]"> HT</span>}
-                      </p>
+                      <p className="leading-[normal]">Payable en plusieurs fois</p>
                     </div>
                   </div>
-                  <div className="flex flex-col font-['SF_Pro:Ultralight',sans-serif] justify-center relative shrink-0 text-[#7c7c7c] text-[18px] text-center whitespace-nowrap" style={{ fontVariationSettings: "'wdth' 100" }}>
-                    <p className="leading-[normal]">︱</p>
-                  </div>
-                  <div
-                    className="flex flex-col font-['SF_Pro:Regular',sans-serif] font-normal justify-center relative shrink-0 text-[#dbdbdb] text-[12px] text-center tracking-[-0.06px] whitespace-nowrap"
-                    style={{ fontVariationSettings: "'wdth' 100" }}
-                  >
-                    <p className="leading-[normal]">Payable en plusieurs fois</p>
-                  </div>
-                </div>
+                </motion.div>
+              </AnimatePresence>
             </div>
           </div>
 
@@ -2096,11 +2113,13 @@ function OfferCard({ activeId, onChangeActiveId }: { activeId: number; onChangeA
       </div>
 
       {/* ── White benefits card ────────────────────────────────────── */}
-      <div className="-translate-x-1/2 absolute bg-white left-1/2 overflow-hidden rounded-bl-[20px] rounded-br-[20px]" style={{ top: OFFER_WHITE_CARD_TOP, width: 534.58, height: whiteCardHeight }}>
+      <div
+        className="-translate-x-1/2 absolute bg-white left-1/2 overflow-hidden rounded-bl-[20px] rounded-br-[20px]"
+        style={{ top: OFFER_WHITE_CARD_TOP, width: 534.58, height: whiteCardHeight }}
+      >
         <div className="absolute inset-0 pointer-events-none rounded-[inherit] shadow-[inset_0px_0px_10px_0px_rgba(104,104,104,0.25)]" />
         <div
-          key={`benefits-${activeId}`}
-          className="absolute inset-0 flex flex-col items-start"
+          className="absolute inset-0 flex flex-col items-start overflow-hidden"
           style={{
             paddingTop: OFFER_BENEFITS_PADDING_TOP,
             paddingRight: OFFER_BENEFITS_PADDING_X,
@@ -2108,14 +2127,15 @@ function OfferCard({ activeId, onChangeActiveId }: { activeId: number; onChangeA
             paddingLeft: OFFER_BENEFITS_PADDING_X,
           }}
         >
-            <div
-              className="content-stretch flex flex-col items-start leading-[0] relative w-full"
-              style={{ gap: OFFER_BENEFIT_CHIP_GAP }}
-            >
-              {offer.benefits.map((text, i) => (
-                <OfferBenefitChip key={i} text={text} />
-              ))}
-            </div>
+          <div
+            key={`benefits-${activeId}`}
+            className="flex flex-col items-start"
+            style={{ gap: OFFER_BENEFIT_CHIP_GAP }}
+          >
+            {offer.benefits.map((text, i) => (
+              <OfferBenefitChip key={i} text={text} />
+            ))}
+          </div>
         </div>
       </div>
 
