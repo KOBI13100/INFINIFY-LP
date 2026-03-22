@@ -1,5 +1,7 @@
-import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
+import { useEffect, useState } from 'react';
+import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
+import { useScrollReveal, REVEAL_Y, REVEAL_BLUR, REVEAL_DURATION, REVEAL_EASE } from '../hooks/useScrollReveal';
+import { useRevealRegistry } from '../hooks/useRevealRegistry';
 import svgPaths from "./svg-6slkny0mf7";
 import imgMindscaleLogo from "../../mindscale.svg";
 import imgMindscaleFrame2 from "../../mindscale img/m2.webp";
@@ -53,13 +55,7 @@ import imgHero from "../../Imagebg.webp";
 import { imgGroup, imgOffres, imgInfinify, imgTeam, imgFrame } from "./svg-ithsc";
 import OfferButton from "../app/components/OfferButton";
 
-type ScrollDirection = 'up' | 'down';
-
 const SECTION_EASE = [0.16, 1, 0.3, 1] as [number, number, number, number];
-const SECTION_Y = 56;
-const SECTION_DURATION = 0.9;
-const SECTION_VIEWPORT = { once: true, amount: 0.35 } as const;
-const TEAM_VIEWPORT = { once: true, amount: 0.5 } as const;
 const HERO_INTRO_DURATION_MULTIPLIER = 1.3;
 const HERO_NAV_DURATION = 0.6;
 const HERO_CONTENT_DURATION = 0.45 * HERO_INTRO_DURATION_MULTIPLIER;
@@ -152,108 +148,23 @@ function MarqueeLogo({
   );
 }
 
-function useScrollDirection(): ScrollDirection {
-  const [scrollDirection, setScrollDirection] = useState<ScrollDirection>('down');
-
-  useEffect(() => {
-    let lastScrollY = window.scrollY;
-
-    const updateScrollDirection = () => {
-      const nextScrollY = window.scrollY;
-      const scrollDelta = nextScrollY - lastScrollY;
-
-      if (Math.abs(scrollDelta) < 4) {
-        return;
-      }
-
-      setScrollDirection(scrollDelta > 0 ? 'down' : 'up');
-      lastScrollY = nextScrollY;
-    };
-
-    window.addEventListener('scroll', updateScrollDirection, { passive: true });
-
-    return () => window.removeEventListener('scroll', updateScrollDirection);
-  }, []);
-
-  return scrollDirection;
-}
-
-function getScrollRevealTransition({
-  duration,
-  ease,
-  scrollDirection,
-  animateIn,
-  downDelay = 0,
-}: {
-  duration: number;
-  ease: [number, number, number, number];
-  scrollDirection: ScrollDirection;
-  animateIn: boolean;
-  downDelay?: number;
-}) {
-  if (scrollDirection === 'up' || !animateIn) {
-    return { duration: 0, ease, delay: 0 };
-  }
-
-  return { duration, ease, delay: downDelay };
-}
-
-function useScrollReveal({
-  ref,
-  isInView,
-  scrollDirection,
-}: {
-  ref: React.RefObject<HTMLDivElement | null>;
-  isInView: boolean;
-  scrollDirection: ScrollDirection;
-}) {
-  const [shouldShow, setShouldShow] = useState(isInView);
-
-  useEffect(() => {
-    if (isInView) {
-      setShouldShow(true);
-    }
-  }, [isInView]);
-
-  useEffect(() => {
-    if (!shouldShow || isInView || scrollDirection !== 'up' || typeof window === 'undefined') {
-      return;
-    }
-
-    const checkReset = () => {
-      const node = ref.current;
-      if (!node) return;
-
-      const rect = node.getBoundingClientRect();
-      if (rect.top >= window.innerHeight) {
-        setShouldShow(false);
-      }
-    };
-
-    checkReset();
-    window.addEventListener('scroll', checkReset, { passive: true });
-
-    return () => window.removeEventListener('scroll', checkReset);
-  }, [shouldShow, isInView, scrollDirection, ref]);
-
-  return shouldShow;
-}
-
-function BackgroundContainer({ scrollDirection }: { scrollDirection: ScrollDirection }) {
+function BackgroundContainer() {
   const reduced = useReducedMotion();
-  const footerBackgroundRef = useRef<HTMLDivElement | null>(null);
-  const isFooterBackgroundInView = useInView(footerBackgroundRef, { amount: TEAM_VIEWPORT.amount });
-  const shouldShowFooterBackground = useScrollReveal({ ref: footerBackgroundRef, isInView: isFooterBackgroundInView, scrollDirection });
+  const { ref, isRevealed, delay } = useScrollReveal({ sectionId: 'footer', staggerIndex: 0 });
 
   return (
-    <motion.div
-      ref={footerBackgroundRef}
-      className="absolute -translate-x-1/2 bg-black h-[269.561px] left-1/2 top-[4251.44px] w-[100dvw]"
+    <div
+      ref={ref}
+      className="absolute -translate-x-1/2 h-[269.561px] left-1/2 top-[4251.44px] w-[100dvw]"
       data-name="Background Shape"
-      initial={{ opacity: 0, y: reduced ? 0 : FOOTER_Y }}
-      animate={shouldShowFooterBackground ? { opacity: 1, y: 0 } : { opacity: 0, y: reduced ? 0 : FOOTER_Y }}
-      transition={getScrollRevealTransition({ duration: FOOTER_DURATION, ease: FOOTER_EASE, scrollDirection, animateIn: shouldShowFooterBackground, downDelay: 0.18 })}
-    />
+    >
+      <motion.div
+        className="absolute inset-0 bg-black"
+        initial={{ opacity: 0, y: reduced ? 0 : REVEAL_Y, filter: reduced ? 'blur(0px)' : `blur(${REVEAL_BLUR}px)` }}
+        animate={isRevealed ? { opacity: 1, y: 0, filter: 'blur(0px)' } : undefined}
+        transition={{ duration: reduced ? 0 : REVEAL_DURATION, ease: REVEAL_EASE, delay }}
+      />
+    </div>
   );
 }
 
@@ -403,32 +314,34 @@ function LegalLinks() {
   );
 }
 
-function ContentGroup({ scrollDirection }: { scrollDirection: ScrollDirection }) {
+function ContentGroup() {
   const reduced = useReducedMotion();
-  const footerContentRef = useRef<HTMLDivElement | null>(null);
-  const isFooterContentInView = useInView(footerContentRef, { amount: TEAM_VIEWPORT.amount });
-  const shouldShowFooterContent = useScrollReveal({ ref: footerContentRef, isInView: isFooterContentInView, scrollDirection });
+  const { ref, isRevealed, delay } = useScrollReveal({ sectionId: 'footer', staggerIndex: 1 });
 
   return (
-    <motion.div
-      ref={footerContentRef}
+    <div
+      ref={ref}
       className="-translate-x-1/2 absolute content-stretch flex gap-[620px] items-start leading-[0] left-1/2 top-[4298.87px] w-[1211px]"
       data-name="Content Group"
-      initial={{ opacity: 0, y: reduced ? 0 : FOOTER_Y }}
-      animate={shouldShowFooterContent ? { opacity: 1, y: 0 } : { opacity: 0, y: reduced ? 0 : FOOTER_Y }}
-      transition={getScrollRevealTransition({ duration: FOOTER_DURATION, ease: FOOTER_EASE, scrollDirection, animateIn: shouldShowFooterContent, downDelay: 0.42 })}
     >
-      <ContentColumn />
-      <LegalLinks />
-    </motion.div>
+      <motion.div
+        className="content-stretch flex gap-[620px] items-start leading-[0] w-full"
+        initial={{ opacity: 0, y: reduced ? 0 : REVEAL_Y, filter: reduced ? 'blur(0px)' : `blur(${REVEAL_BLUR}px)` }}
+        animate={isRevealed ? { opacity: 1, y: 0, filter: 'blur(0px)' } : undefined}
+        transition={{ duration: reduced ? 0 : REVEAL_DURATION, ease: REVEAL_EASE, delay }}
+      >
+        <ContentColumn />
+        <LegalLinks />
+      </motion.div>
+    </div>
   );
 }
 
-function Footer({ scrollDirection }: { scrollDirection: ScrollDirection }) {
+function Footer() {
   return (
     <div className="absolute -translate-x-1/2 left-1/2 top-0 w-[100dvw]" data-name="Footer">
-      <BackgroundContainer scrollDirection={scrollDirection} />
-      <ContentGroup scrollDirection={scrollDirection} />
+      <BackgroundContainer />
+      <ContentGroup />
     </div>
   );
 }
@@ -915,28 +828,30 @@ function TestimonialInfo() {
   );
 }
 
-function Cta({ scrollDirection }: { scrollDirection: ScrollDirection }) {
+function Cta() {
   const reduced = useReducedMotion();
-  const ctaRef = useRef<HTMLDivElement | null>(null);
-  const isCtaInView = useInView(ctaRef, { amount: 0.15 });
-  const shouldShowCta = useScrollReveal({ ref: ctaRef, isInView: isCtaInView, scrollDirection });
+  const { ref, isRevealed } = useScrollReveal({ sectionId: 'cta' });
 
   return (
-    <motion.div
-      ref={ctaRef}
-      className="absolute overflow-hidden rounded-[25px]"
+    <div
+      ref={ref}
+      className="absolute overflow-hidden rounded-[25px] -translate-x-1/2 left-1/2"
       data-name="CTA"
-      style={{ left: 275.5, top: 3380.17, width: 889, height: 439 }}
-      initial={{ opacity: 0, y: reduced ? 0 : CARD_Y }}
-      animate={shouldShowCta ? { opacity: 1, y: 0 } : { opacity: 0, y: reduced ? 0 : CARD_Y }}
-      transition={getScrollRevealTransition({ duration: CARD_DURATION, ease: CARD_EASE, scrollDirection, animateIn: shouldShowCta })}
+      style={{ top: 3405.7, width: 889, height: 439 }}
     >
-      <UpMe />
-      <EarthBackground />
-      <CtaBottomGradient />
-      <CallToActionContainer />
-      <TestimonialInfo />
-    </motion.div>
+      <motion.div
+        className="absolute inset-0 overflow-hidden rounded-[25px]"
+        initial={{ opacity: 0, y: reduced ? 0 : REVEAL_Y, filter: reduced ? 'blur(0px)' : `blur(${REVEAL_BLUR}px)` }}
+        animate={isRevealed ? { opacity: 1, y: 0, filter: 'blur(0px)' } : undefined}
+        transition={{ duration: reduced ? 0 : REVEAL_DURATION, ease: REVEAL_EASE, delay: 0 }}
+      >
+        <UpMe />
+        <EarthBackground />
+        <CtaBottomGradient />
+        <CallToActionContainer />
+        <TestimonialInfo />
+      </motion.div>
+    </div>
   );
 }
 
@@ -1280,6 +1195,9 @@ function CarouselCardImage({
 }
 
 function Realisations() {
+  const reduced = useReducedMotion();
+  const { ref: revealRef, isRevealed } = useScrollReveal({ sectionId: 'realisations' });
+
   const total = CAROUSEL_PROJECTS.length;
   const [pos, setPos]                 = useState(0); // position linéaire cumulative
   const [activeIndex, setActiveIndex] = useState(0);
@@ -1346,7 +1264,15 @@ function Realisations() {
   const cells   = [pos - 2, pos - 1, pos, pos + 1, pos + 2];
 
   return (
-    <div className="absolute" style={{ left: 166.28, top: 1472.03, width: 957, height: 606 }} data-name="Réalisations">
+    <motion.div
+      ref={revealRef}
+      className="absolute"
+      style={{ left: 166.28, top: 1472.03, width: 957, height: 606 }}
+      data-name="Réalisations"
+      initial={{ opacity: 0, y: reduced ? 0 : REVEAL_Y, filter: reduced ? 'blur(0px)' : `blur(${REVEAL_BLUR}px)` }}
+      animate={isRevealed ? { opacity: 1, y: 0, filter: 'blur(0px)' } : undefined}
+      transition={{ duration: reduced ? 0 : REVEAL_DURATION, ease: REVEAL_EASE, delay: 0 }}
+    >
 
       {/* ── Card stack ── overflow:hidden clip les cartes hors-zone ──────── */}
       <div
@@ -1415,11 +1341,11 @@ function Realisations() {
           </button>
           <button onClick={() => go(1)} className="relative cursor-pointer flex-none" style={{ width: 28.502, height: 28.502 }} aria-label="Suivant">
             <svg className="absolute inset-0 size-full" fill="none" viewBox="0 0 28.5016 28.5016">
-              <circle cx="14.2508" cy="14.2508" fill="#BEBEBE" r="14.2508" />
+              <circle cx="14.2508" cy="14.2508" fill="white" r="14.2508" />
             </svg>
             <div className="absolute inset-0 flex items-center justify-center">
               <svg width="9" height="6" viewBox="0 0 9 6" fill="none">
-                <path d="M1 1L4.5 4.5L8 1" stroke="white" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M1 1L4.5 4.5L8 1" stroke="#0E0E0E" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </div>
           </button>
@@ -1502,7 +1428,7 @@ function Realisations() {
         </div>
       </div>
 
-    </div>
+    </motion.div>
   );
 }
 
@@ -1752,25 +1678,27 @@ function Group4() {
 }
 
 function MaskGroup({
-  animateIn,
-  maskTriggerRef,
-  scrollDirection,
+  isRevealed,
 }: {
-  animateIn: boolean;
-  maskTriggerRef?: React.RefObject<HTMLDivElement | null>;
-  scrollDirection: ScrollDirection;
+  isRevealed: boolean;
 }) {
   const reduced = useReducedMotion();
   return (
     <motion.div
-      ref={maskTriggerRef}
       className="-translate-x-1/2 absolute h-[353px] left-1/2 top-[2117.32px] w-[897px]"
       data-name="Mask Group"
-      initial={{ opacity: 0, y: reduced ? 0 : CARD_Y }}
-      animate={animateIn ? { opacity: 1, y: 0 } : { opacity: 0, y: reduced ? 0 : CARD_Y }}
-      transition={getScrollRevealTransition({ duration: SECTION_DURATION + 0.05, ease: SECTION_EASE, scrollDirection, animateIn })}
+      initial={{ opacity: 0, y: reduced ? 0 : REVEAL_Y, filter: reduced ? 'blur(0px)' : `blur(${REVEAL_BLUR}px)` }}
+      animate={isRevealed ? { opacity: 1, y: 0, filter: 'blur(0px)' } : undefined}
+      transition={{ duration: reduced ? 0 : REVEAL_DURATION, ease: REVEAL_EASE, delay: 0 }}
     >
-      <div className="-translate-x-1/2 -translate-y-1/2 absolute flex flex-col font-['Geist:SemiBold',sans-serif] font-semibold justify-center leading-[0] left-[448.61px] mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[-0.111px_0px] mask-size-[896.66px_353.049px] text-[#d8d8d8] text-[300px] text-center top-[195px] whitespace-nowrap" style={{ maskImage: `url('${imgOffres}')` }}>
+      <div className="-translate-x-1/2 -translate-y-1/2 absolute flex flex-col font-['Geist:SemiBold',sans-serif] font-semibold justify-center leading-[0] left-[448.61px] mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[-0.111px_0px] mask-size-[896.66px_353.049px] text-[300px] text-center top-[195px] whitespace-nowrap"
+        style={{
+          maskImage: `url('${imgOffres}')`,
+          color: 'transparent',
+          background: 'linear-gradient(180deg, rgba(216,216,216,0.78) 0%, rgba(216,216,216,0.18) 72%, rgba(216,216,216,0) 100%)',
+          WebkitBackgroundClip: 'text',
+          backgroundClip: 'text',
+        }}>
         <p className="leading-[normal]">Offres</p>
       </div>
     </motion.div>
@@ -1983,19 +1911,12 @@ function OfferBenefitChip({ text }: { text: string }) {
 
 // Stateful offer card — dark card + white benefits, both animated on tab switch
 function OfferCard({
-  animateIn,
-  cardTriggerRef,
-  scrollDirection,
+  isRevealed,
 }: {
-  animateIn: boolean;
-  cardTriggerRef?: React.RefObject<HTMLDivElement | null>;
-  scrollDirection: ScrollDirection;
+  isRevealed: boolean;
 }) {
   const [activeId, setActiveId] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
-  const [reserveButtonTop, setReserveButtonTop] = useState(317.35);
-  const darkCardRef = useRef<HTMLDivElement | null>(null);
-  const priceRowRef = useRef<HTMLDivElement | null>(null);
   const reduced = useReducedMotion();
 
   const offer = OFFERS[activeId];
@@ -2010,28 +1931,6 @@ function OfferCard({
     ? { height: 177, width: 350, marginLeft: 92.29, marginTop: 114.288 }
     : { height: 177, width: 276, marginLeft: 129.29, marginTop: 114.288 };
 
-  useEffect(() => {
-    const updateReserveSpacing = () => {
-      const darkCardNode = darkCardRef.current;
-      const priceRowNode = priceRowRef.current;
-      if (!darkCardNode || !priceRowNode) return;
-
-      const darkCardRect = darkCardNode.getBoundingClientRect();
-      const priceRowRect = priceRowNode.getBoundingClientRect();
-      const nextTop = priceRowRect.bottom - darkCardRect.top + 26.34;
-
-      setReserveButtonTop((prevTop) => (Math.abs(prevTop - nextTop) > 0.1 ? nextTop : prevTop));
-    };
-
-    const rafId = requestAnimationFrame(updateReserveSpacing);
-    window.addEventListener('resize', updateReserveSpacing);
-
-    return () => {
-      cancelAnimationFrame(rafId);
-      window.removeEventListener('resize', updateReserveSpacing);
-    };
-  }, [activeId, labelToTitleGap]);
-
   const switchTo = (id: number) => {
     if (isAnimating || id === activeId) return;
     setIsAnimating(true);
@@ -2041,20 +1940,19 @@ function OfferCard({
   return (
     <motion.div
       className="absolute left-0 top-0 w-full"
-      initial={{ opacity: 0, y: reduced ? 0 : CARD_Y }}
-      animate={animateIn ? { opacity: 1, y: 0 } : { opacity: 0, y: reduced ? 0 : CARD_Y }}
-      transition={getScrollRevealTransition({ duration: CARD_DURATION, ease: CARD_EASE, scrollDirection, animateIn, downDelay: 0.4 })}
+      initial={{ opacity: 0, y: reduced ? 0 : REVEAL_Y, filter: reduced ? 'blur(0px)' : `blur(${REVEAL_BLUR}px)` }}
+      animate={isRevealed ? { opacity: 1, y: 0, filter: 'blur(0px)' } : undefined}
+      transition={{ duration: reduced ? 0 : REVEAL_DURATION, ease: REVEAL_EASE, delay: 0 }}
     >
 
       {/* ── Dark card ─────────────────────────────────────────────── */}
       <div
-        ref={cardTriggerRef}
         className="-translate-x-1/2 absolute content-stretch flex items-center left-1/2 top-[2406.12px]"
       >
         <div className="grid-cols-[max-content] grid-rows-[max-content] inline-grid leading-[0] place-items-start relative shrink-0">
 
           {/* Dark background block */}
-          <div className="col-1 grid-cols-[max-content] grid-rows-[max-content] inline-grid ml-0 mt-0 place-items-start relative row-1" ref={darkCardRef}>
+          <div className="col-1 grid-cols-[max-content] grid-rows-[max-content] inline-grid ml-0 mt-0 place-items-start relative row-1">
             <div className="bg-[#0e0e0e] col-1 h-[408.9px] ml-0 mt-0 relative rounded-tl-[20px] rounded-tr-[20px] row-1 w-[534.581px]">
               <div className="absolute inset-0 pointer-events-none rounded-[inherit] shadow-[inset_0px_0px_10px_0px_rgba(104,104,104,0.25)]" />
             </div>
@@ -2115,7 +2013,7 @@ function OfferCard({
                   </div>
                 </div>
                 {/* Price */}
-                <div className="content-stretch flex gap-[11px] items-center leading-[0] relative shrink-0 w-full" ref={priceRowRef}>
+                <div className="content-stretch flex gap-[11px] items-center leading-[0] relative shrink-0 w-full">
                   <div className="col-1 grid-cols-[max-content] grid-rows-[max-content] inline-grid ml-0 mt-0 place-items-start relative row-1">
                     <div
                       aria-hidden="true"
@@ -2187,99 +2085,96 @@ function OfferCard({
 }
 
 function Offres({
-  animateIn,
-  cardTriggerRef,
-  scrollDirection,
+  isRevealed,
 }: {
-  animateIn: boolean;
-  cardTriggerRef?: React.RefObject<HTMLDivElement | null>;
-  scrollDirection: ScrollDirection;
+  isRevealed: boolean;
 }) {
   return (
     <div className="-translate-x-1/2 absolute contents left-1/2 top-[2406.12px]" data-name="Offres">
-      <OfferCard
-        animateIn={animateIn}
-        cardTriggerRef={cardTriggerRef}
-        scrollDirection={scrollDirection}
-      />
+      <OfferCard isRevealed={isRevealed} />
     </div>
   );
 }
 
-function OffresGroupe({ scrollDirection }: { scrollDirection: ScrollDirection }) {
-  const offersRevealRef = useRef<HTMLDivElement | null>(null);
-  const offersMaskRef = useRef<HTMLDivElement | null>(null);
-  const offersCardRef = useRef<HTMLDivElement | null>(null);
-  const isOffersMaskInView = useInView(offersMaskRef, { amount: 0.35 });
-  const isOffersCardInView = useInView(offersCardRef, { amount: 0.35 });
-  const isOffersInView = isOffersMaskInView || isOffersCardInView;
-  const shouldShowOffers = useScrollReveal({ ref: offersRevealRef, isInView: isOffersInView, scrollDirection });
+function OffresGroupe() {
+  const { ref, isRevealed } = useScrollReveal({ sectionId: 'offres' });
 
   return (
     <>
-      <div id="offres" ref={offersRevealRef} className="-translate-x-1/2 absolute left-1/2 top-[2406.12px]" />
+      <div
+        ref={ref}
+        id="offres"
+        aria-hidden="true"
+        className="-translate-x-1/2 absolute left-1/2 pointer-events-none"
+        style={{ top: 2117.32, width: 897, height: 700 }}
+      />
       <div className="-translate-x-1/2 absolute contents left-1/2 top-[2117.32px]" data-name="Offres Groupe">
-        <MaskGroup
-          animateIn={shouldShowOffers}
-          maskTriggerRef={offersMaskRef}
-          scrollDirection={scrollDirection}
-        />
-        <Offres
-          animateIn={shouldShowOffers}
-          cardTriggerRef={offersCardRef}
-          scrollDirection={scrollDirection}
-        />
+        <MaskGroup isRevealed={isRevealed} />
+        <Offres isRevealed={isRevealed} />
       </div>
     </>
   );
 }
 
-function InfinifyMask({ scrollDirection }: { scrollDirection: ScrollDirection }) {
+function InfinifyMask() {
   const reduced = useReducedMotion();
-  const infinifyMaskRef = useRef<HTMLDivElement | null>(null);
-  const isInfinifyMaskInView = useInView(infinifyMaskRef, { amount: TEAM_VIEWPORT.amount });
-  const shouldShowInfinifyMask = useScrollReveal({ ref: infinifyMaskRef, isInView: isInfinifyMaskInView, scrollDirection });
+  const { ref, isRevealed } = useScrollReveal({ sectionId: 'infinify' });
+
   return (
-    <motion.div
-      ref={infinifyMaskRef}
+    <div
+      ref={ref}
       className="-translate-x-1/2 absolute h-[353px] left-[calc(50%-3.55px)] top-[3934.38px] w-[1057px]"
       data-name="Infinify Mask"
-      initial={{ opacity: 0, y: reduced ? 0 : CARD_Y }}
-      animate={shouldShowInfinifyMask ? { opacity: 1, y: 0 } : { opacity: 0, y: reduced ? 0 : CARD_Y }}
-      transition={getScrollRevealTransition({ duration: CARD_DURATION, ease: CARD_EASE, scrollDirection, animateIn: shouldShowInfinifyMask, downDelay: 0.15 })}
     >
-      <div className="-translate-x-1/2 -translate-y-1/2 absolute flex flex-col font-['Geist:SemiBold',sans-serif] font-semibold justify-center leading-[0] left-[528.5px] mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[-19.5px_0px] mask-size-[1056.66px_353.049px] text-[300px] text-center top-[195px] whitespace-nowrap"
-        style={{
-          maskImage: `url('${imgInfinify}')`,
-          color: 'transparent',
-          background: 'linear-gradient(180deg, rgba(216,216,216,0.78) 0%, rgba(216,216,216,0.18) 72%, rgba(216,216,216,0) 100%)',
-          WebkitBackgroundClip: 'text',
-          backgroundClip: 'text',
-        }}>
-        <p className="leading-[normal]">Infinify</p>
-      </div>
-    </motion.div>
+      <motion.div
+        className="absolute inset-0"
+        initial={{ opacity: 0, y: reduced ? 0 : REVEAL_Y, filter: reduced ? 'blur(0px)' : `blur(${REVEAL_BLUR}px)` }}
+        animate={isRevealed ? { opacity: 1, y: 0, filter: 'blur(0px)' } : undefined}
+        transition={{ duration: reduced ? 0 : REVEAL_DURATION, ease: REVEAL_EASE, delay: 0 }}
+      >
+        <div className="-translate-x-1/2 -translate-y-1/2 absolute flex flex-col font-['Geist:SemiBold',sans-serif] font-semibold justify-center leading-[0] left-[528.5px] mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[-19.5px_0px] mask-size-[1056.66px_353.049px] text-[300px] text-center top-[195px] whitespace-nowrap"
+          style={{
+            maskImage: `url('${imgInfinify}')`,
+            color: 'transparent',
+            background: 'linear-gradient(180deg, rgba(216,216,216,0.78) 0%, rgba(216,216,216,0.18) 72%, rgba(216,216,216,0) 100%)',
+            WebkitBackgroundClip: 'text',
+            backgroundClip: 'text',
+          }}>
+          <p className="leading-[normal]">Infinify</p>
+        </div>
+      </motion.div>
+    </div>
   );
 }
 
-function TeamMask({ scrollDirection }: { scrollDirection: ScrollDirection }) {
+function TeamMask() {
   const reduced = useReducedMotion();
-  const teamMaskRef = useRef<HTMLDivElement | null>(null);
-  const isTeamMaskInView = useInView(teamMaskRef, { amount: TEAM_VIEWPORT.amount });
-  const shouldShowTeamMask = useScrollReveal({ ref: teamMaskRef, isInView: isTeamMaskInView, scrollDirection });
+  const { ref, isRevealed } = useScrollReveal({ sectionId: 'team' });
+
   return (
-    <motion.div
-      ref={teamMaskRef}
+    <div
+      ref={ref}
       className="absolute h-[353px] left-[335.5px] top-[827.37px] w-[769px]"
       data-name="Team Mask"
-      initial={{ opacity: 0, y: reduced ? 0 : SECTION_Y }}
-      animate={shouldShowTeamMask ? { opacity: 1, y: 0 } : { opacity: 0, y: reduced ? 0 : SECTION_Y }}
-      transition={getScrollRevealTransition({ duration: SECTION_DURATION + 0.05, ease: SECTION_EASE, scrollDirection, animateIn: shouldShowTeamMask })}
     >
-      <div className="-translate-x-1/2 -translate-y-1/2 absolute flex flex-col font-['Geist:SemiBold',sans-serif] font-semibold justify-center leading-[0] left-[384.77px] mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[-0.273px_0.484px] mask-size-[768.66px_353.049px] text-[#d8d8d8] text-[300px] text-center top-[194.52px] whitespace-nowrap" style={{ maskImage: `url('${imgTeam}')` }}>
-        <p className="leading-[normal]">Team</p>
-      </div>
-    </motion.div>
+      <motion.div
+        className="absolute inset-0"
+        initial={{ opacity: 0, y: reduced ? 0 : REVEAL_Y, filter: reduced ? 'blur(0px)' : `blur(${REVEAL_BLUR}px)` }}
+        animate={isRevealed ? { opacity: 1, y: 0, filter: 'blur(0px)' } : undefined}
+        transition={{ duration: reduced ? 0 : REVEAL_DURATION, ease: REVEAL_EASE, delay: 0 }}
+      >
+        <div className="-translate-x-1/2 -translate-y-1/2 absolute flex flex-col font-['Geist:SemiBold',sans-serif] font-semibold justify-center leading-[0] left-[384.77px] mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[-0.273px_0.484px] mask-size-[768.66px_353.049px] text-[300px] text-center top-[194.52px] whitespace-nowrap"
+          style={{
+            maskImage: `url('${imgTeam}')`,
+            color: 'transparent',
+            background: 'linear-gradient(180deg, rgba(216,216,216,0.78) 0%, rgba(216,216,216,0.18) 72%, rgba(216,216,216,0) 100%)',
+            WebkitBackgroundClip: 'text',
+            backgroundClip: 'text',
+          }}>
+          <p className="leading-[normal]">Team</p>
+        </div>
+      </motion.div>
+    </div>
   );
 }
 
@@ -2300,7 +2195,7 @@ function TestimonialName1() {
   return (
     <div className="absolute contents left-[156.53px] top-[32px]" data-name="Testimonial Name">
       <div
-        className="absolute content-stretch flex gap-[9.073px] h-[40px] items-center justify-center left-[156.53px] p-[6.805px] pointer-events-none rounded-[100px] top-[32px] backdrop-blur-[6px]"
+        className="absolute content-stretch flex gap-[2.5px] h-[40px] items-center justify-center left-[156.53px] p-[2.5px] pointer-events-none rounded-[100px] top-[32px] backdrop-blur-[6px]"
         data-name="Toolbar - Symbols"
         style={{ width: OSCAR_NAME_CHIP_WIDTH }}
       >
@@ -2317,7 +2212,7 @@ function TestimonialName1() {
           </defs>
         </svg>
       </div>
-      <div className="-translate-x-1/2 -translate-y-1/2 absolute flex flex-col font-['Geist:Regular',sans-serif] font-normal justify-center leading-[0] left-[260.12px] text-[14px] text-center text-white top-[51.84px] whitespace-nowrap">
+      <div className="-translate-x-1/2 -translate-y-1/2 absolute flex flex-col font-['Geist:Regular',sans-serif] font-normal justify-center leading-[0] left-[254.85px] text-[14px] text-center text-white top-[51.84px] whitespace-nowrap">
         <p className="leading-[normal]">Oscar VORTICE</p>
       </div>
     </div>
@@ -2348,11 +2243,11 @@ const TEAM_ROLE_CHIP_STYLE = {
   paddingInline: 10.5,
 } as const;
 
-const OSCAR_NAME_CHIP_WIDTH = 174.996;
+const OSCAR_NAME_CHIP_WIDTH = 159.813;
 const OSCAR_INFO_LEFT_EDGE = 156.53;
-const BENJAMIN_INFO_RIGHT_EDGE = 156.53;
+const BENJAMIN_INFO_RIGHT_EDGE = 171.712;
 const OSCAR_INFO_SHIFT_X = 367.483 * 0.015;
-const BENJAMIN_INFO_SHIFT_X = 377.927 * 0.015;
+const BENJAMIN_INFO_SHIFT_X = 0;
 
 function TestimonialColumn() {
   return (
@@ -2411,10 +2306,10 @@ function TestimonialBackground1() {
 function TestimonialInfo2() {
   return (
     <div className="absolute contents left-[428.68px] top-[32px]" data-name="Testimonial Info">
-      <div className="absolute content-stretch flex gap-[9.073px] h-[40px] items-center justify-center left-[428.68px] p-[6.805px] pointer-events-none rounded-[100px] top-[32px] w-[198px] backdrop-blur-[6px]" data-name="Toolbar - Symbols">
-        <svg aria-hidden="true" className="absolute inset-0 pointer-events-none" width="100%" height="100%" viewBox="0 0 198 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect x="0.354" y="0.354" width="197.292" height="39.292" rx="20" fill="#808080" fillOpacity="0.2" style={{ mixBlendMode: 'luminosity' }} />
-          <rect x="0.354" y="0.354" width="197.292" height="39.292" rx="20" stroke="url(#chipGrad5)" strokeWidth="0.708" />
+      <div className="absolute content-stretch flex gap-[2.5px] h-[40px] items-center justify-center left-[428.68px] p-[2.5px] pointer-events-none rounded-[100px] top-[32px] w-[182.817px] backdrop-blur-[6px]" data-name="Toolbar - Symbols">
+        <svg aria-hidden="true" className="absolute inset-0 pointer-events-none" width="100%" height="100%" viewBox="0 0 182.817 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="0.354" y="0.354" width="182.109" height="39.292" rx="20" fill="#808080" fillOpacity="0.2" style={{ mixBlendMode: 'luminosity' }} />
+          <rect x="0.354" y="0.354" width="182.109" height="39.292" rx="20" stroke="url(#chipGrad5)" strokeWidth="0.708" />
           <defs>
             <linearGradient id="chipGrad5" x1="0.5" y1="0" x2="0.5" y2="1" gradientUnits="objectBoundingBox">
               <stop stopColor="white" stopOpacity="0.4" />
@@ -2425,7 +2320,7 @@ function TestimonialInfo2() {
           </defs>
         </svg>
       </div>
-      <div className="-translate-x-1/2 -translate-y-1/2 absolute flex flex-col font-['Geist:Regular',sans-serif] font-normal justify-center leading-[0] left-[calc(50%+152.17px)] text-[14px] text-center text-white top-[51.84px] whitespace-nowrap">
+      <div className="-translate-x-1/2 -translate-y-1/2 absolute flex flex-col font-['Geist:Regular',sans-serif] font-normal justify-center leading-[0] left-[538.5px] text-[14px] text-center text-white top-[51.84px] whitespace-nowrap">
         <p className="leading-[normal]">Benjamin BOTELLA</p>
       </div>
     </div>
@@ -2458,7 +2353,7 @@ function TestimonialColumn1() {
         className="-translate-y-1/2 absolute flex flex-col font-['Geist:Regular',sans-serif] font-normal justify-center leading-[0] text-[#b1b1b1] text-[16px] text-right top-[94.03px] whitespace-nowrap"
         style={{ right: BENJAMIN_INFO_RIGHT_EDGE + BENJAMIN_INFO_SHIFT_X }}
       >
-        <p className="leading-[normal]"><span style={{ WebkitTextStroke: '1px black', color: 'white', fontWeight: 700 }}>Co-CEO</span> Infinify</p>
+        <p className="leading-[normal]"><span style={{ WebkitTextStroke: '1px black', color: 'white', fontWeight: 700 }}>CTO</span> Infinify</p>
       </div>
       <div className="-translate-x-1/2 -translate-y-1/2 absolute flex flex-col font-['Neue_Montreal:Regular',sans-serif] font-normal justify-center leading-[normal] left-[calc(50%+203.14px)] text-[#0e0e0e] text-[14px] text-center top-[199.72px] whitespace-nowrap whitespace-pre">
         <p className="mb-0">{`“ Chaque détail visible dépend `}</p>
@@ -2487,36 +2382,30 @@ function TestimonialColumn1() {
   );
 }
 
-// Timing constants — adjust here to tune the feel
-const CARD_EASE = [0.16, 1, 0.3, 1] as [number, number, number, number];
-const CARD_DURATION = 0.95;
-const CARD_Y = 60;
-const FOOTER_EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
-const FOOTER_DURATION = CARD_DURATION * 1.2;
-const FOOTER_Y = 48;
-
-function Team({ scrollDirection }: { scrollDirection: ScrollDirection }) {
+function Team() {
   const reduced = useReducedMotion();
-  const teamRef = useRef<HTMLDivElement | null>(null);
-  const isTeamInView = useInView(teamRef, { amount: TEAM_VIEWPORT.amount });
-  const shouldShowTeam = useScrollReveal({ ref: teamRef, isInView: isTeamInView, scrollDirection });
+  const oscar = useScrollReveal({ sectionId: 'team', staggerIndex: 0 });
+  const benjamin = useScrollReveal({ sectionId: 'team', staggerIndex: 1 });
+
   return (
-    <div ref={teamRef} className="-translate-x-1/2 absolute h-[240.496px] left-1/2 top-[1117.87px] w-[783.209px]" data-name="Team">
+    <div className="-translate-x-1/2 absolute h-[240.496px] left-1/2 top-[1117.87px] w-[783.209px]" data-name="Team">
       {/* Card 1 — Oscar VORTICE */}
       <motion.div
+        ref={oscar.ref}
         className="absolute left-0 top-0 w-[783.209px] h-full"
-        initial={{ opacity: 0, y: reduced ? 0 : CARD_Y }}
-        animate={shouldShowTeam ? { opacity: 1, y: 0 } : { opacity: 0, y: reduced ? 0 : CARD_Y }}
-        transition={getScrollRevealTransition({ duration: CARD_DURATION, ease: CARD_EASE, scrollDirection, animateIn: shouldShowTeam, downDelay: 0.15 })}
+        initial={{ opacity: 0, y: reduced ? 0 : REVEAL_Y, filter: reduced ? 'blur(0px)' : `blur(${REVEAL_BLUR}px)` }}
+        animate={oscar.isRevealed ? { opacity: 1, y: 0, filter: 'blur(0px)' } : undefined}
+        transition={{ duration: reduced ? 0 : REVEAL_DURATION, ease: REVEAL_EASE, delay: oscar.delay }}
       >
         <TestimonialColumn />
       </motion.div>
       {/* Card 2 — Benjamin BOTELLA */}
       <motion.div
+        ref={benjamin.ref}
         className="absolute left-0 top-0 w-[783.209px] h-full"
-        initial={{ opacity: 0, y: reduced ? 0 : CARD_Y }}
-        animate={shouldShowTeam ? { opacity: 1, y: 0 } : { opacity: 0, y: reduced ? 0 : CARD_Y }}
-        transition={getScrollRevealTransition({ duration: CARD_DURATION, ease: CARD_EASE, scrollDirection, animateIn: shouldShowTeam, downDelay: 0.35 })}
+        initial={{ opacity: 0, y: reduced ? 0 : REVEAL_Y, filter: reduced ? 'blur(0px)' : `blur(${REVEAL_BLUR}px)` }}
+        animate={benjamin.isRevealed ? { opacity: 1, y: 0, filter: 'blur(0px)' } : undefined}
+        transition={{ duration: reduced ? 0 : REVEAL_DURATION, ease: REVEAL_EASE, delay: benjamin.delay }}
       >
         <TestimonialColumn1 />
       </motion.div>
@@ -2524,11 +2413,11 @@ function Team({ scrollDirection }: { scrollDirection: ScrollDirection }) {
   );
 }
 
-function TeamGroupe({ scrollDirection }: { scrollDirection: ScrollDirection }) {
+function TeamGroupe() {
   return (
     <div className="absolute contents left-[328.4px] top-[827.37px]" data-name="Team Groupe">
-      <TeamMask scrollDirection={scrollDirection} />
-      <Team scrollDirection={scrollDirection} />
+      <TeamMask />
+      <Team />
     </div>
   );
 }
@@ -2671,12 +2560,21 @@ function Frame12({ introActive }: { introActive: boolean }) {
   );
 }
 
-function Cta2({ introActive }: { introActive: boolean }) {
+function Cta2({
+  introActive,
+}: {
+  introActive: boolean;
+}) {
   const reduced = useReducedMotion();
+  const { forceRevealSection } = useRevealRegistry();
 
   const scrollToOffres = (e: React.MouseEvent) => {
     e.preventDefault();
-    document.getElementById('offres')?.scrollIntoView({ behavior: 'smooth' });
+    forceRevealSection('offres');
+    const target = document.getElementById('offres');
+    if (!target) return;
+    const y = target.getBoundingClientRect().top + window.scrollY - window.innerHeight * 0.15;
+    window.scrollTo({ top: y, behavior: reduced ? 'auto' : 'smooth' });
   };
 
   return (
@@ -2699,16 +2597,21 @@ function Cta2({ introActive }: { introActive: boolean }) {
 
 function CtaRealisations({ introActive }: { introActive: boolean }) {
   const reduced = useReducedMotion();
+  const { forceRevealSection } = useRevealRegistry();
 
   const scrollToRealisations = (e: React.MouseEvent) => {
     e.preventDefault();
-    document.querySelector('[data-name="Réalisations"]')?.scrollIntoView({ behavior: 'smooth' });
+    forceRevealSection('realisations');
+    const target = document.querySelector('[data-name="Réalisations"]');
+    if (!target) return;
+    const y = target.getBoundingClientRect().top + window.scrollY - window.innerHeight * 0.15;
+    window.scrollTo({ top: y, behavior: reduced ? 'auto' : 'smooth' });
   };
 
   return (
     <motion.button
       onClick={scrollToRealisations}
-      className="relative inline-flex cursor-pointer items-center justify-center gap-[8.014px] overflow-hidden rounded-[10016.271px] border-0 bg-transparent px-[30px] shrink-0"
+      className="relative inline-flex cursor-pointer items-center justify-center gap-[8.014px] overflow-hidden rounded-[10016.271px] border-0 bg-transparent px-[30px] py-[15px] shrink-0"
       style={{ height: '50.03px' }}
       data-name="CTA Réalisations"
       initial={{ opacity: 0, y: reduced ? 0 : HERO_CTA_Y }}
@@ -2730,11 +2633,15 @@ function CtaRealisations({ introActive }: { introActive: boolean }) {
   );
 }
 
-function Left({ introActive }: { introActive: boolean }) {
+function Left({
+  introActive,
+}: {
+  introActive: boolean;
+}) {
   return (
     <div className="content-stretch flex flex-col gap-[32px] items-start justify-end relative shrink-0" data-name="Left">
       <Frame12 introActive={introActive} />
-      <div className="flex items-center gap-[32px]">
+      <div className="flex items-center gap-[10px]">
         <Cta2 introActive={introActive} />
         <CtaRealisations introActive={introActive} />
       </div>
@@ -2888,7 +2795,11 @@ function Right({ introActive }: { introActive: boolean }) {
   );
 }
 
-function Content({ introActive }: { introActive: boolean }) {
+function Content({
+  introActive,
+}: {
+  introActive: boolean;
+}) {
   return (
     <div className="max-w-[1606.7705078125px] relative shrink-0 w-full" data-name="Content">
       <div className="flex flex-row items-center max-w-[inherit] size-full">
@@ -2901,7 +2812,11 @@ function Content({ introActive }: { introActive: boolean }) {
   );
 }
 
-function Hero({ introActive }: { introActive: boolean }) {
+function Hero({
+  introActive,
+}: {
+  introActive: boolean;
+}) {
   return (
     <div
       className="content-stretch flex flex-col h-[700px] items-center justify-end overflow-clip pb-[64.111px] relative rounded-[32.055px] shrink-0 w-[1400px] border border-black"
@@ -3083,8 +2998,8 @@ function Logos() {
     >
       <div className="flex flex-row items-center max-w-[inherit] size-full">
         <div className="content-stretch flex gap-[32.055px] items-center max-w-[inherit] pb-[10.017px] pt-[32.055px] px-[32.055px] relative w-full">
-          <div className="flex flex-col font-['Neue_Montreal:Regular',sans-serif] font-semibold justify-center leading-[0] max-w-[1202.07275390625px] not-italic relative shrink-0 text-[14.024px] text-[rgba(44,44,44,0.6)] tracking-[-0.2805px] w-[132.228px]" style={{ fontFeatureSettings: "'cv09', 'ss11', 'calt' 0, 'liga' 0" }}>
-            <p className="leading-[1.4]">{`Trusted by world's most exciting brands`}</p>
+          <div className="flex flex-col font-['Neue_Montreal:ppThin',sans-serif] justify-center leading-[0] max-w-[1202.07275390625px] not-italic relative shrink-0 text-[14.024px] text-[rgba(44,44,44,0.6)] tracking-[-0.2805px] w-[132.228px]" style={{ fontFeatureSettings: "'cv09', 'ss11', 'calt' 0, 'liga' 0" }}>
+            <p className="leading-[1.4]">{`Choisi par ceux qui inspirent le monde`}</p>
           </div>
           <Logos1 />
         </div>
@@ -3093,7 +3008,11 @@ function Logos() {
   );
 }
 
-function HeroLogos({ introActive }: { introActive: boolean }) {
+function HeroLogos({
+  introActive,
+}: {
+  introActive: boolean;
+}) {
   return (
     <div className="-translate-x-1/2 absolute content-stretch flex flex-col h-[922px] items-center left-1/2 top-[20px] w-[1400px]" data-name="Hero + Logos">
       <Hero introActive={introActive} />
@@ -3103,8 +3022,6 @@ function HeroLogos({ introActive }: { introActive: boolean }) {
 }
 
 export default function Desktop({ introActive = true }: { introActive?: boolean }) {
-  const scrollDirection = useScrollDirection();
-
   return (
     <div className="relative size-full" data-name="Desktop - 144">
       <div aria-hidden="true" className="absolute inset-0 pointer-events-none">
@@ -3112,12 +3029,12 @@ export default function Desktop({ introActive = true }: { introActive?: boolean 
 
       </div>
       <NavBar />
-      <InfinifyMask scrollDirection={scrollDirection} />
-      <Footer scrollDirection={scrollDirection} />
-      <Cta scrollDirection={scrollDirection} />
+      <InfinifyMask />
+      <Footer />
+      <Cta />
       <Realisations />
-      <OffresGroupe scrollDirection={scrollDirection} />
-      <TeamGroupe scrollDirection={scrollDirection} />
+      <OffresGroupe />
+      <TeamGroupe />
       <HeroLogos introActive={introActive} />
     </div>
   );
