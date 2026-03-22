@@ -43,6 +43,25 @@ interface UseScrollRevealReturn {
 - Disconnects observer once revealed (performance)
 - Respects `prefers-reduced-motion` via `useReducedMotion()` from motion/react
 
+**RefCallback lifecycle:**
+- Observer is created when the ref receives a non-null element (mount)
+- Observer is disconnected when either: (a) element is revealed, or (b) ref receives null (unmount)
+- If the ref target changes (re-render), the old observer is disconnected and a new one is created for the new element
+
+**Usage example after migration:**
+```tsx
+const { ref, isRevealed } = useScrollReveal({ staggerIndex: 0 });
+
+<motion.div
+  ref={ref}
+  initial={{ opacity: 0, y: REVEAL_Y, filter: `blur(${REVEAL_BLUR}px)` }}
+  animate={isRevealed ? { opacity: 1, y: 0, filter: 'blur(0px)' } : undefined}
+  transition={{ duration: REVEAL_DURATION, ease: REVEAL_EASE, delay: 0 }}
+>
+  {content}
+</motion.div>
+```
+
 ### 2. Registry: `RevealRegistryProvider`
 
 **File:** `src/hooks/useRevealRegistry.tsx`
@@ -51,11 +70,11 @@ interface UseScrollRevealReturn {
 RevealRegistryProvider (React Context)
   register(sectionId, forceRevealFn)   — each section registers on mount
   unregister(sectionId)                — cleanup on unmount
-  revealUpTo(sectionId)               — forces reveal on the target section
+  forceRevealSection(sectionId)        — forces reveal on the target section only
 ```
 
 **Flow on "Voir nos offres" click:**
-1. Call `revealUpTo('offres')`
+1. Call `forceRevealSection('offres')`
 2. Registry calls `forceReveal()` on the offres section
 3. Smooth scroll starts toward `#offres`
 4. Section is already `isRevealed = true` — motion/react animation plays on arrival
@@ -96,9 +115,12 @@ Animation properties (applied via motion/react):
 | **Realisations** | Titre + carousel | 0 | `'realisations'` |
 | **MaskGroup** | Texte "Offres" | 0 | `'offres'` |
 | **Offres** | Carte Offres | 0 | `'offres'` |
+| **Cta** | Carte CTA (planete) | 0 | `'cta'` |
 | **InfinifyMask** | Texte "Infinify" | 0 | `'infinify'` |
 | **Footer** | Background | 0 | `'footer'` |
 | **Footer** | Content | 1 | `'footer'` |
+
+**Note on Realisations:** This section currently has NO scroll-reveal animation — it is always visible. This spec **adds** a new scroll-reveal to it for consistency. The reveal wraps the entire section container (title + carousel as one block). Internal carousel animations (auto-rotate, frame switching) are unaffected.
 
 ### 5. Reduced Motion
 
@@ -128,5 +150,20 @@ Animation properties (applied via motion/react):
 ## Removed Code
 
 - `useLatchedInView` hook (~15 lines in Desktop144.tsx)
+- `getScrollRevealTransition` helper function (replaced by uniform constants + staggerIndex-based delay)
 - Disparate reveal constants: `REVEAL_MARGIN`, `OFFERS_REVEAL_MARGIN`, and per-section `amount` values
 - All `useInView` imports from motion/react used for scroll-reveal (not for other purposes)
+
+## Button Handler Wiring
+
+The scroll buttons (`Cta2` "Voir nos offres" and `CtaRealisations` "Voir nos realisations") are defined as standalone functions inside Desktop144.tsx. They will:
+
+1. Use `useRevealRegistry()` context hook directly (they are rendered inside the provider tree since `RevealRegistryProvider` wraps `App.tsx`)
+2. Call `forceRevealSection(sectionId)` before initiating the scroll
+3. Both buttons will use `window.scrollTo` with calculated offset for consistency (replacing the `scrollIntoView` used by `CtaRealisations` to unify scroll behavior)
+
+## Assumptions
+
+- **SPA only**: This is a client-side React app with no SSR. No `typeof window` guards needed.
+- **Resize**: Since the observer disconnects once revealed and the latch is permanent, window resize does not affect already-revealed sections. Unrevealed sections will re-evaluate naturally via their active observer.
+- **Fast repeated clicks**: `forceReveal` is idempotent (sets boolean to true). Smooth scroll behavior on rapid clicks is browser-managed and acceptable.
