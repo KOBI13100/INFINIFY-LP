@@ -68,14 +68,16 @@ const { ref, isRevealed } = useScrollReveal({ staggerIndex: 0 });
 
 ```
 RevealRegistryProvider (React Context)
-  register(sectionId, forceRevealFn)   — each section registers on mount
-  unregister(sectionId)                — cleanup on unmount
-  forceRevealSection(sectionId)        — forces reveal on the target section only
+  register(sectionId, forceRevealFn)   — each element registers on mount
+  unregister(sectionId, forceRevealFn) — cleanup on unmount (removes specific callback)
+  forceRevealSection(sectionId)        — forces reveal on ALL elements with that sectionId
 ```
+
+**One-to-many relationship:** Multiple elements can share the same `sectionId`. Internally the registry stores `Map<string, Set<() => void>>`. When `forceRevealSection('offres')` is called, it iterates the set and calls every registered `forceReveal` callback for that ID. This is required because sections like `'team'` have 3 elements (TeamMask + Oscar + Benjamin), `'offres'` has 2 (MaskGroup + Carte), and `'footer'` has 2 (Background + Content).
 
 **Flow on "Voir nos offres" click:**
 1. Call `forceRevealSection('offres')`
-2. Registry calls `forceReveal()` on the offres section
+2. Registry calls `forceReveal()` on ALL elements registered as `'offres'` (MaskGroup text + Carte Offres)
 3. Smooth scroll starts toward `#offres`
 4. Section is already `isRevealed = true` — motion/react animation plays on arrival
 
