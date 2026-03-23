@@ -11,12 +11,13 @@ html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
-  overscroll-behavior-y: none;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 body {
   overflow-x: hidden;
-  overscroll-behavior-y: none;
+  overflow-y: auto;
 }
 
 #root {

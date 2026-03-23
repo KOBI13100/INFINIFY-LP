@@ -1126,11 +1126,22 @@ function preloadCarouselProject(project: CarouselProject) {
 
 function CarouselCardImage({
   image,
+  imageSequence,
+  frameIndex = 0,
   priority,
+  showSequence = false,
 }: {
   image: string;
+  imageSequence?: string[];
+  frameIndex?: number;
   priority: boolean;
+  showSequence?: boolean;
 }) {
+  const frames = imageSequence?.length ? imageSequence : [image];
+  const activeFrameIndex = showSequence
+    ? ((frameIndex % frames.length) + frames.length) % frames.length
+    : 0;
+
   return (
     <div
       className="absolute"
@@ -1146,19 +1157,34 @@ function CarouselCardImage({
           transformOrigin: 'center center',
         }}
       >
-        <img
-          src={image}
-          alt=""
-          className="absolute max-w-none object-cover"
-          loading={priority ? 'eager' : 'lazy'}
-          decoding="async"
-          fetchPriority={priority ? 'high' : 'auto'}
-          style={{
-            inset: 0,
-            width: '100%',
-            height: '100%',
-          }}
-        />
+        {frames.map((frame, index) => {
+          const isActiveFrame = index === activeFrameIndex;
+
+          return (
+            <img
+              key={`${frame}-${index}`}
+              src={frame}
+              alt=""
+              aria-hidden={!isActiveFrame}
+              draggable={false}
+              className="absolute max-w-none object-cover select-none"
+              loading={priority ? 'eager' : 'lazy'}
+              decoding={priority ? 'sync' : 'async'}
+              fetchPriority={isActiveFrame && priority ? 'high' : 'auto'}
+              style={{
+                inset: 0,
+                width: '100%',
+                height: '100%',
+                opacity: isActiveFrame ? 1 : 0,
+                visibility: isActiveFrame ? 'visible' : 'hidden',
+                transition: 'none',
+                pointerEvents: 'none',
+                backfaceVisibility: 'hidden',
+                transform: 'translateZ(0)',
+              }}
+            />
+          );
+        })}
       </div>
     </div>
   );
@@ -1302,7 +1328,7 @@ function Realisations() {
         ...currentFrameById,
         [activeProject.id]: ((currentFrameById[activeProject.id] ?? 0) + 1) % activeProject.imageSequence!.length,
       }));
-    }, 1000);
+    }, 1300);
 
     return () => window.clearInterval(intervalId);
   }, [activeIndex, readyProjectIds]);
@@ -1340,10 +1366,10 @@ function Realisations() {
           const currentFrameIndex = projectFrameById[projectCard.id] ?? 0;
           const isCenterCard = slotName === 'center';
           const isProjectSequenceReady = Boolean(readyProjectIds[projectCard.id]);
-          const visibleImage =
-            isCenterCard && isProjectSequenceReady && projectCard.imageSequence?.length
-              ? projectCard.imageSequence[currentFrameIndex % projectCard.imageSequence.length]
-              : projectCard.image;
+          const projectImageSequence =
+            isProjectSequenceReady && projectCard.imageSequence?.length
+              ? projectCard.imageSequence
+              : undefined;
 
           return (
             <motion.div
@@ -1359,8 +1385,11 @@ function Realisations() {
               transition={CARD_TRANSITION}
             >
               <CarouselCardImage
-                image={visibleImage}
+                image={projectCard.image}
+                imageSequence={projectImageSequence}
+                frameIndex={currentFrameIndex}
                 priority={isCenterCard}
+                showSequence={isCenterCard && Boolean(projectImageSequence?.length)}
               />
             </motion.div>
           );

@@ -42,24 +42,6 @@ export default function LoaderSplash({
     if (staticSplash) {
       staticSplash.remove();
     }
-
-    const { body, documentElement } = document;
-    const previousBodyOverflow = body.style.overflow;
-    const previousHtmlOverflow = documentElement.style.overflow;
-    const previousBodyOverscroll = body.style.overscrollBehaviorY;
-    const previousHtmlOverscroll = documentElement.style.overscrollBehaviorY;
-
-    body.style.overflow = "hidden";
-    documentElement.style.overflow = "hidden";
-    body.style.overscrollBehaviorY = "none";
-    documentElement.style.overscrollBehaviorY = "none";
-
-    return () => {
-      body.style.overflow = previousBodyOverflow;
-      documentElement.style.overflow = previousHtmlOverflow;
-      body.style.overscrollBehaviorY = previousBodyOverscroll;
-      documentElement.style.overscrollBehaviorY = previousHtmlOverscroll;
-    };
   }, []);
 
   useEffect(() => {
